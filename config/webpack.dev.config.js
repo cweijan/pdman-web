@@ -41,11 +41,6 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: 'json-loader'
             },
-            {
-                test: /\.(js|tsx|jsx)$/,
-                exclude: /node_modules/,
-                loader: "eslint-loader"
-            },
           {
             test: /\.css$/,
             loader: ExtractTextPlugin.extract({

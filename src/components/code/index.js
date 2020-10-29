@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import './style/index.less';
-/* eslint-disable */
+
 export default class Code extends React.Component{
   componentDidMount(){
     this.dom = ReactDom.findDOMNode(this.instance);

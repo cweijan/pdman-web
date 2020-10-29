@@ -63,7 +63,7 @@ export default class Home extends React.Component{
       });
     });
   }
-  /* eslint-disable */
+  
   componentWillUnmount(){
     this.dom.onkeydown = null;
   }

@@ -32,7 +32,7 @@ class Database extends React.Component{
   }
   componentDidMount(){
     this.dom = ReactDom.findDOMNode(this.instance);
-    /* eslint-disable */
+    
     this.setState({
       parentWidth: `${this.dom.getBoundingClientRect().width - 120}px`,
     });

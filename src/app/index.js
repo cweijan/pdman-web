@@ -69,7 +69,7 @@ export default class App extends React.Component {
     this.tableInstance = {};
   }
   componentDidMount() {
-    /* eslint-disable */
+    
     // 增加监听窗口大小的事件
     // console.log(this.props);
     // window.PDMan.loading(window, this.props);

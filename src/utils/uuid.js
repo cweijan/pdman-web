@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 var CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
 export const uuid = (len, radix) => {
   var chars = CHARS, uuid = [], i;

@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import React from 'react';
 import ReactDom from 'react-dom';
 import _object from 'lodash/object';

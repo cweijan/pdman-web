@@ -34,7 +34,7 @@ export default class Setting extends React.Component{
   }
   componentDidMount(){
     this.dom = ReactDom.findDOMNode(this.instance);
-   /* eslint-disable */
+   
     this.setState({
       height: this.dom.getBoundingClientRect().height,
     });

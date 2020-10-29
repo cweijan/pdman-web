@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import _object from 'lodash/object';
 import { Message } from '../components';
 import doT from 'dot';

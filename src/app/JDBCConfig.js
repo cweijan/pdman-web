@@ -106,7 +106,7 @@ export default class JDBCConfig extends React.Component{
       key: key,
       defaultDB: false,
       properties: {
-        'driver_class_name': defaultDBData.driverClass, // eslint-disable-line
+        'driver_class_name': defaultDBData.driverClass,
         url: defaultDBData.url,
         password: '',
         username: '',
@@ -149,7 +149,7 @@ export default class JDBCConfig extends React.Component{
             const defaultDBData = this.url[dbName] || {};
             properties = {
               ...properties,
-              'driver_class_name': defaultDBData.driverClass, // eslint-disable-line
+              'driver_class_name': defaultDBData.driverClass,
               url: defaultDBData.url,
             };
           }
