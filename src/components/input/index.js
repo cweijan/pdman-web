@@ -113,8 +113,7 @@ export default class Input extends React.Component{
         className={`${prefix}-input`}
         onChange={this._onChange}
         style={{...style, float: suffix ? 'left' : 'inherit'}}
-        defaultValue={defaultValue}
-        value={value}
+        value={value?value:defaultValue}
         onSelect={this._onSelect}
         disabled={disabled}
       />
