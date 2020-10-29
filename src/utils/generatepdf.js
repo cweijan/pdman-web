@@ -1,12 +1,12 @@
-/*import PDFDocument from 'pdfkit';
-import fs from 'fs';*/
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
 
-/*const generateIndex = () => {
+const generateIndex = () => {
 
-};*/
+};
 
 export const generatepdf = (dataSource, images, path, callBack) => {
-  /*const doc = new PDFDocument({bufferPages: true});
+  const doc = new PDFDocument({bufferPages: true});
   doc.pipe(fs.createWriteStream('C:/Users/liuqiang/Desktop/test/output.pdf'));
   let fontPath = '';
   if (process.env.NODE_ENV === 'development') {
@@ -49,6 +49,6 @@ export const generatepdf = (dataSource, images, path, callBack) => {
   doc.end();
   generateIndex();
   callBack && callBack();
-  console.log('====');*/
+  console.log('====');
   callBack && callBack();
 };
