@@ -1593,13 +1593,13 @@ export default class App extends React.Component {
                     >
                       <span><u>关</u>系图</span>
                     </li>
-                    <li
+                    {/* <li
                       className={`other-options-menu-tools ${tools === 'plug' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
                       onClick={() =>this._menuClick('plug')}
                     >
                       <span><u>模</u>型</span>
-                    </li>
+                    </li> */}
                     <li
                       className={`other-options-menu-tools ${tools === 'dbversion' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
@@ -1635,17 +1635,23 @@ export default class App extends React.Component {
                     >
                       <Icon type='folderopen' style={{marginRight: 5, color: '#FFCA28'}}/>打开
                     </div>
-                    <div
+                    {/* <div
                       className='tools-content-clickeable'
                       onClick={this._create}
                     >
                       <Icon type='addfolder' style={{marginRight: 5, color: '#96C080'}}/>新建
-                    </div>
+                    </div> */}
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._saveAs()}
                     >
                       <Icon type='fa-save' style={{marginRight: 5, color: '#9291CD'}}/>另存为
+                    </div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._setting()}
+                    >
+                      <Icon type='setting' style={{marginRight: 5}}/>设置
                     </div>
                   </div>
                   <div className='tools-content-group-name'>
@@ -1656,19 +1662,36 @@ export default class App extends React.Component {
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
-                      onClick={() => this._setting()}
-                    >
-                      <Icon type='setting' style={{marginRight: 5}}/>设置
-                    </div>
-                    <div
-                      className='tools-content-clickeable'
                       onClick={() => this._JDBCConfig()}
                     >
                       <Icon type='fa-link' style={{marginRight: 5}}/>数据库连接
                     </div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._readDB()}
+                    ><Icon type="fa-hand-lizard-o"/>逆向解析</div>
                   </div>
                   <div className='tools-content-group-name'>
                     配置
+                  </div>
+                </div>
+                <div className='tools-content-group'>
+                  <div className='tools-content-group-content'>
+                  <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._exportSQL()}
+                    ><Icon type="fa-database"/>导出DDL脚本</div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._export()}
+                    ><Icon type="export"/>导出文档</div>
+                    {/* <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._saveAs('filterDBS')}
+                    ><Icon type="file1"/>导出JSON</div> */}
+                  </div>
+                  <div className='tools-content-group-name'>
+                    导出
                   </div>
                 </div>
               </div>
@@ -1743,21 +1766,21 @@ export default class App extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="tools-content-tab" style={{display: tools === 'plug' ? '' : 'none'}}>
+              {/* <div className="tools-content-tab" style={{display: tools === 'plug' ? '' : 'none'}}>
                 <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._readDB()}
                     ><Icon type="fa-hand-lizard-o"/>数据库逆向解析</div>
-                    {/*<div
+                    <div
                       className='tools-content-clickeable'
                       onClick={() => this._readPDMfile()}
                     ><Icon type="fa-file" />解析PDM文件</div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._readPDMfile()}
-                    ><Icon type="fa-file" />解析ERWin文件</div>*/}
+                    ><Icon type="fa-file" />解析ERWin文件</div>
                   </div>
                   <div className='tools-content-group-name'>
                     解析导入
@@ -1782,7 +1805,7 @@ export default class App extends React.Component {
                     导出
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

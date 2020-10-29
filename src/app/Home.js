@@ -95,8 +95,8 @@ export default class Home extends React.Component{
       dialog.showErrorBox('创建项目失败！', '该项目已经存在了');
     } else {
       fileExistPromise(`${this.projectName}.pdman.json`, true, {
-        modules: [],
         dataTypeDomains: defaultData.profile.defaultDataTypeDomains,
+        modules: defaultData.profile.defaultModules,
       }).then((res) => {
         // 保存的用户配置
         const { histories } = this.state;

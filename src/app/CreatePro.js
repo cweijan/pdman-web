@@ -94,6 +94,9 @@ export default class CreatePro extends React.Component {
             <Button onClick={this._iconClick}>...</Button>
           </div>
         </div>
+        <div className='pdman-create-right-footer' >
+          <Button onClick={this._onOk}>Cancel</Button>
+        </div>
         <div className='pdman-create-right-footer'>
           <Button onClick={this._onOk}>Create</Button>
         </div>

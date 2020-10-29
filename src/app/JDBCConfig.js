@@ -102,14 +102,14 @@ export default class JDBCConfig extends React.Component{
     const dbName = (database.type || 'mysql').toLocaleLowerCase();
     const defaultDBData = this.url[dbName] || {};
     const newField = {
-      name: '',
+      name: tempFields.length==0?'dev':'',
       key: key,
       defaultDB: false,
       properties: {
         'driver_class_name': defaultDBData.driverClass,
         url: defaultDBData.url,
         password: '',
-        username: '',
+        username: 'root',
       },
     };
     if (selectedTrsIndex.length > 0) {

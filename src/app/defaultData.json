@@ -212,6 +212,12 @@
           "updateTableComment": ""
         }
       ]
-    }
+    },
+    "defaultModules":[{
+      "name": "base",
+      "chnname": "基础模块",
+      "entities": [],
+      "graphCanvas": {}
+    }]
   }
 }
