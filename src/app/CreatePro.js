@@ -64,7 +64,7 @@ export default class CreatePro extends React.Component {
   render() {
     const { style } = this.props;
     return (<div className='pdman-create' style={style}>
-      <div className='pdman-create-left'>
+      {/* <div className='pdman-create-left'>
         <div className='pdman-create-left-types'>
           <div className='pdman-create-left-types-type pdman-create-left-types-type-default-select'>
             <Icon type='earth' style={{color: '#3AAEDC'}}/>
@@ -78,7 +78,7 @@ export default class CreatePro extends React.Component {
         <div className='pdman-create-left-back'>
           <Icon type='fa-arrow-circle-left' style={{color: '#3AAEDC'}} onClick={this._closeCreatePro}/>
         </div>
-      </div>
+      </div> */}
       <div className='pdman-create-right'>
         <div className='pdman-create-right-title'>
           新项目
@@ -94,8 +94,8 @@ export default class CreatePro extends React.Component {
             <Button onClick={this._iconClick}>...</Button>
           </div>
         </div>
-        <div className='pdman-create-right-footer' >
-          <Button onClick={this._onOk}>Cancel</Button>
+        <div className='pdman-create-right-footer' style={{right:'100px'}}>
+          <Button onClick={this._closeCreatePro}>Cancel</Button>
         </div>
         <div className='pdman-create-right-footer'>
           <Button onClick={this._onOk}>Create</Button>
