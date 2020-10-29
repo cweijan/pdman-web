@@ -60,22 +60,20 @@ export default class TableSummary extends React.Component{
         <div>
           <span>表名</span>
           <Input
-            wrapperStyle={{width: 'calc(100% - 80px)'}}
-            style={{height: 23, width: '100%'}}
+            wrapperStyle={{width: '30%',display:"inline"}}
+            style={{height: 23, width: '30%'}}
             value={this._getTableSummary('chnname')}
             onChange={e => this._inputTableOnChange(e, 'chnname')}
           />
-        </div>
-        <div>
           <span>逻辑名</span>
           <Input
-            wrapperStyle={{width: 'calc(100% - 80px)'}}
-            style={{height: 23, width: '100%'}}
+            wrapperStyle={{width: '30%',display:"inline"}}
+            style={{height: 23, width: '30%'}}
             value={this._getTableSummary('title')}
             onChange={e => this._inputTableOnChange(e, 'title')}
           />
         </div>
-        <div>
+        {/* <div>
           <span>显示方式</span>
           <Input
             wrapperStyle={{width: 'calc(100% - 80px)'}}
@@ -83,8 +81,8 @@ export default class TableSummary extends React.Component{
             value={this._getTableSummary('nameTemplate') || '{code}[{name}]'}
             onChange={e => this._inputTableOnChange(e, 'nameTemplate')}
           />
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <span>说明</span>
           <TextArea
             wrapperStyle={{width: 'calc(100% - 80px)'}}
@@ -92,7 +90,7 @@ export default class TableSummary extends React.Component{
             value={this._getTableSummary('remark')}
             onChange={e => this._inputTableOnChange(e, 'remark')}
           />
-        </div>
+        </div> */}
       </React.Fragment>
     );
   }

@@ -24,7 +24,7 @@ class DataTable extends React.Component {
     this.currentTable = values[2];
     this.state = {
       dataTable: this._initTableData(this.props.dataSource || {}, values[1], values[2]),
-      tabShow: 'summary',
+      tabShow: 'fields',
       module: values[1],
       table: values[2],
     };
@@ -185,29 +185,29 @@ class DataTable extends React.Component {
         className={`${prefix}-data-table-content`}
       >
         <div className={`${prefix}-data-table-content-tab`}>
-          <div
+          {/* <div
             onClick={() => this._tabClick('summary')}
             className={`${prefix}-data-table-content-tab${this.state.tabShow === 'summary' ? '-selected' : '-unselected'}`}
           >基本信息
-          </div>
+          </div> */}
           <div
             onClick={() => this._tabClick('fields')}
             className={`${prefix}-data-table-content-tab${this.state.tabShow === 'fields' ? '-selected' : '-unselected'}`}
-          >字段信息
-          </div>
-          <div
-            onClick={() => this._tabClick('codes')}
-            className={`${prefix}-data-table-content-tab${this.state.tabShow === 'codes' ? '-selected' : '-unselected'}`}
-          >代码信息
+          >表结构
           </div>
           <div
             onClick={() => this._tabClick('indexs')}
             className={`${prefix}-data-table-content-tab${this.state.tabShow === 'indexs' ? '-selected' : '-unselected'}`}
-          >索引信息
+          >索引
+          </div>
+          <div
+            onClick={() => this._tabClick('codes')}
+            className={`${prefix}-data-table-content-tab${this.state.tabShow === 'codes' ? '-selected' : '-unselected'}`}
+          >代码
           </div>
         </div>
         <div style={{height: height - 145, overflow: 'auto'}}>
-          <div
+          {/* <div
             className={`${prefix}-data-table-content-summary`}
             style={{display: this.state.tabShow === 'summary' ? '' : 'none'}}
           >
@@ -215,8 +215,12 @@ class DataTable extends React.Component {
               dataTable={this.state.dataTable}
               ref={instance => this.tableSummaryInstance = instance}
             />
-          </div>
+          </div> */}
           <div style={{display: this.state.tabShow === 'fields' ? '' : 'none'}}>
+          <TableSummary
+              dataTable={this.state.dataTable}
+              ref={instance => this.tableSummaryInstance = instance}
+            />
             <Table
               height={height}
               columnOrder={columnOrder}
