@@ -29,7 +29,10 @@ export default class Checkbox extends React.Component{
     e.stopPropagation();
   };
   render() {
-    const { prefix = 'pdman', style, wrapperStyle, value = false, title, disabled = false } = this.props;
+    let { prefix = 'pdman', style, wrapperStyle, value = false, title, disabled = false } = this.props;
+    if(!value){
+      value=false;
+    }
     return (
       <ACheckBox
         disabled={disabled}

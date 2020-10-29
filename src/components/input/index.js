@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import './style/index.less';
+import { Input as AInput } from 'antd';
+
+
+// import './style/index.less';
 
 
 export default class Input extends React.Component{
@@ -99,7 +102,7 @@ export default class Input extends React.Component{
     }
     const { prefix = 'pdman', style, defaultValue, wrapperStyle, value, autoFocus, suffix, placeholder, disabled } = otherProps;
     return (<div className={`${prefix}-input-wrapper`}  style={wrapperStyle}>
-      <input
+      <AInput 
         onKeyDown={e => this._onKeyDown(e)}
         placeholder={placeholder}
         ref={instance => this.instance = instance}

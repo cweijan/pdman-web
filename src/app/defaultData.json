@@ -3,7 +3,7 @@
     "defaultFields": [
       {
         "name": "ID",
-        "type": "INT",
+        "type": "Integer",
         "remark": "",
         "chnname": "主键",
         "pk":true,
