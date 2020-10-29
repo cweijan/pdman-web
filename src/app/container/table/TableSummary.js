@@ -1,7 +1,9 @@
 import React from 'react';
 import * as Com from '../../../components';
 
-const { Input, TextArea } = Com;
+import {Input  } from 'antd';
+
+const { TextArea } = Com;
 
 // 状态维持在组件内部，当调用保存时在更新到上层组件【当前组件需要提供一个上层调用的方法来获取最新的数据】
 export default class TableSummary extends React.Component {
@@ -58,20 +60,10 @@ export default class TableSummary extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <span>表名</span>
-          <Input
-            wrapperStyle={{ width: '30%', display: "inline" }}
-            style={{ height: 23, width: '30%' }}
-            value={this._getTableSummary('title')}
-            onChange={e => this._inputTableOnChange(e, 'title')}
-          />
-          <span>中文注释</span>
-          <Input
-            wrapperStyle={{ width: '30%', display: "inline" }}
-            style={{ height: 23, width: '30%' }}
-            value={this._getTableSummary('chnname')}
-            onChange={e => this._inputTableOnChange(e, 'chnname')}
-          />
+        <Input.Group compact>
+        <Input style={{ width: '30%' }} addonBefore="表名" value={this._getTableSummary('title')} onChange={e => this._inputTableOnChange(e, 'title')} />
+        <Input style={{ width: '40%' }} addonBefore="中文名" value={this._getTableSummary('chnname')} onChange={e => this._inputTableOnChange(e, 'chnname')} />
+        </Input.Group>
         </div>
         {/* <div>
           <span>显示方式</span>

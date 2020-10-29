@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Checkbox as ACheckBox } from 'antd';
+
 import './style/index.less';
 
 export default class Checkbox extends React.Component{
@@ -28,8 +30,8 @@ export default class Checkbox extends React.Component{
   };
   render() {
     const { prefix = 'pdman', style, wrapperStyle, value = false, title, disabled = false } = this.props;
-    return (<div className={`${prefix}-checkbox-wrapper`}  style={wrapperStyle}>
-      <input
+    return (
+      <ACheckBox
         disabled={disabled}
         draggable
         onDragStart={this._onDragStart}
@@ -37,12 +39,11 @@ export default class Checkbox extends React.Component{
         onBlur={this._onBlur}
         className={`${prefix}-checkbox`}
         onChange={this._onChange}
-        style={style}
         onClick={this._onClick}
         value={value}
         checked={value}
         title={title}
       />
-    </div>);
+    );
   }
 }
