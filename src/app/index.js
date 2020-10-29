@@ -566,7 +566,7 @@ export default class App extends React.Component {
     openModal(<div style={{textAlign: 'center', padding: 10}}>
       <Button icon='HTML' onClick={(btn) => this._exportFile('Html', btn)}>导出HTML</Button>
       <Button icon='wordfile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Word', btn)}>导出WORD</Button>
-      {/* <Button icon='pdffile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button> */}
+      <Button icon='pdffile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
       <Button icon='file1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button>
     </div>, {
       title: '文件导出'
