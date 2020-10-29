@@ -123,13 +123,13 @@ export default class TableDataCode extends React.Component{
                   className={`${prefix}-data-table-content-tab`}
                   style={{marginTop: 5, fontSize: 12, marginBottom: 0}}
                 >
-                  <div
+                  {/* <div
                     onClick={() => this._templateTabClick('createTableTemplate')}
                     className={`${prefix}-data-table-content-tab${templateShow === 'createTableTemplate' ? '-selected' : '-unselected'}`}
                   >
                     新建数据表代码
-                  </div>
-                  <div
+                  </div> */}
+                  {/* <div
                     onClick={() => this._templateTabClick('deleteTableTemplate')}
                     className={`${prefix}-data-table-content-tab${templateShow === 'deleteTableTemplate' ? '-selected' : '-unselected'}`}
                   >
@@ -172,10 +172,13 @@ export default class TableDataCode extends React.Component{
                     className={`${prefix}-data-table-content-tab${templateShow === 'deleteIndexTemplate' ? '-selected' : '-unselected'}`}
                   >
                     删除索引代码
-                  </div>
+                  </div> */}
                 </div>
                 <div className={`${prefix}-data-tab-content`}>
                   <div style={{display: 'flex', padding: 5}}>
+                     <span style={{marginLeft: '10px', fontSize: 12, color: 'green'}} >
+                     点击复制到粘贴板
+                    </span>
                     <Com.Icon
                       type='copy1'
                       style={{cursor: 'pointer'}}
@@ -183,15 +186,6 @@ export default class TableDataCode extends React.Component{
                       onClick={() => this._copyClick(
                         this._getTableCode(currentCode, templateShow))}
                     />
-                    <span
-                      style={{marginLeft: '10px', fontSize: 12, color: 'green'}}
-                    >
-                      {
-                        (templateShow === 'createTableTemplate' ||
-                          templateShow === 'deleteTableTemplate' ||
-                          templateShow === 'createIndexTemplate') ? '该脚本为全量脚本' : '该脚本为差异化脚本'
-                      }
-                    </span>
                   </div>
                   <div style={{height: height - 242, overflow: 'auto'}}>
                     <Com.Code
