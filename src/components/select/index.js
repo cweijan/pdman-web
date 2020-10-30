@@ -35,8 +35,7 @@ class Index extends React.Component {
         onDragStart={this._onDragStart}
         className={`${prefix}-select`}
         style={style}
-        defaultValue={defaultValue}
-        value={value}
+        value={value?value:defaultValue}
         onChange={this._onChange}
         onBlur={this._onBlur}
       >

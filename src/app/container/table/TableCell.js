@@ -130,10 +130,12 @@ export default class TableCell extends React.Component{
           value={(column.code === 'dataType' ?
             this._getDefaultDataType(field.type) : field[column.code]) || ''}
           style={{
-            height: (column.code !== 'pk' && column.code !== 'notNull' && column.code !== 'autoIncrement') ? 23 : 15,
+            height: (column.code !== 'pk' && column.code !== 'notNull' && column.code !== 'autoIncrement') ? '100%' : 15,
             ...this._getStyle(column.code),
+            border:'none',
           }}
         >
+          
           {
             column.com === 'Select' && this._getOptions(column.code)
           }

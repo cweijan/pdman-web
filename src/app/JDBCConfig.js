@@ -409,7 +409,7 @@ export default class JDBCConfig extends React.Component{
                       className='pdman-jdbc-config-left-db-list-item-index'
                     >{index + 1}</span>
                     <Input onChange={e => this._onDBChange(d.key, e, 'name')} value={d.name}/>
-                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type}>
+                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type} style={{width:'200px'}}>
                       {
                         database
                           .map(db => (<option key={db.code} value={db.code}>{db.code}</option>))
