@@ -254,7 +254,10 @@ class TreeNode extends React.Component {
           //textOverflow: 'ellipsis'
         }}
         key={value}
-        onClick={(e) => this._onDoubleClick(e, value,children)}
+        onClick={(e) => {
+          this._onClick(e, value)
+          this._onDoubleClick(e, value, children)
+        }}
         onDoubleClick={(e) => this._onDoubleClick(e, value, children)}
       >
         {this._getTreeValue(name, value, false, row)}</li>
