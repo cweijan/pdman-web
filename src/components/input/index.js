@@ -11,7 +11,7 @@ export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: null
+      value: props.value||props.defaultValue
     }
   }
   componentDidMount() {
@@ -108,7 +108,7 @@ export default class Input extends React.Component {
       delete otherProps.defaultValue;
     }
     const { prefix = 'pdman', style, defaultValue, wrapperStyle, value, autoFocus, suffix, placeholder, disabled } = otherProps;
-    const renValue = value || this.state.value
+    const renValue =this.state.value
     return (<div className={`${prefix}-input-wrapper`} style={wrapperStyle}>
       <AInput
         onKeyDown={e => this._onKeyDown(e)}
