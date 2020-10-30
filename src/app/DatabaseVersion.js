@@ -518,7 +518,7 @@ export default class DatabaseVersion extends React.Component{
     this.basePath = `${this.basePathDir}${name}-base.pdman.json`;
     const base = fileExist(this.basePath);
     if (!base) {
-      Message.error({title: '当前项目不存在基线版本，请先初始化基线'});
+      // Message.error({title: '当前项目不存在基线版本，请先初始化基线'});
       this.setState({
         init: true,
       });
