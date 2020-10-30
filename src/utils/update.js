@@ -1,6 +1,6 @@
 const version = {
-  version: '2.2.0',
-  date: '2020.9',
+  version: '2.5.0',
+  date: '2020.11',
 };
 
 export const getCurrentVersion = () => {
