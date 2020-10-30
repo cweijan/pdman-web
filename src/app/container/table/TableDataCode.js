@@ -4,13 +4,15 @@ import * as Com from '../../../components';
 import { getCodeByDataTable } from '../../../utils/json2code';
 import { getCurrentVersionData } from '../../../utils/dbversionutils';
 
+import { Button } from 'antd';
+
 const clipboard = require('electron').clipboard;
 
 export default class TableDataCode extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      codesTabShow: '',
+      codesTabShow: 'MYSQL',
       templateShow: 'createTableTemplate',
       dataTable: this._getDataTable(props),
     };
@@ -103,12 +105,7 @@ export default class TableDataCode extends React.Component{
           {
             // 根据数据库的数量来生成数据类型
             database.map(db => (
-              <div
-                key={`${db.code}`}
-                onClick={() => this._codesTabClick(db.code)}
-                className={`${prefix}-data-table-content-tab${currentCode === db.code ? '-selected' : '-unselected'}`}
-              >{db.code}
-              </div>
+              <Button key={db.code} type={codesTabShow==db.code?'':'unactive'} onClick={() => this._codesTabClick(db.code)} >{db.code}</Button>
             ))
           }
         </div>

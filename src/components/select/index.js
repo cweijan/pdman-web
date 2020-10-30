@@ -21,7 +21,6 @@ class Index extends React.Component {
   };
   _onChange = (value) => {
     const { onChange } = this.props;
-    console.log(this.convertToEvent(value))
     onChange && onChange(this.convertToEvent(value));
   };
   _onDragStart = (e) => {
@@ -41,7 +40,7 @@ class Index extends React.Component {
         onChange={this._onChange}
         onBlur={this._onBlur}
       >
-        {children.map(opt => (<Option key={opt.key} value={opt.props.value}>{opt.props.children}</Option>))}
+        {children}
       </Select>
     );
   }
