@@ -7,8 +7,14 @@ import { Input as AInput } from 'antd';
 // import './style/index.less';
 
 
-export default class Input extends React.Component{
-  componentDidMount(){
+export default class Input extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: null
+    }
+  }
+  componentDidMount() {
     this.input = ReactDom.findDOMNode(this.instance);
   }
   select = () => {
@@ -27,6 +33,7 @@ export default class Input extends React.Component{
     const result = validate && validate();
     this.setState({
       result,
+      value:e.target.value
     });
   };
   _onBlur = (e) => {
@@ -59,7 +66,7 @@ export default class Input extends React.Component{
         ret = ret.replace(/_([\w+])/g, (all, letter) => {
           return letter.toUpperCase();
         });
-        if(firstUpper){
+        if (firstUpper) {
           ret = ret.replace(/\b(\w)(\w*)/g, ($0, $1, $2) => {
             return $1.toUpperCase() + $2;
           });
@@ -95,14 +102,15 @@ export default class Input extends React.Component{
     }
   };
   render() {
-    const otherProps = {...this.props};
+    const otherProps = { ...this.props };
     if ('value' in otherProps) {
       otherProps.value = this.fixControlledValue(otherProps.value);
       delete otherProps.defaultValue;
     }
     const { prefix = 'pdman', style, defaultValue, wrapperStyle, value, autoFocus, suffix, placeholder, disabled } = otherProps;
-    return (<div className={`${prefix}-input-wrapper`}  style={wrapperStyle}>
-      <AInput 
+    const renValue = value || this.state.value
+    return (<div className={`${prefix}-input-wrapper`} style={wrapperStyle}>
+      <AInput
         onKeyDown={e => this._onKeyDown(e)}
         placeholder={placeholder}
         ref={instance => this.instance = instance}
@@ -112,12 +120,13 @@ export default class Input extends React.Component{
         onBlur={this._onBlur}
         className={`${prefix}-input`}
         onChange={this._onChange}
-        style={{...style, float: suffix ? 'left' : 'inherit'}}
-        value={value?value:defaultValue}
+        defaultValue={defaultValue}
+        style={{ ...style, float: suffix ? 'left' : 'inherit' }}
+        value={renValue}
         onSelect={this._onSelect}
         disabled={disabled}
       />
-      {suffix && React.cloneElement(suffix, {className: `${prefix}-input-suffix`})}
+      {suffix && React.cloneElement(suffix, { className: `${prefix}-input-suffix` })}
       <span className={`${prefix}-input-validate`}>{this.state && this.state.result}</span>
     </div>);
   }
