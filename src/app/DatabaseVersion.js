@@ -316,8 +316,8 @@ class DatabaseVersionContext extends React.Component{
         <span>版本号：</span>
         <Input
           disabled={versionReadonly}
-          style={{width: '100%'}}
-          defaultValue={defaultVersion || this.getNewVersion()}
+          style={{width: '500px'}}
+          defaultValue={'V1.0.0' || this.getNewVersion()}
           placeholder='例如：v1.0.0【请勿低于系统默认的数据库版本v0.0.0】'
           onChange={e => this.onChange(e, 'version')}/>
       </div>
@@ -1409,7 +1409,7 @@ export default class DatabaseVersion extends React.Component{
     return tempResult;
   };
   _getDBVersion = () => {
-    /*// 模拟返回1.0.1
+    // 模拟返回1.0.1
     this.setState({
       versionData: true,
     });
@@ -1441,7 +1441,7 @@ export default class DatabaseVersion extends React.Component{
           dbVersion: result.status !== 'SUCCESS' ? '' : result.body,
         });
       }, 'dbversion');
-    }*/
+    }
   };
   _getCurrentDBData = () => {
     const { dbs } = this.state;
