@@ -1,29 +1,37 @@
 
 import React from 'react';
 
-import './style/index.less';
+// import './style/index.less';
+
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 class Index extends React.Component {
 
-  _onBlur = (evt) => {
-    evt.stopPropagation();
+  convertToEvent = (value) => ({
+    target:{
+      value
+    }
+  })
+
+  _onBlur = (value) => {
     const { onBlur } = this.props;
-    onBlur && onBlur(evt);
+    onBlur && onBlur(this.convertToEvent(value));
   };
-  _onChange = (evt) => {
-    evt.stopPropagation();
-    evt.target.blur();
+  _onChange = (value) => {
     const { onChange } = this.props;
-    onChange && onChange(evt);
+    console.log(this.convertToEvent(value))
+    onChange && onChange(this.convertToEvent(value));
   };
   _onDragStart = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
   render() {
-    const { defaultValue, prefix = 'pdman', style, children, value } = this.props;
+    const { defaultValue, prefix = 'pdman', style, children, value, onChange } = this.props;
     return (
-      <select
+      <Select
         draggable
         onDragStart={this._onDragStart}
         className={`${prefix}-select`}
@@ -33,8 +41,8 @@ class Index extends React.Component {
         onChange={this._onChange}
         onBlur={this._onBlur}
       >
-        {children}
-      </select>
+        {children.map(opt => (<Option key={opt.key} value={opt.props.value}>{opt.props.children}</Option>))}
+      </Select>
     );
   }
 }
