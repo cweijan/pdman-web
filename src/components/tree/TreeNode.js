@@ -188,7 +188,6 @@ class TreeNode extends React.Component {
   _onClick = (e, value, cb) => {
     e.stopPropagation();
     const { onClick } = this.props;
-    console.log(onClick)
     onClick && onClick(e, value, cb);
   };
 
