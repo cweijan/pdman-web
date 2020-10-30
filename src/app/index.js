@@ -1146,6 +1146,7 @@ export default class App extends React.Component {
   };
   handleTable = (key) => {
     const { dataSource, project, saveProject } = this.props;
+    console.log(key)
     const optType = key[0];
     const module = key[2];
     const table = key[3] !== '数据表' ? key[3] : '';

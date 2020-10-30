@@ -1,7 +1,9 @@
 import React from 'react';
 import _object from 'lodash/object';
 import defaultData from '../../defaultData';
-import {openModal, Input, Modal} from '../../../components';
+import { openModal, Modal } from '../../../components';
+
+import { Input } from 'antd';
 
 const clipboard = require('electron').clipboard;
 
@@ -30,31 +32,27 @@ const getAllTable = (dataSource) => {
 
 export const addTable = (moduleName, dataSource, cb) => {
   let tempTableName = '';
-  const onChange = (e) => {
-    tempTableName = e.target.value;
-  };
+  let tempTableChnName = '';
   let flag = true;
-  const validate = () => {
-    const resultName = validateTableAndNewName(getAllTable(dataSource), tempTableName);
-    flag = true;
-    if (resultName !== tempTableName) {
-      flag = false;
-      return '表名已经存在了';
-    } else if (!tempTableName) {
-      flag = false;
-      return '表名不能为空';
-    }
-    return '';
-  };
   openModal(<div>
-    <Input autoFocus onChange={onChange} style={{width: '100%'}} validate={validate}/>
+    <Input.Group compact>
+      <Input style={{ width: '50%' }} addonBefore="表名" onChange={e => tempTableName = e.target.value} />
+      <Input style={{ width: '50%' }} addonBefore="中文名" onChange={e => tempTableChnName = e.target.value} />
+    </Input.Group>
   </div>, {
     title: 'PDMan-新增数据表',
     onOk: (modal) => {
+
+      const resultName = validateTableAndNewName(getAllTable(dataSource), tempTableName);
+      if (resultName !== tempTableName) {
+        Modal.error({ title: '新增失败', message: '表名已经存在了' });
+        return;
+      }
+
       if (!tempTableName) {
-        Modal.error({title: '新增失败', message: '数据表名不能为空'});
+        Modal.error({ title: '新增失败', message: '数据表名不能为空' });
       } else if (tempTableName.includes('/') || tempTableName.includes('&') || tempTableName.includes(':')) {
-        Modal.error({title: '新增失败', message: '数据表名不能包含/或者&或者:'});
+        Modal.error({ title: '新增失败', message: '数据表名不能包含/或者&或者:' });
       } else {
         const defaultFields = _object.get(dataSource, 'profile.defaultFields', defaultData.profile.defaultFields);
         tempTableName && flag && modal && modal.close();
@@ -66,6 +64,7 @@ export const addTable = (moduleName, dataSource, cb) => {
                 ...module,
                 entities: (module.entities || []).concat({
                   title: tempTableName,
+                  chnname: tempTableChnName,
                   fields: defaultFields || [],
                 }),
               };
@@ -95,54 +94,51 @@ export const deleteTable = (moduleName, tableName, dataSource, cb) => {
 
 export const renameTable = (moduleName, oldTableName, dataSource, cb) => {
   let tempTableName = oldTableName;
-  const onChange = (e) => {
-    tempTableName = e.target.value;
-  };
   let flag = true;
-  const validate = () => {
-    const resultName = validateTableAndNewName(getAllTable(dataSource), tempTableName);
-    flag = true;
-    if (resultName !== tempTableName) {
-      flag = false;
-      return '表名已经存在了';
-    } else if (!tempTableName) {
-      flag = false;
-      return '表名不能为空';
-    }
-    return '';
-  };
   openModal(<div>
-    <Input autoFocus onChange={onChange} style={{width: '100%'}} validate={validate} defaultValue={oldTableName}/>
+    <Input.Group compact>
+      <Input style={{ width: '50%' }} addonBefore="表名" onChange={e => tempTableName = e.target.value} defaultValue={oldTableName} />
+    </Input.Group>
   </div>, {
     title: 'PDMan-重命名数据表',
     onOk: (modal) => {
       if (tempTableName === oldTableName) {
-        Modal.error({title: '重命名失败', message: '数据表名不能与旧名相同'});
-      }  else if (tempTableName.includes('/') || tempTableName.includes('&') || tempTableName.includes(':')) {
-        Modal.error({title: '新增失败', message: '数据表名不能包含/或者&或者:'});
-      }else {
-        flag && modal && modal.close();
-        flag && cb && cb({
-          ...dataSource,
-          modules: (dataSource.modules || []).map((module) => {
-            if (module.name === moduleName) {
-              return {
-                ...module,
-                entities: (module.entities || []).map((entity) => {
-                  if (entity.title === oldTableName) {
-                    return {
-                      ...entity,
-                      title: tempTableName,
-                    };
-                  }
-                  return entity;
-                }),
-              };
-            }
-            return module;
-          }),
-        }, {oldName: oldTableName, newName: tempTableName});
+        Modal.error({ title: '重命名失败', message: '数据表名不能与旧名相同' });
+        return;
       }
+
+      const resultName = validateTableAndNewName(getAllTable(dataSource), tempTableName);
+      if (resultName !== tempTableName) {
+        Modal.error({ title: '重命名失败', message: '表名已经存在了' });
+        return;
+      }
+
+      if (tempTableName.includes('/') || tempTableName.includes('&') || tempTableName.includes(':')) {
+        Modal.error({ title: '新增失败', message: '数据表名不能包含/或者&或者:' });
+        return;
+      }
+
+      flag && modal && modal.close();
+      flag && cb && cb({
+        ...dataSource,
+        modules: (dataSource.modules || []).map((module) => {
+          if (module.name === moduleName) {
+            return {
+              ...module,
+              entities: (module.entities || []).map((entity) => {
+                if (entity.title === oldTableName) {
+                  return {
+                    ...entity,
+                    title: tempTableName,
+                  };
+                }
+                return entity;
+              }),
+            };
+          }
+          return module;
+        }),
+      }, { oldName: oldTableName, newName: tempTableName });
     },
   });
 };
@@ -171,7 +167,7 @@ export const cutTable = (moduleName, tableName, dataSource) => {
       table = tempModule.entities;
     }
     clipboard.writeText(
-      JSON.stringify(table.map(entity => ({...entity, rightType: 'cut'}))));
+      JSON.stringify(table.map(entity => ({ ...entity, rightType: 'cut' }))));
   }
 };
 

@@ -1,37 +1,21 @@
 import React from 'react';
 import _object from 'lodash/object';
 // import * as json from '../../../utils/json';
-import { openModal, Input, Modal } from '../../../components';
+import { openModal, Modal } from '../../../components';
+
+import {Input  } from 'antd';
 
 const clipboard = require('electron').clipboard;
 
-class ModuleForm extends React.Component{
+class ModuleForm extends React.Component {
   render() {
     const { onChange, validate, defaultValue } = this.props;
     return (
       <div>
-        <div style={{display: 'flex', padding: 5}}>
-          <span style={{width: 100, textAlign: 'right', paddingRight: 5}}>
-            模块名:
-          </span>
-          <Input
-            autoFocus
-            style={{width: 'calc(100% - 100px)'}}
-            validate={validate}
-            onChange={e => onChange('name', e)}
-            defaultValue={defaultValue.name}
-          />
-        </div>
-        <div style={{display: 'flex', padding: 5}}>
-          <span style={{width: 100, textAlign: 'right', paddingRight: 5}}>
-            中文名:
-          </span>
-          <Input
-            style={{width: 'calc(100% - 100px)'}}
-            onChange={e => onChange('chnname', e)}
-            defaultValue={defaultValue.chnname}
-          />
-        </div>
+        <Input.Group compact>
+          <Input style={{ width: '50%' }} addonBefore="模块名" onChange={e => onChange('name', e)} defaultValue={defaultValue.name} />
+          <Input style={{ width: '50%' }} addonBefore="中文名" onChange={e => onChange('chnname', e)} defaultValue={defaultValue.chnname}/>
+        </Input.Group>
       </div>
     );
   }
@@ -95,15 +79,15 @@ export const addModule = (dataSource, cb) => {
   openModal(<ModuleForm
     validate={validate}
     onChange={onChange}
-    defaultValue={{name: '', chnname: ''}}
+    defaultValue={{ name: '', chnname: '' }}
   />, {
     title: 'PDMan-新增模块',
     onOk: (modal) => {
       // 1.修改dataSource
       if (!tempModuleName) {
-        Modal.error({title: '新增失败', message: '模块名不能为空'});
-      } else if(tempModuleName.includes('/') || tempModuleName.includes('&') || tempModuleName.includes(':')) {
-        Modal.error({title: '新增失败', message: '模块名不能包含/或者&或者:'});
+        Modal.error({ title: '新增失败', message: '模块名不能为空' });
+      } else if (tempModuleName.includes('/') || tempModuleName.includes('&') || tempModuleName.includes(':')) {
+        Modal.error({ title: '新增失败', message: '模块名不能包含/或者&或者:' });
       } else {
         tempModuleName && flag && modal && modal.close();
         tempModuleName && flag && cb && cb({
@@ -151,15 +135,15 @@ export const renameModule = (oldName, dataSource, cb) => {
   openModal(<ModuleForm
     validate={validate}
     onChange={onChange}
-    defaultValue={{name: oldName, chnname: tempModuleChnname}}
+    defaultValue={{ name: oldName, chnname: tempModuleChnname }}
   />, {
     title: 'PDMan-重命名模块',
     onOk: (modal) => {
       // 1.修改dataSource
       if (tempModuleName === oldName && tempModuleChnname === oldModuleChnname) {
-        Modal.error({title: '重命名失败', message: '模块信息不能与旧信息相同'});
+        Modal.error({ title: '重命名失败', message: '模块信息不能与旧信息相同' });
       } else if (tempModuleName.includes('/') || tempModuleName.includes('&') || tempModuleName.includes(':')) {
-        Modal.error({title: '重命名失败', message: '模块名不能包含/或者&或者:'});
+        Modal.error({ title: '重命名失败', message: '模块名不能包含/或者&或者:' });
       } else {
         flag && modal && modal.close();
         flag && cb && cb({
@@ -200,7 +184,7 @@ export const cutModule = (name, dataSource) => {
   // 剪切模块
   clipboard.writeText(JSON.stringify((dataSource.modules || [])
     .filter(module => module.name === name)
-    .map(module => ({...module, rightType: 'cut'}))[0]));
+    .map(module => ({ ...module, rightType: 'cut' }))[0]));
 };
 
 export const pasteModule = (dataSource, cb) => {
@@ -245,7 +229,7 @@ export const pasteModule = (dataSource, cb) => {
   }
   let modules = [...(dataSource.modules || [])];
   data.forEach((d) => {
-    modules =  paste(d, modules);
+    modules = paste(d, modules);
   });
-  cb && cb({...dataSource, modules});
+  cb && cb({ ...dataSource, modules });
 };
