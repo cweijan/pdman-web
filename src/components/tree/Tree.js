@@ -169,7 +169,7 @@ class Tree extends React.Component {
             ...item,
             props: {
               ...item.props,
-              onClick: this._onClick,
+              onClick: this._onContextMenu,
               onDrop,
               onContextMenu: this._onContextMenu,
               onDoubleClick: this._onDoubleClick,

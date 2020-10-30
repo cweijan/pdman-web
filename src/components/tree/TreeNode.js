@@ -233,7 +233,7 @@ class TreeNode extends React.Component {
           cursor: 'default'
         }}
         key={value}
-        onClick={(e) => this._onClick(e, value)}
+        onClick={(e) => this._onDoubleClick(e, value,children)}
         onDoubleClick={(e) => this._onDoubleClick(e, value, children)}
       >
         <span>{this._getTreeValue(name, value, children, row)}</span>
@@ -254,7 +254,7 @@ class TreeNode extends React.Component {
           //textOverflow: 'ellipsis'
         }}
         key={value}
-        onClick={(e) => this._onClick(e, value)}
+        onClick={(e) => this._onDoubleClick(e, value,children)}
         onDoubleClick={(e) => this._onDoubleClick(e, value, children)}
       >
         {this._getTreeValue(name, value, false, row)}</li>
