@@ -159,7 +159,7 @@ class Tree extends React.Component {
           maxWidth: '80%',
           display: showSearch ? '' : 'none',
         }}>
-        <Input onChange={this._searchChange} placeholder='快速搜索数据表' style={{width: '100%', height: 20}}/>
+        <Input onChange={this._searchChange} placeholder='快速搜索数据表' style={{width: '100%', height: 25}}/>
       </div>
       <ul style={{marginTop: showSearch ? 32 : 0}}>
         {[].concat(children).map(item => {
