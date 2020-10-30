@@ -143,11 +143,29 @@
           }
         },
         {
+          "code": "BIGINT",
+          "name": "BIGINT",
+          "apply": {
+            "MYSQL": {
+              "type": "BIGINT"
+            }
+          }
+        },
+        {
           "name": "JSON",
           "code": "JSON",
           "apply": {
             "MYSQL": {
               "type": "JSON"
+            }
+          }
+        },
+        {
+          "name": "BLOB",
+          "code": "BLOB",
+          "apply": {
+            "MYSQL": {
+              "type": "BLOB"
             }
           }
         }
