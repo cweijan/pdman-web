@@ -329,7 +329,11 @@ export default class Table extends React.Component {
     const { prefix = 'pdman', columnOrder = this.emptyArray, dataTypes = this.emptyArray, dataSource, height } = this.props;
     const { headers } = dataTable;
     return (
-      <div onKeyPress={(e) => {
+      <div onKeyDown={e=>{
+        if (e.key == "Delete") {
+          this._deleteField()
+        }
+      }} onKeyPress={(e) => {
         if (e.key == "Enter") {
           this._addField('field')
         }

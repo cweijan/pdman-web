@@ -43,7 +43,7 @@ export default class ExportSQL extends React.Component{
         updateComment: false,
       },
       data: getAllDataSQLByFilter(props.dataSource,
-        props.defaultDb, ['deleteTable', 'createTable', 'createIndex', 'updateComment']),
+        props.defaultDb, ["sldlfkjsl;dfkjs;lfkjsdfkl;jsfl;skdjf;lsdf"]),
       loading: false,
       editorWidth: '400px',
     };

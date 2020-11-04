@@ -1681,7 +1681,7 @@ export default class App extends React.Component {
                   <div
                       className='tools-content-clickeable'
                       onClick={() => this._exportSQL()}
-                    ><Icon type="fa-database"/>导出DDL脚本</div>
+                    ><Icon type="fa-database"/>执行SQL</div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._export()}

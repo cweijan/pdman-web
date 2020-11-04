@@ -173,9 +173,6 @@ export default class TableDataCode extends React.Component{
                 </div>
                 <div className={`${prefix}-data-tab-content`}>
                   <div style={{display: 'flex', padding: 5}}>
-                     <span style={{marginLeft: '10px', fontSize: 12, color: 'green'}} >
-                     点击复制到粘贴板
-                    </span>
                     <Com.Icon
                       type='copy1'
                       style={{cursor: 'pointer'}}
