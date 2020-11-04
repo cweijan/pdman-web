@@ -31,6 +31,7 @@ class Index extends React.Component {
     const { defaultValue, prefix = 'pdman', style, children, value, onChange } = this.props;
     return (
       <Select
+        showSearch
         draggable
         onDragStart={this._onDragStart}
         className={`${prefix}-select`}

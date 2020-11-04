@@ -59,9 +59,9 @@ export default class TableSummary extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div>
+        <div style={{marginBottom:'10px'}}>
         <Input.Group compact>
-        <Input style={{ width: '30%' }} addonBefore="表名" value={this._getTableSummary('title')} onChange={e => this._inputTableOnChange(e, 'title')} />
+        <Input style={{ width: '30%' }} addonBefore="表　名" value={this._getTableSummary('title')} onChange={e => this._inputTableOnChange(e, 'title')} />
         <Input style={{ width: '40%' }} addonBefore="中文名" value={this._getTableSummary('chnname')} onChange={e => this._inputTableOnChange(e, 'chnname')} />
         </Input.Group>
         </div>

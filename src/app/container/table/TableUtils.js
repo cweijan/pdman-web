@@ -35,11 +35,10 @@ export const addTable = (moduleName, dataSource, cb) => {
   let tempTableChnName = '';
   let flag = true;
   openModal(<div>
-    <Input.Group compact>
-      <Input style={{ width: '50%' }} addonBefore="表名" onChange={e => tempTableName = e.target.value} />
-      <Input style={{ width: '50%' }} addonBefore="中文名" onChange={e => tempTableChnName = e.target.value} />
-    </Input.Group>
+      <Input style={{ width: '100%' }} addonBefore="表　名" onChange={e => tempTableName = e.target.value} />
+      <Input style={{ width: '100%' }} addonBefore="中文名" onChange={e => tempTableChnName = e.target.value} />
   </div>, {
+    width:'300px',
     title: 'PDMan-新增数据表',
     onOk: (modal) => {
 
