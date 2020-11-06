@@ -19,7 +19,7 @@ $ npm run start                # 编译代码并且启动electron界面
 ![preview](preview.png)
 
 未来计划
-- 升级关系图, 改用新版本的AntD: https://github.com/lusess123/web-pdm
+- 升级关系图, 改用新版本的G6: https://github.com/lusess123/web-pdm
 
 # 致谢
 官方仓库: [pdman](https://gitee.com/robergroup/pdman)
