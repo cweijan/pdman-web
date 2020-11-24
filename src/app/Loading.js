@@ -33,7 +33,8 @@ export default class Loading extends React.Component {
 
     componentDidMount() {
 
-        setTimeout(() => {
+        // setTimeout(() => {
+            // todo 历史记录读取
             if (fileExist(this.historyPath)) {
                 readFilePromise(this.historyPath).then((res) => {
                     this.setState({
@@ -54,39 +55,39 @@ export default class Loading extends React.Component {
                     width: '100%',
                 });
             }
-        }, 2000);
+        // }, 2000);
     }
 
     render() {
-        if (this.state.width !== '100%') {
-            const version = getCurrentVersion();
-            return (<div className='pdman-loading-content'>
-                <div className='pdman-loading-content-img'>
-                    <div style={{textAlign: 'center', marginTop: 100}}>
-                        <div className='pdman-loading-content-logo'>{}</div>
-                        <div className='pdman-loading-content-welcom'>
-                            <span style={{fontSize: 35, fontWeight: 2, color: '#65B1F0'}}>WELCOME</span>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <span style={{fontSize: 35, fontWeight: 2, color: '#FFF'}}>PDMAN</span>
-                        </div>
-                    </div>
-                    <div style={{position: 'relative', width: '100%', height: '30%'}}>
-                        <span style={{position: 'absolute', left: '26%', bottom: 5, color: '#FFF'}}>正在加载...</span>
-                        <div className='pdman-loading-content-progress'>
-                            <div className='pdman-loading-content-progress-base'>
-                                <div className='pdman-loading-content-progress-base-line'
-                                     style={{width: this.state.width}}>{}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='pdman-loading-content-footer'>
-                        <div className='pdman-loading-content-footer-content'>
-                            Copyright© {version.date.split('.')[0]} robergroup team All rights reserved
-                        </div>
-                    </div>
-                </div>
-            </div>);
-        }
+        // if (this.state.width !== '100%') {
+        //     const version = getCurrentVersion();
+        //     return (<div className='pdman-loading-content'>
+        //         <div className='pdman-loading-content-img'>
+        //             <div style={{textAlign: 'center', marginTop: 100}}>
+        //                 <div className='pdman-loading-content-logo'>{}</div>
+        //                 <div className='pdman-loading-content-welcom'>
+        //                     <span style={{fontSize: 35, fontWeight: 2, color: '#65B1F0'}}>WELCOME</span>
+        //                     &nbsp;&nbsp;&nbsp;&nbsp;
+        //                     <span style={{fontSize: 35, fontWeight: 2, color: '#FFF'}}>PDMAN</span>
+        //                 </div>
+        //             </div>
+        //             <div style={{position: 'relative', width: '100%', height: '30%'}}>
+        //                 <span style={{position: 'absolute', left: '26%', bottom: 5, color: '#FFF'}}>正在加载...</span>
+        //                 <div className='pdman-loading-content-progress'>
+        //                     <div className='pdman-loading-content-progress-base'>
+        //                         <div className='pdman-loading-content-progress-base-line'
+        //                              style={{width: this.state.width}}>{}</div>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //             <div className='pdman-loading-content-footer'>
+        //                 <div className='pdman-loading-content-footer-content'>
+        //                     Copyright© {version.date.split('.')[0]} robergroup team All rights reserved
+        //                 </div>
+        //             </div>
+        //         </div>
+        //     </div>);
+        // }
         return (<Home
             histories={this.state.histories}
             columnOrder={this.state.columnOrder}

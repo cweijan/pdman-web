@@ -4,10 +4,10 @@ import ReactDom from 'react-dom';
 import _object from 'lodash/object';
 import defaultData from './defaultData';
 import './style/home.less';
-import {Icon, Modal, openModal, Button, Message} from '../components';
+import { Icon, Modal, openModal, Button, Message } from '../components';
 import Header from './Header';
 import CreatePro from './CreatePro';
-import {fileExist, fileExistPromise, readFilePromise, saveFilePromise, writeFile, readFile } from '../utils/json';
+import { fileExist, fileExistPromise, readFilePromise, saveFilePromise, writeFile, readFile } from '../utils/json';
 import defaultConfig from '../profile';
 import App from './index';
 import demo from '../demo';
@@ -15,8 +15,8 @@ import { getVersion, getCurrentVersion } from '../utils/update';
 import { compareStringVersion } from '../utils/string';
 
 
-export default class Home extends React.Component{
-  constructor(props){
+export default class Home extends React.Component {
+  constructor(props) {
     super(props);
     this.projectName = '';
     this.split = process.platform === 'win32' ? '\\' : '/';
@@ -37,7 +37,7 @@ export default class Home extends React.Component{
       register: {},
     };
   }
-  componentDidMount(){
+  componentDidMount() {
     // 设置快捷方式
     this.dom = ReactDom.findDOMNode(this.instance);
     this.dom && this.dom.focus();
@@ -50,6 +50,7 @@ export default class Home extends React.Component{
     };
     // 获取当前版本信息
     getVersion((res) => {
+      return;
       const currentVersion = getCurrentVersion().version;
       if (Object.keys(res).length > 0) {
         const newData = res;
@@ -61,25 +62,25 @@ export default class Home extends React.Component{
           };
           modal = openModal(
             <div>
-              <div style={{textAlign: 'center'}}>
+              <div style={{ textAlign: 'center' }}>
                 {newData.forceUpdate ?
                   '新版为强制更新版本，请及时更新新版，当前版本将停止使用！关闭此弹窗将关闭当前应用！' : ''}
               </div>
-              <div style={{display: 'flex'}}>
+              <div style={{ display: 'flex' }}>
                 <div>下载地址：</div>
-                <div  style={{textAlign: 'left'}}>
+                <div style={{ textAlign: 'left' }}>
                   {Object.keys(newData.downloadURL || {})
                     .map(type => (<div
                       key={type}
                       title='点击下载'
-                      style={{userSelect: 'text'}}
+                      style={{ userSelect: 'text' }}
                     >
                       <span>{type}:</span>
                       <a></a>
                     </div>))}
                 </div>
               </div>
-              <div style={{display: 'flex'}}>
+              <div style={{ display: 'flex' }}>
                 <div>更新内容：</div>
                 <div>
                   {(newData.leaseLog || []).map(log => (<div key={log}>{log}</div>))}
@@ -98,11 +99,11 @@ export default class Home extends React.Component{
     });
   }
   /* eslint-disable */
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.dom.onkeydown = null;
   }
-  componentDidCatch(){
-    Modal.error({title: '项目数据出错', message: '当前打开的项目不是PDMan的项目格式', width: 300});
+  componentDidCatch() {
+    Modal.error({ title: '项目数据出错', message: '当前打开的项目不是PDMan的项目格式', width: 300 });
     this.setState({
       error: true,
     });
@@ -205,37 +206,40 @@ export default class Home extends React.Component{
   _readData = (path, callBack) => {
     if (fileExist(path)) {
       readFilePromise(path).then((res) => {
-        // 过滤已经存在的历史记录
-        const project = path.split('.pdman.json')[0];
-        const temp = [...this.state.histories].filter(his => his !== project);
-        // 把当前的项目插入到第一条数据
-        temp.unshift(project);
-        callBack && callBack();
-        this.setState({
-          histories: temp,
-          flag: false,
-          dataSource: {
-            ...res,
-            dataTypeDomains: {
-              ...(res.dataTypeDomains || {}),
-              database: this._checkDatabase(_object.get(res, 'dataTypeDomains.database', [])),
-            },
-          },
-          changeDataType: 'reset',
-          project: project,
-          error: false,
-          closeProject: false,
-          projectDemo: '',
-        });
-        // 将其存储到历史记录中
-        saveFilePromise({
-          histories: temp,
-        }, this.historyPath);
+        this.readData(path, res, callBack)
       }).catch((e) => {
       });
     } else {
       this._delete(null, path);
     }
+  };
+  readData = (path, res, callBack) => {
+    // 过滤已经存在的历史记录
+    const project = path.split('.pdman.json')[0];
+    const temp = [...this.state.histories].filter(his => his !== project);
+    // 把当前的项目插入到第一条数据
+    temp.unshift(project);
+    callBack && callBack();
+    this.setState({
+      histories: temp,
+      flag: false,
+      dataSource: {
+        ...res,
+        dataTypeDomains: {
+          ...(res.dataTypeDomains || {}),
+          database: this._checkDatabase(_object.get(res, 'dataTypeDomains.database', [])),
+        },
+      },
+      changeDataType: 'reset',
+      project: project,
+      error: false,
+      closeProject: false,
+      projectDemo: '',
+    });
+    // 将其存储到历史记录中
+    saveFilePromise({
+      histories: temp,
+    }, this.historyPath);
   };
   _openProject = (path, callBack, type) => {
     // 打开项目
@@ -262,13 +266,26 @@ export default class Home extends React.Component{
       } else {
         extensions.push('pdman.json');
       }
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.oninput = (e) => {
+        const file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (fileContent) => {
+          this.readData(file.name, JSON.parse(fileContent.target.result), callBack)
+        }
+
+      }
+      input.click();
     }
   };
   _saveProject = (path, data, cb, dataHistory, selectCb) => {
     // 保存项目
     const { project } = this.state;
     if (path && project) {
-      const tempData = {...data};
+      const tempData = { ...data };
       if (!tempData) {
         // 保存时增加数据为空提示，防止生成空文件
         Modal.error({
@@ -285,7 +302,7 @@ export default class Home extends React.Component{
             cb && cb();
           });
         }).catch(() => {
-          Message.error({title: '保存失败'});
+          Message.error({ title: '保存失败' });
         });
       }
     } else {
@@ -324,7 +341,7 @@ export default class Home extends React.Component{
     // 保存部分数据
     const { dataSource } = this.state;
     const typeArray = type.split('/');
-    let tempDataSource = {...dataSource};
+    let tempDataSource = { ...dataSource };
     if (typeArray.length === 0) {
       // 修改模块
       tempDataSource = {
@@ -358,9 +375,9 @@ export default class Home extends React.Component{
               .filter(entity => entity.title === typeArray[2])[0];
             const tempNodes = this._updateTableName(_object.get(module, 'graphCanvas.nodes', []), dataHistory);
             const graphCanvas = {
-                ...(module.graphCanvas || {}),
-                nodes: tempNodes,
-              };
+              ...(module.graphCanvas || {}),
+              nodes: tempNodes,
+            };
             const entities = changeEntity ? (module.entities || []).map((entity) => {
               if (entity.title === typeArray[2]) {
                 return data;
@@ -442,7 +459,7 @@ export default class Home extends React.Component{
     });
   };
   _getNodeData = (sourceId, targetId, data, nodes) => {
-    const tempNodes =  nodes.map(n => {
+    const tempNodes = nodes.map(n => {
       const table = data.filter(d => d.title === (n.copy || n.title.split(':')[0]))[0];
       return {
         ...n,
@@ -451,7 +468,7 @@ export default class Home extends React.Component{
       };
     });
     let sourceNode, targetNode = null;
-    for (let i = 0; i < tempNodes.length; i ++){
+    for (let i = 0; i < tempNodes.length; i++) {
       if (tempNodes[i].id === sourceId) {
         sourceNode = tempNodes[i];
       } else if (tempNodes[i].id === targetId) {
@@ -510,7 +527,7 @@ export default class Home extends React.Component{
   _openDev = () => {
   };
   _cloneProject = () => {
-    Message.warning({title: '该功能正在开发中，敬请期待！'});
+    Message.warning({ title: '该功能正在开发中，敬请期待！' });
   };
   render() {
     if (this.state.flag || this.state.error || this.state.closeProject) {
@@ -518,11 +535,11 @@ export default class Home extends React.Component{
       const version = getCurrentVersion();
       return (
         <div tabIndex="0" className='pdman-home-content' ref={instance => this.instance = instance}>
-          <Header project={project} disableMaximize/>
+          <Header project={project} disableMaximize />
           <div className='pdman-home'>
             <div
               className='pdman-home-left'
-              style={{display: display === 'none' ? '' : 'none'}}
+              style={{ display: display === 'none' ? '' : 'none' }}
             >
               <span className='pdman-home-left-list-name'>最近使用</span>
               <div className='pdman-home-left-list'>
@@ -531,7 +548,7 @@ export default class Home extends React.Component{
                     <div className='pdman-home-left-list-item' key={item} onClick={() => this._openProject(item)}>
                       <div className='pdman-home-left-list-item-name'>{this._getProjectName(item)}</div>
                       <div className='pdman-home-left-list-item-icon'>
-                        <Icon type='close' onClick={e => this._delete(e, item)}/>
+                        <Icon type='close' onClick={e => this._delete(e, item)} />
                       </div>
                       <div className='pdman-home-left-list-item-path'>{item}</div>
                     </div>
@@ -544,12 +561,12 @@ export default class Home extends React.Component{
                   className='pdman-home-left-list-item pdman-home-left-demo-item'
                   onClick={() => this._openProject('standard', undefined, 'demo')}
                 >
-                  <Icon type='fa-briefcase' style={{marginRight: 5}}/>
+                  <Icon type='fa-briefcase' style={{ marginRight: 5 }} />
                   学生信息管理系统
                 </div>
               </div>
             </div>
-            <div className='pdman-home-right' style={{display: display === 'none' ? '' : 'none'}}>
+            <div className='pdman-home-right' style={{ display: display === 'none' ? '' : 'none' }}>
               <div className='pdman-home-right-logo'>
                 <div className='pdman-home-right-logo-img'>{}</div>
                 {/*<Icon type='roic-pdman' style={{fontSize: '50px', color: '#3091E3'}}/>*/}
@@ -561,10 +578,10 @@ export default class Home extends React.Component{
               <div className='pdman-home-right-opts'>
                 <div className='pdman-home-right-opts-icons'>
                   <div className='pdman-home-right-opts-icons-icon'>
-                    <div className='pdman-home-right-opts-icons-icon1'/>
+                    <div className='pdman-home-right-opts-icons-icon1' />
                   </div>
                   <div className='pdman-home-right-opts-icons-icon'>
-                    <div className='pdman-home-right-opts-icons-icon2'/>
+                    <div className='pdman-home-right-opts-icons-icon2' />
                   </div>
                 </div>
                 <div className='pdman-home-right-opts-names'>
@@ -582,19 +599,19 @@ export default class Home extends React.Component{
                   </div>
                 </div>
               </div>
-              <div className='pdman-home-right-footer'>
-                <span onClick={() => this._openUrl('http://www.pdman.cn')}>官方网站</span>
-                {/*<div className='pdman-home-right-footer-config' onClick={this._openDev}>
+              {/* <div className='pdman-home-right-footer'> */}
+              {/* <span onClick={() => this._openUrl('http://www.pdman.cn')}>官方网站</span> */}
+              {/*<div className='pdman-home-right-footer-config' onClick={this._openDev}>
                   <Icon type='setting'/><span>调试</span>
                 </div>*/}
-                {/*<div className='pdman-home-right-footer-help'>{}
+              {/*<div className='pdman-home-right-footer-help'>{}
                 </div>*/}
-              </div>
+              {/* </div> */}
             </div>
             <CreatePro
               close={this._createClose}
               onChange={this._onChange}
-              style={{display: this.state.display, width: '100%'}}
+              style={{ display: this.state.display, width: '100%' }}
               onOk={this._onOk}
             />
           </div>
@@ -602,11 +619,11 @@ export default class Home extends React.Component{
       );
     }
     return (
-      <div style={{width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column'}}>
+      <div style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <Header
           project={this.state.project}
           projectDemo={this.state.projectDemo}
-          disableMaximize={!this.state.projectDemo && !this.state.project}/>
+          disableMaximize={!this.state.projectDemo && !this.state.project} />
         <App
           changeDataType={this.state.changeDataType}
           dataSource={this.state.dataSource}
@@ -627,4 +644,3 @@ export default class Home extends React.Component{
       </div>);
   }
 }
-

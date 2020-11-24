@@ -12,6 +12,7 @@ import { generateHtml } from '../../src/utils/generatehtml';
 import { saveImage } from '../../src/utils/relation2file';
 import { upgrade } from '../../src/utils/basedataupgrade';
 import { moveArrayPosition } from '../../src/utils/array';
+import { download } from '../../src/utils/download';
 import Module from './container/module';
 import Table from './container/table';
 import DataType from './container/datatype';
@@ -522,6 +523,7 @@ export default class App extends React.Component {
         if (value.length === 0) {
           Modal.error({title: '导出失败', message: '请选择导出的内容'})
         } else {
+          download(`Export_${new Date().getTime()}.sql`,modal.com.getData())
         }
       };
       const onCancel = () => {
@@ -1575,7 +1577,7 @@ export default class App extends React.Component {
                     </li>
                   </ul>
                   <Icon
-                    type='logout'
+                    type='fa-arrow-circle-left'
                     title='关闭当前项目'
                     style={{float: 'right', marginRight: 5, paddingTop: 1, cursor: 'pointer'}}
                     onClick={this._closeProject}

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import G6 from '@antv/g6';
+import G6 from 'G6';
 import _object from 'lodash/object';
 import { Context, openModal, Icon, Modal } from '../../../components';
 import RelationEdit from './RelationEdit';

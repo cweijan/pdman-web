@@ -15,6 +15,7 @@ export const getCurrentVersion = () => {
 
 
 export const getVersion = (callback) => {
+  return;
   _http.get(defaultUrl, (req) => {
     let result = '';
     req.setEncoding('utf8'); //设置编码格式

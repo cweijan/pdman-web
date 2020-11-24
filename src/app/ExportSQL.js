@@ -46,9 +46,9 @@ export default class ExportSQL extends React.Component{
     };
   }
   componentDidMount(){
-    this._getConfigData().then((res) => {
-      this.userData = res;
-      const exportSqlDefault = this.userData.exportSqlDefault || {};
+    // this._getConfigData().then((res) => {
+    //   this.userData = res;
+      const exportSqlDefault = {};
       this.setState({
         type: {
           deleteTable: exportSqlDefault.deleteTable || false,
@@ -57,7 +57,7 @@ export default class ExportSQL extends React.Component{
           updateComment: exportSqlDefault.updateComment || false,
         },
       });
-    });
+    // });
     addOnResize(this._getEditorWidth);
     this._getEditorWidth();
   }
@@ -139,15 +139,15 @@ export default class ExportSQL extends React.Component{
   };
   _export = () => {
     // 保存当前导出的数据信息
-    this._saveConfigData({
-      ...this.userData,
-      exportSqlDefault: {
-        ...this.state.type,
-      },
-    }).then(() => {
+    // this._saveConfigData({
+    //   ...this.userData,
+    //   exportSqlDefault: {
+    //     ...this.state.type,
+    //   },
+    // }).then(() => {
       const { exportSQL } = this.props;
       exportSQL && exportSQL();
-    });
+    // });
   };
   _selectTable = () => {
     const { selectTable } = this.state;

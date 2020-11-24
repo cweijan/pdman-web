@@ -318,6 +318,9 @@ module.exports = function (webpackEnv) {
                 PnpWebpackPlugin.moduleLoader(module),
             ],
         },
+        externals: {
+            G6: 'G6'
+        },
         module: {
             strictExportPresence: true,
             rules: [

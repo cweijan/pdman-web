@@ -2,10 +2,13 @@
   "profile": {
     "defaultFields": [
       {
-        "name": "REVISION",
+        "name": "id",
         "type": "Integer",
         "remark": "",
-        "chnname": "乐观锁"
+        "chnname": "主键",
+        "pk":true,
+        "autoIncrement":true,
+        "notNull":true
       },
       {
         "name": "CREATED_BY",
