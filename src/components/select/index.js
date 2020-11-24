@@ -1,40 +1,47 @@
-/* eslint-disable */
+
 import React from 'react';
 
-import './style/index.less';
+// import './style/index.less';
+
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 class Index extends React.Component {
 
-  _onBlur = (evt) => {
-    evt.stopPropagation();
+  convertToEvent = (value) => ({
+    target:{
+      value
+    }
+  })
+
+  _onBlur = (value) => {
     const { onBlur } = this.props;
-    onBlur && onBlur(evt);
+    onBlur && onBlur(this.convertToEvent(value));
   };
-  _onChange = (evt) => {
-    evt.stopPropagation();
-    evt.target.blur();
+  _onChange = (value) => {
     const { onChange } = this.props;
-    onChange && onChange(evt);
+    onChange && onChange(this.convertToEvent(value));
   };
   _onDragStart = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
   render() {
-    const { defaultValue, prefix = 'pdman', style, children, value } = this.props;
+    const { defaultValue, prefix = 'pdman', style, children, value, onChange } = this.props;
     return (
-      <select
+      <Select
+        showSearch
         draggable
         onDragStart={this._onDragStart}
         className={`${prefix}-select`}
         style={style}
-        defaultValue={defaultValue}
-        value={value}
+        value={value?value:defaultValue}
         onChange={this._onChange}
         onBlur={this._onBlur}
       >
         {children}
-      </select>
+      </Select>
     );
   }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import _object from 'lodash/object';
-
 import {Icon, Tree, Context, Tab, Modal, Message, openModal, Button, Input} from '../components';
 import { ensureDirectoryExistence } from '../utils/json';
+import { download } from '../../src/utils/download';
 import { addOnResize } from '../../src/utils/listener';
 import { generate } from '../../src/utils/markdown';
 import { generateByJar } from '../../src/utils/office';
@@ -12,7 +12,6 @@ import { generateHtml } from '../../src/utils/generatehtml';
 import { saveImage } from '../../src/utils/relation2file';
 import { upgrade } from '../../src/utils/basedataupgrade';
 import { moveArrayPosition } from '../../src/utils/array';
-import { download } from '../../src/utils/download';
 import Module from './container/module';
 import Table from './container/table';
 import DataType from './container/datatype';
@@ -45,7 +44,6 @@ const menus = [
   { name: '粘贴', key: 'paste', icon: <Icon type='fa-paste' style={{color: '#6968E1', marginRight: 5}}/> },
   { name: '打开', key: 'open', icon: <Icon type='folderopen' style={{color: '#C3D6E8', marginRight: 5}}/> },
 ];
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +67,7 @@ export default class App extends React.Component {
     this.tableInstance = {};
   }
   componentDidMount() {
-    /* eslint-disable */
+    
     // 增加监听窗口大小的事件
     // console.log(this.props);
     // window.PDMan.loading(window, this.props);
@@ -445,6 +443,7 @@ export default class App extends React.Component {
               });
             })).then(() => {
               // 图片保存成功
+              // const defaultPath = ipcRenderer.sendSync('wordPath');
               const defaultPath = '';
               const templatePath = _object.get(dataSource, 'profile.wordTemplateConfig') || defaultPath;
               generateByJar(dataSource, {
@@ -549,7 +548,7 @@ export default class App extends React.Component {
     openModal(<div style={{textAlign: 'center', padding: 10}}>
       <Button icon='HTML' onClick={(btn) => this._exportFile('Html', btn)}>导出HTML</Button>
       <Button icon='wordfile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Word', btn)}>导出WORD</Button>
-      {/*<Button icon='pdffile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>*/}
+      <Button icon='pdffile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
       <Button icon='file1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button>
     </div>, {
       title: '文件导出'
@@ -694,6 +693,7 @@ export default class App extends React.Component {
   };
   _menuClick = (tools) => {
     if (tools === "openDev") {
+      // ipcRenderer.sendSync('headerType', 'openDev');
     } else {
       this.setState({
         tools,
@@ -1128,6 +1128,7 @@ export default class App extends React.Component {
   };
   handleTable = (key) => {
     const { dataSource, project, saveProject } = this.props;
+    console.log(key)
     const optType = key[0];
     const module = key[2];
     const table = key[3] !== '数据表' ? key[3] : '';
@@ -1518,6 +1519,20 @@ export default class App extends React.Component {
         modal.close();
         const type = com.getType();
         // 打开选择图片存储路径的对话框
+        // dialog.showSaveDialog({
+        //   title: '选择图片存储路径',
+        //   filters: [
+        //     { name: 'image/jpg', extensions: ['jpg'] },
+        //     { name: 'image/png', extensions: ['png'] },
+        //   ],
+        // }, (file) => {
+        //   if (file) {
+        //     const { show } = this.state;
+        //     this.relationInstance[show] && this.relationInstance[show].exportImg(file, type, () => {
+        //       Message.success({title: '图片导出成功！'})
+        //     });
+        //   }
+        // });
       }
     });
   };
@@ -1561,13 +1576,13 @@ export default class App extends React.Component {
                     >
                       <span><u>关</u>系图</span>
                     </li>
-                    <li
+                    {/* <li
                       className={`other-options-menu-tools ${tools === 'plug' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
                       onClick={() =>this._menuClick('plug')}
                     >
                       <span><u>模</u>型</span>
-                    </li>
+                    </li> */}
                     <li
                       className={`other-options-menu-tools ${tools === 'dbversion' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
@@ -1577,7 +1592,7 @@ export default class App extends React.Component {
                     </li>
                   </ul>
                   <Icon
-                    type='fa-arrow-circle-left'
+                    type='logout'
                     title='关闭当前项目'
                     style={{float: 'right', marginRight: 5, paddingTop: 1, cursor: 'pointer'}}
                     onClick={this._closeProject}
@@ -1603,17 +1618,23 @@ export default class App extends React.Component {
                     >
                       <Icon type='folderopen' style={{marginRight: 5, color: '#FFCA28'}}/>打开
                     </div>
-                    <div
+                    {/* <div
                       className='tools-content-clickeable'
                       onClick={this._create}
                     >
                       <Icon type='addfolder' style={{marginRight: 5, color: '#96C080'}}/>新建
-                    </div>
+                    </div> */}
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._saveAs()}
                     >
                       <Icon type='fa-save' style={{marginRight: 5, color: '#9291CD'}}/>另存为
+                    </div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._setting()}
+                    >
+                      <Icon type='setting' style={{marginRight: 5}}/>设置
                     </div>
                   </div>
                   <div className='tools-content-group-name'>
@@ -1624,19 +1645,36 @@ export default class App extends React.Component {
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
-                      onClick={() => this._setting()}
-                    >
-                      <Icon type='setting' style={{marginRight: 5}}/>设置
-                    </div>
-                    <div
-                      className='tools-content-clickeable'
                       onClick={() => this._JDBCConfig()}
                     >
                       <Icon type='fa-link' style={{marginRight: 5}}/>数据库连接
                     </div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._readDB()}
+                    ><Icon type="fa-hand-lizard-o"/>逆向解析</div>
                   </div>
                   <div className='tools-content-group-name'>
                     配置
+                  </div>
+                </div>
+                <div className='tools-content-group'>
+                  <div className='tools-content-group-content'>
+                  <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._exportSQL()}
+                    ><Icon type="fa-database"/>执行SQL</div>
+                    <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._export()}
+                    ><Icon type="export"/>导出文档</div>
+                    {/* <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._saveAs('filterDBS')}
+                    ><Icon type="file1"/>导出JSON</div> */}
+                  </div>
+                  <div className='tools-content-group-name'>
+                    导出
                   </div>
                 </div>
               </div>
@@ -1711,21 +1749,21 @@ export default class App extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className="tools-content-tab" style={{display: tools === 'plug' ? '' : 'none'}}>
+              {/* <div className="tools-content-tab" style={{display: tools === 'plug' ? '' : 'none'}}>
                 <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._readDB()}
                     ><Icon type="fa-hand-lizard-o"/>数据库逆向解析</div>
-                    {/*<div
+                    <div
                       className='tools-content-clickeable'
                       onClick={() => this._readPDMfile()}
                     ><Icon type="fa-file" />解析PDM文件</div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._readPDMfile()}
-                    ><Icon type="fa-file" />解析ERWin文件</div>*/}
+                    ><Icon type="fa-file" />解析ERWin文件</div>
                   </div>
                   <div className='tools-content-group-name'>
                     解析导入
@@ -1750,7 +1788,7 @@ export default class App extends React.Component {
                     导出
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -1,14 +1,14 @@
-/* eslint-disable */
+
 import React from 'react';
 import _object from 'lodash/object';
 
 import Icon from '../icon';
 
 const defaultColor = '#EBEEF2';
-const selectColor = '#1A7DC4';
-const blurColor = '#CDDDF6';
-const selectTextColor = '#FFFFFF';
-const defaultTextColor = '#000000';
+const selectColor = '#D4D9E0';
+const blurColor = '#c1cad8';
+const selectTextColor = '#1b1b1b';
+const defaultTextColor = '#1b1b1b';
 
 class TreeNode extends React.Component {
 
@@ -233,7 +233,7 @@ class TreeNode extends React.Component {
           cursor: 'default'
         }}
         key={value}
-        onClick={(e) => this._onClick(e, value)}
+        onClick={(e) => this._onDoubleClick(e, value,children)}
         onDoubleClick={(e) => this._onDoubleClick(e, value, children)}
       >
         <span>{this._getTreeValue(name, value, children, row)}</span>
@@ -254,7 +254,10 @@ class TreeNode extends React.Component {
           //textOverflow: 'ellipsis'
         }}
         key={value}
-        onClick={(e) => this._onClick(e, value)}
+        onClick={(e) => {
+          this._onClick(e, value)
+          this._onDoubleClick(e, value, children)
+        }}
         onDoubleClick={(e) => this._onDoubleClick(e, value, children)}
       >
         {this._getTreeValue(name, value, false, row)}</li>

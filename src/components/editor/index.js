@@ -3,7 +3,7 @@ import AceEditor from 'react-ace';
 
 import 'brace/mode/mysql';
 import 'brace/mode/java';
-import 'brace/theme/monokai';
+import 'brace/theme/dracula';
 import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
 
@@ -36,7 +36,7 @@ export default class Editor extends React.Component{
   };
   render() {
     const { name } = this.state;
-    const { mode = 'mysql', theme = 'monokai', value, height, width } = this.props;
+    const { mode = 'mysql', theme = 'dracula', value, height, width } = this.props;
     return (
       <div onKeyDown={this._onKeyDown}>
         <AceEditor

@@ -1,11 +1,10 @@
-import React from 'react';
 import _object from 'lodash/object';
-
-
-import {Input, Icon, Button, Modal, RadioGroup, Select, openModal } from '../components';
+import React from 'react';
+import { Button, Icon, Input, Modal, openModal, RadioGroup, Select } from '../components';
 import { uuid } from '../utils/uuid';
-
 import './style/jdbc.less';
+
+
 
 const { execFile } = require('child_process');
 
@@ -23,7 +22,7 @@ export default class JDBCConfig extends React.Component{
     };
     this.url = {
       mysql : {
-        url: 'jdbc:mysql://IP地址:端口号/数据库名?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
+        url: 'jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
         driverClass: 'com.mysql.jdbc.Driver',
       },
       oracle : {
@@ -100,14 +99,14 @@ export default class JDBCConfig extends React.Component{
     const dbName = (database.type || 'mysql').toLocaleLowerCase();
     const defaultDBData = this.url[dbName] || {};
     const newField = {
-      name: '',
+      name: tempFields.length==0?'dev':'',
       key: key,
       defaultDB: false,
       properties: {
-        'driver_class_name': defaultDBData.driverClass, // eslint-disable-line
+        'driver_class_name': defaultDBData.driverClass,
         url: defaultDBData.url,
         password: '',
-        username: '',
+        username: 'root',
       },
     };
     if (selectedTrsIndex.length > 0) {
@@ -147,7 +146,7 @@ export default class JDBCConfig extends React.Component{
             const defaultDBData = this.url[dbName] || {};
             properties = {
               ...properties,
-              'driver_class_name': defaultDBData.driverClass, // eslint-disable-line
+              'driver_class_name': defaultDBData.driverClass,
               url: defaultDBData.url,
             };
           }
@@ -231,7 +230,8 @@ export default class JDBCConfig extends React.Component{
     const { getJavaConfig } = this.props;
     const configData = (getJavaConfig && getJavaConfig()) || {};
     const value = configData.JAVA_HOME;
-    const defaultPath = '';
+    // const defaultPath = ipcRenderer.sendSync('jarPath');
+    const defaultPath = "读取jar包";
     const jar = configData.DB_CONNECTOR || defaultPath;
     const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
     // 先判断当前的JAVA版本
@@ -341,6 +341,19 @@ export default class JDBCConfig extends React.Component{
     });
   };
   _selectJar = () => {
+    // dialog.showOpenDialog({
+    //   title: '选择驱动jar包',
+    //   properties:['openFile'],
+    //   filters: [{name: 'PDMan自定义驱动', extensions: ['jar']}],
+    // }, (file) => {
+    //   if (file) {
+    //     this._onChange('customer_driver', {
+    //       target: {
+    //         value: file[0],
+    //       },
+    //     });
+    //   }
+    // });
   };
   render(){
     const { dataSource } = this.props;
@@ -394,7 +407,7 @@ export default class JDBCConfig extends React.Component{
                       className='pdman-jdbc-config-left-db-list-item-index'
                     >{index + 1}</span>
                     <Input onChange={e => this._onDBChange(d.key, e, 'name')} value={d.name}/>
-                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type}>
+                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type} style={{width:'200px'}}>
                       {
                         database
                           .map(db => (<option key={db.code} value={db.code}>{db.code}</option>))

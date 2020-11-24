@@ -388,7 +388,8 @@ export default class TableIndexConfig extends React.Component{
                         onChange={e => this._inputOnChange(e, data.key, 'name')}
                         value={data.name || ''}
                         style={{
-                          height: 23,
+                          height: '100%',
+                          border:'none',
                           ...this._getStyle('Input'),
                         }}
                       />
