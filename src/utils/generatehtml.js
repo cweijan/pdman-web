@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import _object from 'lodash/object';
 
 const moduleList = '模块清单';

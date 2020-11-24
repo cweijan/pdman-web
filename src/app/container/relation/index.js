@@ -8,7 +8,7 @@ import { writeFile } from '../../../utils/json';
 import './style/index.less';
 import { uuid } from '../../../utils/uuid';
 
-/* eslint-disable */
+
 G6.track(false);
 
 export default class Relation extends React.Component{
@@ -89,7 +89,7 @@ export default class Relation extends React.Component{
     }
     this._zoomTree(scale);
   };
-  /* eslint-disable */
+  
   _addCountTableName = (name, title) => {
     const titleNumber = title.split(':')[1];
     if (name.includes(':')) {
@@ -461,7 +461,7 @@ export default class Relation extends React.Component{
   _renderRelation = (paintHeight, paintWidth, data, dataSource, id, fitView, disableGrid, disableMap) => {
     const Util = G6.Util;
     const getDefaultDataType = this._getDefaultDataType;
-    /* eslint-disable */
+    
 
     const miniMap = new G6.Plugins['tool.minimap']({
       width: 180,
@@ -817,7 +817,7 @@ export default class Relation extends React.Component{
           x2: cfg.x + width / 2,
           y2: cfg.y - height / 2 + 2 * padding + titleBox.height,
         });
-        /* eslint-disable */
+        
         backRect.attr({
           x: x - (!isFinite(width) ? titleBox.width : width / 2),
           y: y - (!isFinite(height) ? titleBox.height / 2 : height / 2),
