@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import _object from 'lodash/object';
 import { Message } from '../components';
 import doT from 'dot';
@@ -328,7 +328,7 @@ const generateUpdateSql = (dataSource, changesData = [], code, oldDataSource) =>
           index,
           separator
         });
-        return `${deleteString}${separator}\n${createString}`;
+        return `${separator}\n${createString}`;
       }
       return getTemplateString(getTemplate('deleteIndexTemplate'), {
         module: { name: dataTable.name },
@@ -730,11 +730,7 @@ export const getAllDataSQL = (dataSource, code) => {
         separator
       })}`;
     }).join('\n');
-    return `${getTemplateString(getTemplate('deleteTableTemplate'), {
-      module: { name: e.name },
-      entity: e,
-      separator
-    })}\n${getTemplateString(getTemplate('createTableTemplate'), {
+    return `${getTemplateString(getTemplate('createTableTemplate'), {
       module: { name: e.name },
       entity: e,
       separator
@@ -782,11 +778,11 @@ export const getAllDataSQLByFilter = (dataSource, code, filter = []) => {
         separator
       })}`;
     }).join('\n');
-    allData.deleteTable = `${getTemplateString(getTemplate('deleteTableTemplate'), {
-      module: {name: e.name},
-      entity: e,
-      separator
-    })}`;
+    // allData.deleteTable = `${getTemplateString(getTemplate('deleteTableTemplate'), {
+    //   module: {name: e.name},
+    //   entity: e,
+    //   separator
+    // })}`;
     allData.createTable = `${getTemplateString(getTemplate('createTableTemplate'), {
       module: { name: e.name },
       entity: e,

@@ -4,12 +4,15 @@ import * as Com from '../../../components';
 import { getCodeByDataTable } from '../../../utils/json2code';
 import { getCurrentVersionData } from '../../../utils/dbversionutils';
 
+import { Button } from 'antd';
+
+import clipboard  from '../../../utils/clipboard';
 
 export default class TableDataCode extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      codesTabShow: '',
+      codesTabShow: 'MYSQL',
       templateShow: 'createTableTemplate',
       dataTable: this._getDataTable(props),
     };
@@ -46,6 +49,7 @@ export default class TableDataCode extends React.Component{
     });
   };
   _copyClick = (data) => {
+    clipboard.writeText(data);
     Com.Message.success({title: '代码经成功复制到粘贴板'});
   };
   _getTableCode = (code, templateShow) => {
@@ -101,12 +105,7 @@ export default class TableDataCode extends React.Component{
           {
             // 根据数据库的数量来生成数据类型
             database.map(db => (
-              <div
-                key={`${db.code}`}
-                onClick={() => this._codesTabClick(db.code)}
-                className={`${prefix}-data-table-content-tab${currentCode === db.code ? '-selected' : '-unselected'}`}
-              >{db.code}
-              </div>
+              <Button key={db.code} type={codesTabShow==db.code?'':'unactive'} onClick={() => this._codesTabClick(db.code)} >{db.code}</Button>
             ))
           }
         </div>
@@ -121,13 +120,13 @@ export default class TableDataCode extends React.Component{
                   className={`${prefix}-data-table-content-tab`}
                   style={{marginTop: 5, fontSize: 12, marginBottom: 0}}
                 >
-                  <div
+                  {/* <div
                     onClick={() => this._templateTabClick('createTableTemplate')}
                     className={`${prefix}-data-table-content-tab${templateShow === 'createTableTemplate' ? '-selected' : '-unselected'}`}
                   >
                     新建数据表代码
-                  </div>
-                  <div
+                  </div> */}
+                  {/* <div
                     onClick={() => this._templateTabClick('deleteTableTemplate')}
                     className={`${prefix}-data-table-content-tab${templateShow === 'deleteTableTemplate' ? '-selected' : '-unselected'}`}
                   >
@@ -170,7 +169,7 @@ export default class TableDataCode extends React.Component{
                     className={`${prefix}-data-table-content-tab${templateShow === 'deleteIndexTemplate' ? '-selected' : '-unselected'}`}
                   >
                     删除索引代码
-                  </div>
+                  </div> */}
                 </div>
                 <div className={`${prefix}-data-tab-content`}>
                   <div style={{display: 'flex', padding: 5}}>
@@ -181,15 +180,6 @@ export default class TableDataCode extends React.Component{
                       onClick={() => this._copyClick(
                         this._getTableCode(currentCode, templateShow))}
                     />
-                    <span
-                      style={{marginLeft: '10px', fontSize: 12, color: 'green'}}
-                    >
-                      {
-                        (templateShow === 'createTableTemplate' ||
-                          templateShow === 'deleteTableTemplate' ||
-                          templateShow === 'createIndexTemplate') ? '该脚本为全量脚本' : '该脚本为差异化脚本'
-                      }
-                    </span>
                   </div>
                   <div style={{height: height - 242, overflow: 'auto'}}>
                     <Com.Code

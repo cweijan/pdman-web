@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { Icon, Button } from '../components';
+import { Button } from '../components';
 import './style/create.less';
 
 export default class CreatePro extends React.Component {
@@ -8,6 +7,9 @@ export default class CreatePro extends React.Component {
     super(props);
     this.split = process.platform === 'win32' ? '\\' : '/';
     this.state = {
+      // value: `${app.getPath('home')}${this.split}demo`,
+      // TODO 创建工程
+      value: `${this.split}demo`,
     };
   }
   componentDidMount(){
@@ -23,6 +25,27 @@ export default class CreatePro extends React.Component {
     } else {
       extensions.push('pdman.json');
     }
+    // TODO 
+    // dialog.showSaveDialog({
+    //   title: 'New Project',
+    //   buttonLabel: '确定',
+    //   filters: [
+    //     { name: 'PDMan', extensions: extensions },
+    //   ],
+    // }, (file) => {
+    //   if (file) {
+    //     let tempFile = file;
+    //     if (tempFile.endsWith('.pdman.json')) {
+    //       tempFile = file.replace('.pdman.json', '');
+    //     } else {
+    //       tempFile = file.replace('.json', '');
+    //     }
+    //     this.setState({
+    //       value: tempFile,
+    //     });
+    //     onChange && onChange(tempFile);
+    //   }
+    // });
   };
   _onChange = (e) => {
     const { onChange } = this.props;
@@ -42,7 +65,7 @@ export default class CreatePro extends React.Component {
   render() {
     const { style } = this.props;
     return (<div className='pdman-create' style={style}>
-      <div className='pdman-create-left'>
+      {/* <div className='pdman-create-left'>
         <div className='pdman-create-left-types'>
           <div className='pdman-create-left-types-type pdman-create-left-types-type-default-select'>
             <Icon type='earth' style={{color: '#3AAEDC'}}/>
@@ -56,7 +79,7 @@ export default class CreatePro extends React.Component {
         <div className='pdman-create-left-back'>
           <Icon type='fa-arrow-circle-left' style={{color: '#3AAEDC'}} onClick={this._closeCreatePro}/>
         </div>
-      </div>
+      </div> */}
       <div className='pdman-create-right'>
         <div className='pdman-create-right-title'>
           新项目
@@ -71,6 +94,9 @@ export default class CreatePro extends React.Component {
           <div className='pdman-create-right-com-button'>
             <Button onClick={this._iconClick}>...</Button>
           </div>
+        </div>
+        <div className='pdman-create-right-footer' style={{right:'100px'}}>
+          <Button onClick={this._closeCreatePro}>Cancel</Button>
         </div>
         <div className='pdman-create-right-footer'>
           <Button onClick={this._onOk}>Create</Button>

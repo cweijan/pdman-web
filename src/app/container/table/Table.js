@@ -6,11 +6,12 @@ import TableRow from './TableRow';
 import { uuid } from '../../../utils/uuid';
 import { moveArrayPositionByFuc } from '../../../utils/array';
 import DataTypeHelp from '../datatype/help';
+import clipboard  from '../../../utils/clipboard';
 
-const { Modal, openMask }  = Com;
+const { Modal, openMask } = Com;
 
-export default class Table extends React.Component{
-  constructor(props){
+export default class Table extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       dataTable: props.dataTable,
@@ -21,7 +22,7 @@ export default class Table extends React.Component{
     // 构造当前组件通用空数组
     this.emptyArray = [];
   }
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     // 1.全局数据类型发生改变【columnOrder = [], dataTypes = []】
     // 2.当前的数据表发生变化
     return (nextProps.columnOrder !== this.props.columnOrder)
@@ -62,15 +63,16 @@ export default class Table extends React.Component{
           const { fields = [] } = dataTable;
           const clipboardData = fields
             .filter(field => selectedTrs.includes(field.key))
-            .map(field => ({...field, key: `${uuid()}-${field.name}`}));
+            .map(field => ({ ...field, key: `${uuid()}-${field.name}` }));
           if (clipboardData.length === 0) {
-            Modal.error({title: '复制无效', message: '未选中属性', width: 200});
+            Modal.error({ title: '复制无效', message: '未选中属性', width: 200 });
             return;
           }
-          Com.Message.success({title: '数据表列已经成功复制到粘贴板'});
-        } else if(e.keyCode === 86) {
+          clipboard.writeText(JSON.stringify(clipboardData));
+          Com.Message.success({ title: '数据表列已经成功复制到粘贴板' });
+        } else if (e.keyCode === 86) {
           try {
-            const tempData = '';
+            const tempData = JSON.parse(clipboard.readText());
             if (this._checkFields(tempData)) {
               const fieldNames = (dataTable.fields || []).map(field => field.name);
               const copyFields = tempData.map((field) => {
@@ -100,15 +102,15 @@ export default class Table extends React.Component{
                 fields: tempFields,
               });
             } else {
-              Modal.error({title: '粘贴失败', message: '无效的数据', width: 200});
+              Modal.error({ title: '粘贴失败', message: '无效的数据', width: 200 });
             }
           } catch (err) {
             console.log(err);
-            Modal.error({title: '粘贴失败', message: '无效的数据', width: 200});
+            Modal.error({ title: '粘贴失败', message: '无效的数据', width: 200 });
           }
         }
       }
-    } else if (e.keyCode === 40 || e.keyCode === 38){
+    } else if (e.keyCode === 40 || e.keyCode === 38) {
       // 处理键盘上下箭头，判断光标是在最前还是最后
       if ((e.target.selectionEnd === (e.target.value && e.target.value.length))
         || (e.target.selectionEnd === 0)) {
@@ -118,7 +120,7 @@ export default class Table extends React.Component{
         if (e.keyCode === 38 && y - 1 > -1) {
           // 将光标放置上一行
           this.inputInstance[y - 1][x].select();
-        } else if (e.keyCode === 40 && y + 1 < this.inputInstance.length){
+        } else if (e.keyCode === 40 && y + 1 < this.inputInstance.length) {
           // 将光标放置下一行
           this.inputInstance[y + 1][x].select();
         }
@@ -181,7 +183,7 @@ export default class Table extends React.Component{
     });
   };
   _showCreateType = () => {
-    openMask(<DataTypeHelp/>);
+    openMask(<DataTypeHelp />);
   };
   _relationNoShowClick = (e, key, code, value) => {
     if (key) {
@@ -247,7 +249,7 @@ export default class Table extends React.Component{
         .sort((a, b) => (type === 'up' ? a.fieldIndex - b.fieldIndex : b.fieldIndex - a.fieldIndex))
         .forEach((field) => {
           tempFields = moveArrayPositionByFuc(
-            tempFields,  (f) => {
+            tempFields, (f) => {
               return f.key === field.from.key;
             }, type === 'up' ? field.fieldIndex - 1 : field.fieldIndex + 1);
         });
@@ -327,7 +329,15 @@ export default class Table extends React.Component{
     const { prefix = 'pdman', columnOrder = this.emptyArray, dataTypes = this.emptyArray, dataSource, height } = this.props;
     const { headers } = dataTable;
     return (
-      <div>
+      <div onKeyDown={e=>{
+        if (e.key == "Delete") {
+          this._deleteField()
+        }
+      }} onKeyPress={(e) => {
+        if (e.key == "Enter") {
+          this._addField('field')
+        }
+      }}>
         <div className={`${prefix}-data-table-content-table-opt-icon`}>
           <Com.Icon
             onClick={() => selectedTrs.length !== 0 && this._moveField('up')}
@@ -355,7 +365,7 @@ export default class Table extends React.Component{
             type="fa-plus"
           />
         </div>
-        <div style={{height: height - 176, overflow: 'auto'}}>
+        <div style={{ height: height - 176, overflow: 'auto' }}>
           <table
             tabIndex="0"
             onKeyDown={e => this._onKeyDown(e)}
@@ -370,11 +380,11 @@ export default class Table extends React.Component{
                     const showLeft = index === 0 ? 'none' : '';
                     const showRight = index === headers.length - 1 ? 'none' : '';
                     return (<th key={column.code}>
-                      <div style={{minWidth: column.code === 'type' ? 150 : 'auto' }}>
+                      <div style={{ minWidth: column.code === 'type' ? 150 : 'auto' }}>
                         <Com.Icon
                           onClick={() => this._columnClick('left', index)}
                           type='arrowleft'
-                          style={{display: showLeft}}
+                          style={{ display: showLeft }}
                         />
                         <div>
                           {column.value}
@@ -391,12 +401,12 @@ export default class Table extends React.Component{
                           title='创建新的数据类型'
                           onClick={this._showCreateType}
                           type='fa-question-circle-o'
-                          style={{display: column.code === 'type' ? '' : 'none', color: 'green'}}
+                          style={{ display: column.code === 'type' ? '' : 'none', color: 'green' }}
                         />
                         <Com.Icon
                           onClick={() => this._columnClick('right', index)}
                           type='arrowright'
-                          style={{display: showRight}}
+                          style={{ display: showRight }}
                         />
                       </div>
                     </th>);

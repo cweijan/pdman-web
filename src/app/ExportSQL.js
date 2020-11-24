@@ -1,5 +1,4 @@
 import React from 'react';
-
 import _object from 'lodash/object';
 import fs from 'fs';
 
@@ -17,17 +16,19 @@ import {
   Code,
 } from '../components';
 import { getAllDataSQLByFilter } from '../utils/json2code';
-import {fileExist, fileExistPromise, readFilePromise, saveFilePromise} from '../utils/json';
+import { fileExist, fileExistPromise, readFilePromise, saveFilePromise } from '../utils/json';
 import defaultConfig from '../profile';
 import { addOnResize } from '../../src/utils/listener';
 
 const { Radio } = RadioGroup;
 const { execFile } = require('child_process');
 
-export default class ExportSQL extends React.Component{
-  constructor(props){
+export default class ExportSQL extends React.Component {
+  constructor(props) {
     super(props);
     this.split = process.platform === 'win32' ? '\\' : '/';
+    // this.configPath = app.getPath('userData');
+    this.configPath = '';
     this.historyPath = `${this.configPath}${this.split}${defaultConfig.userPath}`;
     this.state = {
       selectTable: null,
@@ -40,15 +41,15 @@ export default class ExportSQL extends React.Component{
         updateComment: false,
       },
       data: getAllDataSQLByFilter(props.dataSource,
-        props.defaultDb, ['deleteTable', 'createTable', 'createIndex', 'updateComment']),
+        props.defaultDb, ["sldlfkjsl;dfkjs;lfkjsdfkl;jsfl;skdjf;lsdf"]),
       loading: false,
       editorWidth: '400px',
     };
   }
-  componentDidMount(){
-    // this._getConfigData().then((res) => {
-    //   this.userData = res;
-      const exportSqlDefault = {};
+  componentDidMount() {
+    this._getConfigData().then((res) => {
+      this.userData = res;
+      const exportSqlDefault = this.userData.exportSqlDefault || {};
       this.setState({
         type: {
           deleteTable: exportSqlDefault.deleteTable || false,
@@ -57,7 +58,7 @@ export default class ExportSQL extends React.Component{
           updateComment: exportSqlDefault.updateComment || false,
         },
       });
-    // });
+    });
     addOnResize(this._getEditorWidth);
     this._getEditorWidth();
   }
@@ -119,7 +120,7 @@ export default class ExportSQL extends React.Component{
   _preview = () => {
     const { dataSource } = this.props;
     const { defaultDb, selectTable } = this.state;
-    let tempDataSource = {...dataSource};
+    let tempDataSource = { ...dataSource };
     if (selectTable) {
       const tables = selectTable.filter(t => t.includes('/')).map(t => t.split('/')[1]);
       tempDataSource = {
@@ -139,20 +140,20 @@ export default class ExportSQL extends React.Component{
   };
   _export = () => {
     // 保存当前导出的数据信息
-    // this._saveConfigData({
-    //   ...this.userData,
-    //   exportSqlDefault: {
-    //     ...this.state.type,
-    //   },
-    // }).then(() => {
+    this._saveConfigData({
+      ...this.userData,
+      exportSqlDefault: {
+        ...this.state.type,
+      },
+    }).then(() => {
       const { exportSQL } = this.props;
       exportSQL && exportSQL();
-    // });
+    });
   };
   _selectTable = () => {
     const { selectTable } = this.state;
     const { dataSource } = this.props;
-    openModal(<TreeSelect data={dataSource.modules || []} defaultSelecteds={selectTable}/>, {
+    openModal(<TreeSelect data={dataSource.modules || []} defaultSelecteds={selectTable} />, {
       title: '导出数据表选择',
       onOk: (m, c) => {
         this.setState({
@@ -208,8 +209,9 @@ export default class ExportSQL extends React.Component{
     return tempResult;
   };
   _connectJDBC = (selectJDBC, cb, cmd) => {
-    const configData =  this._getJavaConfig();
+    const configData = this._getJavaConfig();
     const value = configData.JAVA_HOME;
+    // const defaultPath = ipcRenderer.sendSync('jarPath');
     const defaultPath = '';
     const jar = configData.DB_CONNECTOR || defaultPath;
     const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
@@ -241,11 +243,14 @@ export default class ExportSQL extends React.Component{
     });
     const { project, dataSource } = this.props;
     const dbData = _object.get(dataSource, 'profile.dbs', []).filter(d => d.defaultDB)[0];
+    // todo
+    // const temp = app.getPath('temp');
+    const temp = '';
     const proName = this._getProject(project, 'name');
     if (dbData) {
       const name = _object.get(dbData, 'name', 'untitled');
       const fileName = `${proName}-${name}-exec-temp.sql`;
-      let tempPath = '';
+      let tempPath = `${temp}${this.split}${fileName}`;
       fileExistPromise(tempPath, true, this.state.data, '.sql')
         .then(() => {
           if (dbData) {
@@ -275,21 +280,21 @@ export default class ExportSQL extends React.Component{
                     >
                       <Input
                         onChange={this._searchValueChange}
-                        wrapperStyle={{width: 'auto'}}
+                        wrapperStyle={{ width: 'auto' }}
                       />
                       <Icon
                         type='fa-search'
-                        style={{marginLeft: 10, cursor: 'pointer'}}
+                        style={{ marginLeft: 10, cursor: 'pointer' }}
                         onClick={this._search}
                       />
                       <span
                         ref={instance => this.countDom = instance}
                         style={{ marginLeft: 10, cursor: 'pointer' }}
                       >
-                      0/0
+                        0/0
                       </span>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext}/>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre}/>
+                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
+                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
                     </div>
                     <Code
                       ref={(instance) => {
@@ -298,10 +303,11 @@ export default class ExportSQL extends React.Component{
                           this.tempHtml = this.code.innerHTML;
                         }
                       }}
-                      style={{height: 400}}
+                      style={{ height: 400 }}
                       data={this._getProperties(result.body || result)}
                     />
-                  </div>});
+                  </div>
+                });
                 if (fileExist(tempPath)) {
                   fs.unlinkSync(tempPath);
                 }
@@ -321,21 +327,21 @@ export default class ExportSQL extends React.Component{
                     >
                       <Input
                         onChange={this._searchValueChange}
-                        wrapperStyle={{width: 'auto'}}
+                        wrapperStyle={{ width: 'auto' }}
                       />
                       <Icon
                         type='fa-search'
-                        style={{marginLeft: 10, cursor: 'pointer'}}
+                        style={{ marginLeft: 10, cursor: 'pointer' }}
                         onClick={this._search}
                       />
                       <span
                         ref={instance => this.countDom = instance}
                         style={{ marginLeft: 10, cursor: 'pointer' }}
                       >
-                      0/0
+                        0/0
                       </span>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext}/>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre}/>
+                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
+                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
                     </div>
                     <Code
                       ref={(instance) => {
@@ -344,7 +350,7 @@ export default class ExportSQL extends React.Component{
                           this.tempHtml = this.code.innerHTML;
                         }
                       }}
-                      style={{height: 400}}
+                      style={{ height: 400 }}
                       data={this._getProperties(result.body || result)}
                     />
                   </div>
@@ -352,7 +358,7 @@ export default class ExportSQL extends React.Component{
                 });
               }
             }, 'sqlexec');
-          } else if (fileExist(tempPath)){
+          } else if (fileExist(tempPath)) {
             fs.unlinkSync(tempPath);
           }
         });
@@ -360,13 +366,13 @@ export default class ExportSQL extends React.Component{
       this.setState({
         loading: false,
       });
-      Modal.error({title: '执行失败', message: '未配置默认数据库，无法执行SQL，请到数据库版本界面配置默认数据库！'});
+      Modal.error({ title: '执行失败', message: '未配置默认数据库，无法执行SQL，请到数据库版本界面配置默认数据库！' });
     }
   };
   render() {
     const { database } = this.props;
     const { data, defaultDb, selectTable, loading, editorWidth } = this.state;
-    return (<div style={{display: 'flex'}} ref={instance => this.instance = instance}>
+    return (<div style={{ display: 'flex' }} ref={instance => this.instance = instance}>
       <div
         style={{
           width: '400px',
@@ -382,8 +388,8 @@ export default class ExportSQL extends React.Component{
           alignItems: 'center',
           padding: 5,
         }}>
-          <span style={{width: 110, textAlign: 'right'}}>数据库:</span>
-          <Select onChange={this._onDBChange} value={this.state.defaultDb} style={{marginLeft: 10}}>
+          <span style={{ width: 110, textAlign: 'right' }}>数据库:</span>
+          <Select onChange={this._onDBChange} value={this.state.defaultDb} style={{ marginLeft: 10 }}>
             {
               database.map(db => (<option key={db.code} value={db.code}>{db.code}</option>))
             }
@@ -396,28 +402,28 @@ export default class ExportSQL extends React.Component{
             padding: 5,
           }}
         >
-          <span style={{width: 110, textAlign: 'right'}}>导出数据表:</span>
-          <span style={{marginLeft: 10}}>
+          <span style={{ width: 110, textAlign: 'right' }}>导出数据表:</span>
+          <span style={{ marginLeft: 10 }}>
             {selectTable === null ? '默认导出所有数据表' :
               `当前已选择数据表数量：${selectTable.filter(k => k.includes('/')).length}`}
           </span>
-          <Button style={{marginLeft: 10}} title='选择数据表' onClick={this._selectTable}>...</Button>
+          <Button style={{ marginLeft: 10 }} title='选择数据表' onClick={this._selectTable}>...</Button>
         </div>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           padding: 5,
         }}>
-          <span style={{width: 110, textAlign: 'right'}}>导出内容:</span>
+          <span style={{ width: 110, textAlign: 'right' }}>导出内容:</span>
           <RadioGroup
-            groupStyle={{width: 'calc(100% - 110px)'}}
+            groupStyle={{ width: 'calc(100% - 110px)' }}
             name='export'
             title='数据表导出内容'
             value={this.state.export}
             onChange={this._exportChange}
           >
-            <Radio wrapperStyle={{width: 20, marginLeft: 10}} value='customer'>自定义</Radio>
-            <Radio wrapperStyle={{width: 20, marginLeft: 10}} value='all'>全部</Radio>
+            <Radio wrapperStyle={{ width: 20, marginLeft: 10 }} value='customer'>自定义</Radio>
+            <Radio wrapperStyle={{ width: 20, marginLeft: 10 }} value='all'>全部</Radio>
           </RadioGroup>
         </div>
         <div style={{
@@ -425,37 +431,37 @@ export default class ExportSQL extends React.Component{
           alignItems: 'center',
           padding: 5,
         }}>
-          <span style={{width: 110, textAlign: 'right', minWidth: 110}}>
+          <span style={{ width: 110, textAlign: 'right', minWidth: 110 }}>
             自定义导出内容:
           </span>
-          <div style={{display: 'flex', flexWrap: 'wrap'}}>
-            <div style={{display: 'flex'}}>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex' }}>
               <Checkbox
-                wrapperStyle={{width: 20, alignItems: 'center', marginLeft: 10}}
+                wrapperStyle={{ width: 20, alignItems: 'center', marginLeft: 10 }}
                 onChange={e => this._typeChange(e, 'deleteTable')}
                 value={this.state.type.deleteTable || false}
               />
               <span>删表语句</span>
             </div>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <Checkbox
-                wrapperStyle={{width: 20, alignItems: 'center', marginLeft: 10}}
+                wrapperStyle={{ width: 20, alignItems: 'center', marginLeft: 10 }}
                 onChange={e => this._typeChange(e, 'createTable')}
                 value={this.state.type.createTable || false}
               />
               <span>建表语句</span>
             </div>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <Checkbox
-                wrapperStyle={{width: 20, alignItems: 'center', marginLeft: 10}}
+                wrapperStyle={{ width: 20, alignItems: 'center', marginLeft: 10 }}
                 onChange={e => this._typeChange(e, 'createIndex')}
                 value={this.state.type.createIndex || false}
               />
               <span>建索引语句</span>
             </div>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <Checkbox
-                wrapperStyle={{width: 20, alignItems: 'center', marginLeft: 10}}
+                wrapperStyle={{ width: 20, alignItems: 'center', marginLeft: 10 }}
                 onChange={e => this._typeChange(e, 'updateComment')}
                 value={this.state.type.updateComment || false}
               />
@@ -474,16 +480,12 @@ export default class ExportSQL extends React.Component{
           >预览</Button>
         </div>
       </div>
-      <div style={{border: 'solid 1px #DFDFDF'}}>
-        <div style={{margin: '10px 0px'}}>
-          <Button type="primary" onClick={this._export}>导出</Button>
-          {/*<Button
-            style={{marginLeft: 10}}
-            onClick={this._execSql}
-            loading={loading}
-          >
+      <div style={{ border: 'solid 1px #DFDFDF' }}>
+        <div style={{ margin: '10px 0px' }}>
+          <Button style={{ marginLeft: 30 }} onClick={this._execSql} loading={loading} >
             {loading ? '正在执行' : '执行'}
-          </Button>*/}
+          </Button>
+          <Button type="primary" onClick={this._export}>导出</Button>
         </div>
         <Editor
           height='300px'

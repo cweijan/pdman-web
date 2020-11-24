@@ -1,17 +1,19 @@
 import React from 'react';
 import * as Com from '../../../components';
 
-const { Input, TextArea } = Com;
+import {Input  } from 'antd';
+
+const { TextArea } = Com;
 
 // 状态维持在组件内部，当调用保存时在更新到上层组件【当前组件需要提供一个上层调用的方法来获取最新的数据】
-export default class TableSummary extends React.Component{
-  constructor(props){
+export default class TableSummary extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       dataTable: props.dataTable,
     };
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     // 如果上层的dataTable标题发生发生变化则需要以上层为主
     if (nextProps.dataTable.title !== this.state.dataTable.title) {
       this.setState({
@@ -22,9 +24,9 @@ export default class TableSummary extends React.Component{
       });
     }
   }
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     // 当前组件需要渲染的内容
-    const tableSummaryFields = ['chnname','title','nameTemplate','remark'];
+    const tableSummaryFields = ['chnname', 'title', 'nameTemplate', 'remark'];
     // 循环判断组件参数是否发生变化
     return tableSummaryFields.some(f => nextState.dataTable[f] !== this.state.dataTable[f]);
   }
@@ -57,25 +59,13 @@ export default class TableSummary extends React.Component{
   render() {
     return (
       <React.Fragment>
-        <div>
-          <span>表名</span>
-          <Input
-            wrapperStyle={{width: 'calc(100% - 80px)'}}
-            style={{height: 23, width: '100%'}}
-            value={this._getTableSummary('chnname')}
-            onChange={e => this._inputTableOnChange(e, 'chnname')}
-          />
+        <div style={{marginBottom:'10px'}}>
+        <Input.Group compact>
+        <Input style={{ width: '30%' }} addonBefore="表　名" value={this._getTableSummary('title')} onChange={e => this._inputTableOnChange(e, 'title')} />
+        <Input style={{ width: '40%' }} addonBefore="中文名" value={this._getTableSummary('chnname')} onChange={e => this._inputTableOnChange(e, 'chnname')} />
+        </Input.Group>
         </div>
-        <div>
-          <span>逻辑名</span>
-          <Input
-            wrapperStyle={{width: 'calc(100% - 80px)'}}
-            style={{height: 23, width: '100%'}}
-            value={this._getTableSummary('title')}
-            onChange={e => this._inputTableOnChange(e, 'title')}
-          />
-        </div>
-        <div>
+        {/* <div>
           <span>显示方式</span>
           <Input
             wrapperStyle={{width: 'calc(100% - 80px)'}}
@@ -83,8 +73,8 @@ export default class TableSummary extends React.Component{
             value={this._getTableSummary('nameTemplate') || '{code}[{name}]'}
             onChange={e => this._inputTableOnChange(e, 'nameTemplate')}
           />
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <span>说明</span>
           <TextArea
             wrapperStyle={{width: 'calc(100% - 80px)'}}
@@ -92,7 +82,7 @@ export default class TableSummary extends React.Component{
             value={this._getTableSummary('remark')}
             onChange={e => this._inputTableOnChange(e, 'remark')}
           />
-        </div>
+        </div> */}
       </React.Fragment>
     );
   }

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import * as Utils from './TableUtils';
 import { uuid } from '../../../utils/uuid';
 import * as Com from '../../../components';
+import { Button } from 'antd';
 
 import TableDataCode from './TableDataCode';
 import TableIndexConfig from './TableIndexConfig';
@@ -24,12 +25,12 @@ class DataTable extends React.Component {
     this.currentTable = values[2];
     this.state = {
       dataTable: this._initTableData(this.props.dataSource || {}, values[1], values[2]),
-      tabShow: 'summary',
+      tabShow: 'fields',
       module: values[1],
       table: values[2],
     };
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     // 如果该数据表发生了变化则将变化后的数据记录下来
     if (this.props.dataSource !== nextProps.dataSource) {
       // 此处界面渲染增加当前数据表判断，如果是当前数据表发生变化则需要更新
@@ -43,7 +44,7 @@ class DataTable extends React.Component {
       }
     }
   }
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     // 表数据有变化
     // 数据类型和数据库有变化
     return (nextState.dataTable !== this.state.dataTable)
@@ -71,31 +72,31 @@ class DataTable extends React.Component {
     // 增加校验表名重复的问题
     const tables = this._getAllTable(dataSource);
     if (title !== table && tables.includes(title)) {
-      Modal.error({title: '保存失败', message: `数据表【${title}】已经存在了`, width: 300});
+      Modal.error({ title: '保存失败', message: `数据表【${title}】已经存在了`, width: 300 });
     } else if (!title) {
       if (cb) {
         cb(`数据表【${this.currentTable}】代码不能为空`);
       } else {
-        Modal.error({title: '保存失败', message: `数据表【${this.currentTable}】代码不能为空`, width: 300});
+        Modal.error({ title: '保存失败', message: `数据表【${this.currentTable}】代码不能为空`, width: 300 });
       }
     } else {
       const currTable = this._deleteKey(dataTable);
       if (title.includes('/') || title.includes('&') || title.includes(':')) {
-        Modal.error({title: '保存失败', message: '数据表名不能包含/或者&或者:', width: 300});
+        Modal.error({ title: '保存失败', message: '数据表名不能包含/或者&或者:', width: 300 });
         cb('error');
       } else if (currTable.fields && currTable.fields
         .some(filed => filed.name.includes('/') || filed.name.includes('&') || filed.name.includes(':'))) {
-        Modal.error({title: '保存失败', message: '属性名不能包含/或者&或者:', width: 300});
+        Modal.error({ title: '保存失败', message: '属性名不能包含/或者&或者:', width: 300 });
         cb('error');
       } else {
         const { project, saveProjectSome, updateTabs } = this.props;
         saveProjectSome(`${project}.pdman.json`, currTable, () => {
-            if (title !== table) {
-              // 如果修改了表名修改更新tab信息
-              updateTabs && updateTabs(module, table, title);
-            }
-            cb();
-          }, title !== table && {oldName: table, newName: title},
+          if (title !== table) {
+            // 如果修改了表名修改更新tab信息
+            updateTabs && updateTabs(module, table, title);
+          }
+          cb();
+        }, title !== table && { oldName: table, newName: title },
           `${module}/entities/${table}`);
       }
     }
@@ -140,11 +141,13 @@ class DataTable extends React.Component {
     };
   };
   _initTableData = (dataSource, module, table) => {
-    const moduleData = {...(dataSource.modules || []).filter(mo => mo.name === module)[0] || {}};
-    const tableData = {...(moduleData.entities || [])
-        .filter(entity => entity.title === table)[0] || {}};
-    const fields = (tableData.fields || []).map(field => ({...field, key: `${uuid()}-${field.name}`}));
-    const indexs = (tableData.indexs || []).map(field => ({...field, key: `${uuid()}-${field.name}`}));
+    const moduleData = { ...(dataSource.modules || []).filter(mo => mo.name === module)[0] || {} };
+    const tableData = {
+      ...(moduleData.entities || [])
+        .filter(entity => entity.title === table)[0] || {}
+    };
+    const fields = (tableData.fields || []).map(field => ({ ...field, key: `${uuid()}-${field.name}` }));
+    const indexs = (tableData.indexs || []).map(field => ({ ...field, key: `${uuid()}-${field.name}` }));
     tableData.fields = fields;
     tableData.indexs = indexs;
     return this._initColumnOrder(tableData);
@@ -178,36 +181,30 @@ class DataTable extends React.Component {
     const dataTypes = _object.get(dataSource, 'dataTypeDomains.datatype', []);
     return (<div className={`${prefix}-data-table`}>
       <div className={`${prefix}-data-table-title`}>
-        <Icon type="fa-table" style={{marginRight: 5}}/>
+        <Icon type="fa-table" style={{ marginRight: 5 }} />
         {`${module}/${table}/数据表详情`}
       </div>
       <div
         className={`${prefix}-data-table-content`}
       >
         <div className={`${prefix}-data-table-content-tab`}>
-          <div
+          {/* <div
             onClick={() => this._tabClick('summary')}
             className={`${prefix}-data-table-content-tab${this.state.tabShow === 'summary' ? '-selected' : '-unselected'}`}
           >基本信息
-          </div>
-          <div
-            onClick={() => this._tabClick('fields')}
-            className={`${prefix}-data-table-content-tab${this.state.tabShow === 'fields' ? '-selected' : '-unselected'}`}
-          >字段信息
-          </div>
-          <div
-            onClick={() => this._tabClick('codes')}
-            className={`${prefix}-data-table-content-tab${this.state.tabShow === 'codes' ? '-selected' : '-unselected'}`}
-          >代码信息
-          </div>
-          <div
-            onClick={() => this._tabClick('indexs')}
-            className={`${prefix}-data-table-content-tab${this.state.tabShow === 'indexs' ? '-selected' : '-unselected'}`}
-          >索引信息
-          </div>
+          </div> */}
+          <Button type={this.state.tabShow === 'fields' ? '' : 'unactive'} onClick={() => this._tabClick('fields')}>
+            表结构
+          </Button>
+          <Button type={this.state.tabShow === 'indexs' ? '' : 'unactive'} onClick={() => this._tabClick('indexs')}>
+            索引
+          </Button>
+          <Button type={this.state.tabShow === 'codes' ? '' : 'unactive'} onClick={() => this._tabClick('codes')}>
+            代码
+          </Button>
         </div>
-        <div style={{height: height - 145, overflow: 'auto'}}>
-          <div
+        <div style={{ height: height - 145, overflow: 'auto' }}>
+          {/* <div
             className={`${prefix}-data-table-content-summary`}
             style={{display: this.state.tabShow === 'summary' ? '' : 'none'}}
           >
@@ -215,8 +212,12 @@ class DataTable extends React.Component {
               dataTable={this.state.dataTable}
               ref={instance => this.tableSummaryInstance = instance}
             />
-          </div>
-          <div style={{display: this.state.tabShow === 'fields' ? '' : 'none'}}>
+          </div> */}
+          <div style={{ display: this.state.tabShow === 'fields' ? '' : 'none' }}>
+            <TableSummary
+              dataTable={this.state.dataTable}
+              ref={instance => this.tableSummaryInstance = instance}
+            />
             <Table
               height={height}
               columnOrder={columnOrder}
@@ -226,7 +227,7 @@ class DataTable extends React.Component {
               ref={instance => this.tableInstance = instance}
             />
           </div>
-          <div style={{display: this.state.tabShow === 'codes' ? '' : 'none'}}>
+          <div style={{ display: this.state.tabShow === 'codes' ? '' : 'none' }}>
             <TableDataCode
               tabShow={this.state.tabShow}
               height={height}
@@ -236,7 +237,7 @@ class DataTable extends React.Component {
               module={module}
             />
           </div>
-          <div style={{display: this.state.tabShow === 'indexs' ? '' : 'none', height: '100%'}}>
+          <div style={{ display: this.state.tabShow === 'indexs' ? '' : 'none', height: '100%' }}>
             <TableIndexConfig
               height={height}
               ref={instance => this.indexConfigInstance = instance}

@@ -1,33 +1,29 @@
+import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
-import _object from 'lodash/object';
-import {Icon, Tree, Context, Tab, Modal, Message, openModal, Button, Input} from '../components';
-import { ensureDirectoryExistence } from '../utils/json';
-import { download } from '../../src/utils/download';
+import { moveArrayPosition } from '../../src/utils/array';
+import { upgrade } from '../../src/utils/basedataupgrade';
+//import { generatepdf } from '../../src/utils/generatepdf';
+import { generateHtml } from '../../src/utils/generatehtml';
 import { addOnResize } from '../../src/utils/listener';
 import { generate } from '../../src/utils/markdown';
 import { generateByJar } from '../../src/utils/office';
-//import { generatepdf } from '../../src/utils/generatepdf';
-import { generateHtml } from '../../src/utils/generatehtml';
 import { saveImage } from '../../src/utils/relation2file';
-import { upgrade } from '../../src/utils/basedataupgrade';
-import { moveArrayPosition } from '../../src/utils/array';
-import Module from './container/module';
-import Table from './container/table';
-import DataType from './container/datatype';
+import { Button, Context, Icon, Input, Message, Modal, openModal, Tab, Tree } from '../components';
+import { ensureDirectoryExistence } from '../utils/json';
 import Database from './container/database';
-import Relation from './container/relation';
-import DatabaseVersion from './DatabaseVersion';
-import ExportSQL from './ExportSQL';
-import ExportImg from './ExportImg';
-import ReadDB from './container/plugin/dbreverseparse/ReadDB';
+import DataType from './container/datatype';
+import Module from './container/module';
 import MultipleUtils from './container/multipleopt/MultipleUtils';
-
-
-import Setting from './Setting';
-
-import './style/index.less';
+import ReadDB from './container/plugin/dbreverseparse/ReadDB';
+import Relation from './container/relation';
+import Table from './container/table';
+import DatabaseVersion from './DatabaseVersion';
+import ExportImg from './ExportImg';
+import ExportSQL from './ExportSQL';
 import JDBCConfig from './JDBCConfig';
+import Setting from './Setting';
+import './style/index.less';
 
 const moduleUtils = Module.Utils;
 const tableUtils = Table.Utils;
@@ -444,6 +440,7 @@ export default class App extends React.Component {
             })).then(() => {
               // 图片保存成功
               // const defaultPath = ipcRenderer.sendSync('wordPath');
+              // TODO
               const defaultPath = '';
               const templatePath = _object.get(dataSource, 'profile.wordTemplateConfig') || defaultPath;
               generateByJar(dataSource, {
@@ -522,7 +519,25 @@ export default class App extends React.Component {
         if (value.length === 0) {
           Modal.error({title: '导出失败', message: '请选择导出的内容'})
         } else {
-          download(`Export_${new Date().getTime()}.sql`,modal.com.getData())
+          // TODO
+          // dialog.showSaveDialog({
+          //   title: '保存SQL文件',
+          //   filters: [
+          //     { name: 'PDMan', extensions: ['sql'] },
+          //   ],
+          // }, (file) => {
+          //   if (file) {
+          //     const data = modal.com.getData();
+          //     writeFile(file, data).then(() => {
+          //       //btn.setLoading(false);
+          //       Message.success({title: `SQL文件导出成功！导出路径：[${file}]`});
+          //       modal && modal.close();
+          //     }).catch(() => {
+          //       Message.success({title: 'SQL文件导出失败！'});
+          //       //btn.setLoading(false);
+          //     });
+          //   }
+          // });
         }
       };
       const onCancel = () => {
@@ -1519,6 +1534,7 @@ export default class App extends React.Component {
         modal.close();
         const type = com.getType();
         // 打开选择图片存储路径的对话框
+        // TODO
         // dialog.showSaveDialog({
         //   title: '选择图片存储路径',
         //   filters: [

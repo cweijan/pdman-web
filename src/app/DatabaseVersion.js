@@ -1,17 +1,19 @@
-import React from 'react';
+import fs from 'fs';
 import _object from 'lodash/object';
 import moment from 'moment';
-import fs from 'fs';
-
-import { fileExist, fileExistPromise, deleteDirectoryFile,
-  getDirListPromise, readFilePromise, saveFilePromise, deleteJsonFile } from '../utils/json';
-import {Button, openModal, Message, Modal, Input, Select, Icon, RadioGroup, Code, Editor, TextArea} from '../components';
-import {getCodeByChanges, getAllDataSQL} from '../utils/json2code';
-import { checkVersionData } from '../utils/dbversionutils';
-import { compareStringVersion } from '../utils/string';
-
-import './style/dbVersion.less';
+import React from 'react';
 import defaultConfig from '../profile';
+import { Button, Code, Editor, Icon, Input, Message, Modal, openModal, RadioGroup, Select, TextArea } from '../components';
+import { checkVersionData } from '../utils/dbversionutils';
+import {
+  deleteDirectoryFile,
+  deleteJsonFile, fileExist, fileExistPromise,
+  getDirListPromise, readFilePromise, saveFilePromise
+} from '../utils/json';
+import { getAllDataSQL, getCodeByChanges } from '../utils/json2code';
+import { compareStringVersion } from '../utils/string';
+import './style/dbVersion.less';
+
 
 const { execFile } = require('child_process');
 
@@ -29,6 +31,19 @@ class ChangeCode extends React.Component{
     };
   }
   _onSave = () => {
+    // todo
+    // dialog.showSaveDialog({
+    //   title: '保存SQL文件',
+    //   filters: [
+    //     { name: 'PDMan', extensions: ['sql'] },
+    //   ],
+    // }, (file) => {
+    //   if (file) {
+    //     fileExistPromise(file, true, this.data || this.props.data, '.sql').then(() => {
+    //       Message.success({title: `SQL文件导出成功！导出路径：[${file}]`});
+    //     });
+    //   }
+    // });
   };
   _valueChange = (e) => {
     this.data = e.target.value;
@@ -37,7 +52,7 @@ class ChangeCode extends React.Component{
     const { readDB } = this.props;
     readDB && readDB();
   };
-  /*_execSQL = (updateDBVersion, type) => {
+  _execSQL = (updateDBVersion, type) => {
     const { execSQL, currentVersion, data, checkVersionCount } = this.props;
     let flag = checkVersionCount && checkVersionCount(currentVersion);
     if (!flag) {
@@ -56,7 +71,7 @@ class ChangeCode extends React.Component{
         message: '当前操作的版本之前还有版本尚未同步，请不要跨版本操作!',
       });
     }
-  };*/
+  };
   _iconClick = () => {
     const { width } = this.state;
     this.setState({
@@ -109,7 +124,7 @@ class ChangeCode extends React.Component{
           </div>
           <div className='pdman-data-tab-content'>
             <Button style={{marginBottom: 10}} key="save" onClick={this._onSave}>导出到文件</Button>
-            {/*<Button
+            <Button
               loading={preSynchronous}
               title='不会更新数据库中的版本号'
               style={{
@@ -119,8 +134,8 @@ class ChangeCode extends React.Component{
               onClick={() => this._execSQL(false, 'preSynchronous')}
             >
               {preSynchronous ? '正在预同步' : '预同步'}
-            </Button>*/}
-            {/*<Button
+            </Button>
+            <Button
               loading={synchronous}
               title='会更新数据库中的版本号'
               style={{
@@ -130,8 +145,8 @@ class ChangeCode extends React.Component{
               onClick={() => this._execSQL(true, 'synchronous')}
             >
               {synchronous ? '正在同步' : '同步'}
-            </Button>*/}
-            {/*<Button
+            </Button>
+            <Button
               loading={flagSynchronous}
               title='更新数据库的版本号，不会执行差异化的SQL'
               style={{
@@ -141,8 +156,8 @@ class ChangeCode extends React.Component{
               onClick={() => this._execSQL(true, 'flagSynchronous')}
             >
               {flagSynchronous ? '正在标记为同步' : '标记为同步'}
-            </Button>*/}
-            {/*<Button
+            </Button>
+            <Button
               loading={again}
               title='不会更新数据库中的版本号'
               style={{
@@ -151,7 +166,7 @@ class ChangeCode extends React.Component{
               }}
               onClick={() => this._execSQL(false, 'again')}
             >
-              {again ? '正在执行' : '再次执行'}</Button>*/}
+              {again ? '正在执行' : '再次执行'}</Button>
             <Editor
               height='300px'
               width={width === '50%' ?
@@ -302,8 +317,8 @@ class DatabaseVersionContext extends React.Component{
         <span>版本号：</span>
         <Input
           disabled={versionReadonly}
-          style={{width: '100%'}}
-          defaultValue={defaultVersion || this.getNewVersion()}
+          style={{width: '500px'}}
+          defaultValue={'V1.0.0' || this.getNewVersion()}
           placeholder='例如：v1.0.0【请勿低于系统默认的数据库版本v0.0.0】'
           onChange={e => this.onChange(e, 'version')}/>
       </div>
@@ -353,6 +368,20 @@ class ReadDB extends React.Component{
     });
   };
   _selectPath = () => {
+    // todo
+    // dialog.showOpenDialog({
+    //   title: '选择SQL存储目录',
+    //   buttonLabel: '确定',
+    //   properties: ['openDirectory'],
+    // }, (files) => {
+    //   if (files && files[0]) {
+    //     this.setState({
+    //       sqlPath: files[0],
+    //     }, () => {
+    //       this._onChange();
+    //     });
+    //   }
+    // });
   };
   render(){
     return (<div>
@@ -374,7 +403,7 @@ class ReadDB extends React.Component{
           </RadioGroup>
         </span>
       </div>
-      {/*<div style={{display: 'flex', padding: 5}}>
+      <div style={{display: 'flex', padding: 5}}>
         <span style={{width: 140, textAlign: 'right'}}>写入数据库类型:</span>
         <span>
           <RadioGroup
@@ -408,7 +437,7 @@ class ReadDB extends React.Component{
           />
           <Button onClick={this._selectPath}>...</Button>
         </span>
-      </div>*/}
+      </div>
     </div>);
   }
 }
@@ -417,6 +446,9 @@ export default class DatabaseVersion extends React.Component{
   constructor(props){
     super(props);
     this.split = process.platform === 'win32' ? '\\' : '/';
+    // todo
+    // this.configPath = app.getPath('userData');
+    this.configPath = '';
     this.historyPath = `${this.configPath}${this.split}${defaultConfig.userPath}`;
     this.state = {
       init: true,
@@ -455,6 +487,30 @@ export default class DatabaseVersion extends React.Component{
     return saveFilePromise(data, this.historyPath);
   };
   _getVersionMessage = () => {
+    getDirListPromise(this.basePathDir).then((res) => {
+      // 从每个版本的文件中获取版本信息
+      const versions = res.filter(r => r.endsWith('.pdman.json'));
+      // 循环读取每个版本文件的信息
+      Promise.all(versions.map((v) => {
+        return new Promise((resolve, reject) => {
+          readFilePromise(`${this.basePathDir}${v}`).then((data) => {
+            resolve({
+              ...data,
+              file: v,
+            });
+          }).catch(() => {
+            reject();
+          });
+        });
+      })).then((result) => {
+        this.setState({
+          versions: result.map(data => _object.pick(data, ['version', 'message', 'changes', 'date', 'modules', 'file']))
+            .sort((a, b) => compareStringVersion(b.version, a.version)),
+        });
+      }).catch(() => {
+        Modal.error({title: '错误', message: '获取版本信息失败', width: 100});
+      });
+    }).catch(() => {});
   };
   _checkBaseVersion = () => {
     const { props } = this;
@@ -466,7 +522,7 @@ export default class DatabaseVersion extends React.Component{
     this.basePath = `${this.basePathDir}${name}-base.pdman.json`;
     const base = fileExist(this.basePath);
     if (!base) {
-      Message.error({title: '当前项目不存在基线版本，请先初始化基线'});
+      // Message.error({title: '当前项目不存在基线版本，请先初始化基线'});
       this.setState({
         init: true,
       });
@@ -583,7 +639,9 @@ export default class DatabaseVersion extends React.Component{
     //const { project } = this.props;
     const configData =  this._getJavaConfig();
     const value = configData.JAVA_HOME;
-    const defaultPath = '';
+    // todo
+    // const defaultPath = ipcRenderer.sendSync('jarPath');
+    const defaultPath ='';
     const jar = configData.DB_CONNECTOR || defaultPath;
     const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
     let modal = null;
@@ -643,12 +701,14 @@ export default class DatabaseVersion extends React.Component{
     const cmd = this._getCMD(updateVersion, onlyUpdateVersion);
     // 获取外层目录
     const { project, dataSource } = this.props;
+    // const temp = path || app.getPath('temp');
+    const temp = path ;
     // 构建文件名
     const proName = this._getProject(project, 'name');
     const name = _object.get(dbData, 'name', 'untitled');
     const fileName = `${proName}-${name}-${version.version}.sql`;
     // 构建最终文件名【项目名-数据库名-版本号】
-    let tempPath = '';
+    let tempPath = `${temp}${this.split}${fileName}`;
     fileExistPromise(tempPath, true, data, '.sql')
       .then(() => {
         if (path) {
@@ -798,12 +858,12 @@ export default class DatabaseVersion extends React.Component{
   _execSQL = (data, version, updateDBVersion, cb, onlyUpdateDBVersion) => {
     const dbData = this._getCurrentDBData();
     if (!dbData) {
-      /*this.setState({
+      this.setState({
         dbVersion: '',
       });
       Modal.error({
         title: '初始化数据库版本表失败',
-        message: '无法获取到数据库信息，请切换尝试数据库'});*/
+        message: '无法获取到数据库信息，请切换尝试数据库'});
       cb && cb();
     } else {
       this._generateSQL(dbData, version, data, updateDBVersion, null, cb, onlyUpdateDBVersion);
@@ -813,10 +873,10 @@ export default class DatabaseVersion extends React.Component{
     if (!status) {
       const dbData = this._getCurrentDBData();
       if (!dbData) {
-       /* Modal.error({
+       Modal.error({
           title: '同步失败',
           message: '无法获取到数据库信息，' +
-            '请切换尝试数据库'});*/
+            '请切换尝试数据库'});
       } else {
         let flag = false;
         if (!initVersion) {
@@ -943,14 +1003,14 @@ export default class DatabaseVersion extends React.Component{
   _dropVersionTable = () => {
     const dbData = this._getCurrentDBData();
     if (!dbData) {
-      /*this.setState({
+      this.setState({
         dbVersion: '',
       });
       Modal.error({
         title: '初始化数据库版本表失败',
-        message: '无法获取到数据库信息，请切换尝试数据库'});*/
+        message: '无法获取到数据库信息，请切换尝试数据库'});
     } else {
-     /* this._connectJDBC({
+      this._connectJDBC({
         ...dbData,
         properties: {
           ...(dbData.properties || {}),
@@ -964,7 +1024,7 @@ export default class DatabaseVersion extends React.Component{
           Message.success({title: '初始化数据表成功'});
           this._getDBVersion();
         }
-      }, 'rebaseline');*/
+      }, 'rebaseline');
     }
   };
   _rebuild = () => {
@@ -1356,7 +1416,7 @@ export default class DatabaseVersion extends React.Component{
     return tempResult;
   };
   _getDBVersion = () => {
-    /*// 模拟返回1.0.1
+    // 模拟返回1.0.1
     this.setState({
       versionData: true,
     });
@@ -1388,7 +1448,7 @@ export default class DatabaseVersion extends React.Component{
           dbVersion: result.status !== 'SUCCESS' ? '' : result.body,
         });
       }, 'dbversion');
-    }*/
+    }
   };
   _getCurrentDBData = () => {
     const { dbs } = this.state;
@@ -1671,12 +1731,11 @@ export default class DatabaseVersion extends React.Component{
             <span
               style={{textAlign: 'center', color: '#2492E6'}}
             >
-              当前版本暂时关闭数据库连接功能，大家可以手动复制SQL语句手动执行
-              {/*{currentDB ? `当前使用的数据库：【${currentDB}】,
+              {currentDB ? `当前使用的数据库：【${currentDB}】,
               当前数据库版本：【${dbVersion === 'v0.0.0' ?
                 `数据库默认初始版本:${dbVersion}` : dbVersion ||
                 '当前数据库版本暂未生成，请先初始化基线或者同步当前版本！'}】`
-                : '当前未选择数据库，如需同步到数据库请先配置数据库!'}*/}
+                : '当前未选择数据库，如需同步到数据库请先配置数据库!'}
             </span>
             <div style={{display: 'flex', justifyContent: 'center',  flexGrow: 1, minHeight: 65}}>
               <div className='pdman-db-version-list-item'>
@@ -1733,12 +1792,12 @@ export default class DatabaseVersion extends React.Component{
                       <div className='pdman-db-version-list-item-tag-arrow'>{}
                       </div>
                       <div
-                        /*onClick={() => this._readDb(
+                        onClick={() => this._readDb(
                           compareStringVersion(v.version, dbVersion) <= 0,
                           v,
                           versions[index + 1] || v, v.changes,
                           index === (versions.length - 1), true)}
-                        title={compareStringVersion(v.version, dbVersion) <= 0 ? '' : '点击将进行同步'}*/
+                        title={compareStringVersion(v.version, dbVersion) <= 0 ? '' : '点击将进行同步'}
                         className={`pdman-db-version-list-item-tag-${compareStringVersion(v.version, dbVersion) <= 0 ?
                           'success' : 'error'}`}
                       >
