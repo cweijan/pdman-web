@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import express = require('express');
 import bodyParser = require('body-parser');/*post方法*/
-import { SaveRequest } from "./request/saveRequest";
+import { SaveDTO } from "./request/requestDTO";
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -13,10 +13,31 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 app.post('/save', function (req, res, next) {
-  const saveRequest:SaveRequest = req.body
+  const saveRequest:SaveDTO = req.body
   fs.writeFileSync(saveRequest.path, saveRequest.content, 'utf8')
   res.json(req.body);
 });
+
+app.post('/db/connect', function (req, res, next) {
+  res.json(req.body);
+});
+
+app.post('/db/execute', function (req, res, next) {
+  res.json(req.body);
+});
+
+app.post('/db/reverse/parse', function (req, res, next) {
+  res.json(req.body);
+});
+
+app.post('/db/versions', function (req, res, next) {
+  res.json(req.body);
+});
+
+app.post('/db/version/new', function (req, res, next) {
+  res.json(req.body);
+});
+
 app.listen(8000, function () {
   console.log('App is listening on port 8000!');
 });
