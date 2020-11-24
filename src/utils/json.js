@@ -52,6 +52,12 @@ function writeFile(file, dataBuffer) {
 // 同步保存json文件
 function saveFileSync(jsonObj, filePath) {
 }
+
+// 异步保存json文件返回Promise
+function storeJson(jsonObj, filePath) {
+  localStorage.setItem(filePath,JSON.stringify(jsonObj))
+}
+
 // 异步保存json文件返回Promise
 function saveFilePromise(jsonObj, filePath) {
 }
@@ -90,6 +96,7 @@ export {
   readFileCall,
   writeFile,
   saveFileSync,
+  storeJson,
   saveFilePromise,
   saveFileCall,
   getFilesByDirPromise,

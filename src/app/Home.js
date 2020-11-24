@@ -4,7 +4,7 @@ import ReactDom from 'react-dom';
 import defaultConfig from '../profile';
 import { Icon, Message, Modal } from '../components';
 import demo from '../demo';
-import { fileExist, fileExistPromise, readFile, readFilePromise, saveFilePromise, writeFile } from '../utils/json';
+import { fileExist, fileExistPromise, readFile, storeJson,readFilePromise, saveFilePromise, writeFile } from '../utils/json';
 import { getCurrentVersion, getVersion } from '../utils/update';
 import CreatePro from './CreatePro';
 import defaultData from './defaultData';
@@ -170,39 +170,40 @@ export default class Home extends React.Component{
   _readData = (path, callBack) => {
     if (fileExist(path)) {
       readFilePromise(path).then((res) => {
-        // 过滤已经存在的历史记录
-        const project = path.split('.pdman.json')[0];
-        const temp = [...this.state.histories].filter(his => his !== project);
-        // 把当前的项目插入到第一条数据
-        temp.unshift(project);
-        callBack && callBack();
-        this.setState({
-          histories: temp,
-          flag: false,
-          dataSource: {
-            ...res,
-            dataTypeDomains: {
-              ...(res.dataTypeDomains || {}),
-              database: this._checkDatabase(_object.get(res, 'dataTypeDomains.database', [])),
-            },
-          },
-          changeDataType: 'reset',
-          project: project,
-          error: false,
-          closeProject: false,
-          projectDemo: '',
-        });
-        // 将其存储到历史记录中
-        saveFilePromise({
-          histories: temp,
-        }, this.historyPath);
+        this.readData(path, res, callBack)
       }).catch((e) => {
-        alert('打开项目失败！', JSON.stringify(e));
       });
     } else {
-      alert('打开项目失败！', '该项目已经不存在了！');
       this._delete(null, path);
     }
+  };
+  readData = (path, res, callBack) => {
+    // 过滤已经存在的历史记录
+    const project = path.split('.pdman.json')[0];
+    const temp = [...this.state.histories].filter(his => his !== project);
+    // 把当前的项目插入到第一条数据
+    temp.unshift(project);
+    callBack && callBack();
+    this.setState({
+      histories: temp,
+      flag: false,
+      dataSource: {
+        ...res,
+        dataTypeDomains: {
+          ...(res.dataTypeDomains || {}),
+          database: this._checkDatabase(_object.get(res, 'dataTypeDomains.database', [])),
+        },
+      },
+      changeDataType: 'reset',
+      project: project,
+      error: false,
+      closeProject: false,
+      projectDemo: '',
+    });
+    // 将其存储到历史记录中
+    storeJson({
+      histories: temp,
+    }, this.historyPath);
   };
   _openProject = (path, callBack, type) => {
     // 打开项目
@@ -229,17 +230,19 @@ export default class Home extends React.Component{
       } else {
         extensions.push('pdman.json');
       }
-      // dialog.showOpenDialog({
-      //   title: 'Open Project',
-      //   properties:['openFile'],
-      //   filters: [
-      //     { name: 'PDMan', extensions: extensions},
-      //   ],
-      // }, (file) => {
-      //   if (file) {
-      //     this._readData(file[0], callBack);
-      //   }
-      // });
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.oninput = (e) => {
+        const file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (fileContent) => {
+          this.readData(file.name, JSON.parse(fileContent.target.result), callBack)
+        }
+
+      }
+      input.click();
     }
   };
   _saveProject = (path, data, cb, dataHistory, selectCb) => {
@@ -254,17 +257,18 @@ export default class Home extends React.Component{
           message: '保存失败，请重试！',
         });
       } else {
-        fileExistPromise(path, true, tempData).then(() => {
-          this.setState({
-            dataSource: tempData,
-            changeDataType: 'update',
-            dataHistory,
-          }, () => {
-            cb && cb();
-          });
-        }).catch(() => {
-          Message.error({title: '保存失败'});
-        });
+        // todo 增加打开功能后这里报错了
+        // fileExistPromise(path, true, tempData).then(() => {
+        //   this.setState({
+        //     dataSource: tempData,
+        //     changeDataType: 'update',
+        //     dataHistory,
+        //   }, () => {
+        //     cb && cb();
+        //   });
+        // }).catch(() => {
+        //   Message.error({title: '保存失败'});
+        // });
       }
     } else {
       const extensions = [];
