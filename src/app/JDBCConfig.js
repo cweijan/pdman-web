@@ -1,3 +1,4 @@
+import { post } from '@/service/ajax';
 import _object from 'lodash/object';
 import React from 'react';
 import { Button, Icon, Input, Modal, openModal, RadioGroup, Select } from '../components';
@@ -10,8 +11,8 @@ const { execFile } = require('child_process');
 
 const Radio = RadioGroup.Radio;
 
-export default class JDBCConfig extends React.Component{
-  constructor(props){
+export default class JDBCConfig extends React.Component {
+  constructor(props) {
     super(props);
     this.split = process.platform === 'win32' ? '\\' : '/';
     const data = this._initData(props.data || []);
@@ -21,19 +22,21 @@ export default class JDBCConfig extends React.Component{
       loading: false,
     };
     this.url = {
-      mysql : {
-        url: 'jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC',
+      mysql: {
+        url: '127.0.0.1',
+        username:'root',
+        port: 3306,
         driverClass: 'com.mysql.jdbc.Driver',
       },
-      oracle : {
+      oracle: {
         url: 'jdbc:oracle:thin:@IP地址:端口号/数据库名',
         driverClass: 'oracle.jdbc.driver.OracleDriver',
       },
-      sqlserver : {
+      sqlserver: {
         url: 'jdbc:sqlserver://IP地址:端口号;DatabaseName=数据库名',
         driverClass: 'com.microsoft.sqlserver.jdbc.SQLServerDriver',
       },
-      postgresql : {
+      postgresql: {
         url: 'jdbc:postgresql://IP地址:端口号/数据库名',
         driverClass: 'org.postgresql.Driver',
       },
@@ -99,14 +102,16 @@ export default class JDBCConfig extends React.Component{
     const dbName = (database.type || 'mysql').toLocaleLowerCase();
     const defaultDBData = this.url[dbName] || {};
     const newField = {
-      name: tempFields.length==0?'dev':'',
+      name: tempFields.length == 0 ? 'dev' : '',
       key: key,
+      type: dbName.toUpperCase(),
       defaultDB: false,
       properties: {
         'driver_class_name': defaultDBData.driverClass,
         url: defaultDBData.url,
         password: '',
-        username: 'root',
+        username: defaultDBData.username,
+        port: defaultDBData.port,
       },
     };
     if (selectedTrsIndex.length > 0) {
@@ -199,7 +204,7 @@ export default class JDBCConfig extends React.Component{
     execFile(java, ['-version'],
       (error, stdout, stderr) => {
         if (error) {
-          Modal.error({title: '获取JDK版本失败！', message: error.message || error});
+          Modal.error({ title: '获取JDK版本失败！', message: error.message || error });
           cb && cb(error);
         } else {
           const versionNumber = (stderr.match(/"(\S+)"/g)[0] || '');
@@ -218,78 +223,33 @@ export default class JDBCConfig extends React.Component{
   };
   _connectJDBC = (selectJDBC) => {
     const { properties = {} } = (selectJDBC || {});
-    if (Object.keys(properties).some((p) => {
-      return p !== 'customer_driver' && !properties[p];
-    })) {
-      Modal.error({title: '连接失败', message: '所有带*为必填项，不能为空!'});
-      return;
-    }
     this.setState({
       loading: true,
     });
-    const { getJavaConfig } = this.props;
-    const configData = (getJavaConfig && getJavaConfig()) || {};
-    const value = configData.JAVA_HOME;
-    // const defaultPath = ipcRenderer.sendSync('jarPath');
-    const defaultPath = "读取jar包";
-    const jar = configData.DB_CONNECTOR || defaultPath;
-    const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
-    // 先判断当前的JAVA版本
-    this._getJAVAVersion(tempValue, (versionError, flag, versionNumber) => {
-      if (!versionError) {
-        if (!flag) {
-          Modal.error({
-            title: '当前系统安装的JDK版本过低！',
-            message: `当前版本：${versionNumber}，请安装JDK1.8及以上版本！`,
-          });
-          this.setState({
-            loading: false,
-          });
-        } else {
-          const customerDriver = _object.get(selectJDBC, 'properties.customer_driver', '');
-          const commend = [
-            '-Dfile.encoding=utf-8', '-jar', jar, 'ping',
-            ...this._getParam({
-              ...selectJDBC,
-              properties: {
-                ...(selectJDBC.properties || {}),
-              },
-            }),
-          ];
-          if (customerDriver) {
-            commend.unshift(`-Xbootclasspath/a:${customerDriver}`);
-          }
-          execFile(tempValue, commend,
-            (error, stdout, stderr) => {
-              const result = (stdout || stderr);
-              this.setState({
-                loading: false,
-              });
-              let tempResult = '';
-              try {
-                tempResult = JSON.parse(result);
-              } catch (e) {
-                tempResult = result;
-              }
-              if (tempResult.status !== 'SUCCESS') {
-                Modal.error({title: '连接失败', message: tempResult.body || tempResult});
-              } else {
-                Modal.success({title: '连接成功', message: `${tempResult.body}!数据库连接设置配置正确`});
-              }
-            });
-        }
-      }
+    post('/api/db/connect', properties).then(res=>{
+      // todo 逻辑处理
+      console.log(res)
+      // if (tempResult.status !== 'SUCCESS') {
+      //   Modal.error({title: '连接失败', message: tempResult.body || tempResult});
+      // } else {
+      //   Modal.success({title: '连接成功', message: `${tempResult.body}!数据库连接设置配置正确`});
+      // }
+      this.setState({
+        loading: false,
+      });
     });
+
+   
   };
   _defaultDBChange = (value) => {
     const { data } = this.state;
     const { onChange } = this.props;
     this.setState({
       data: data.map((field) => {
-      if (field.key === value) {
-        return {...field, defaultDB: true};
-      }
-      return {...field, defaultDB: false};
+        if (field.key === value) {
+          return { ...field, defaultDB: true };
+        }
+        return { ...field, defaultDB: false };
       }),
     }, () => {
       onChange && onChange(this.state.data.map(field => _object.omit(field, ['key'])));
@@ -307,33 +267,33 @@ export default class JDBCConfig extends React.Component{
     };
     const { mysql, oracle, sqlserver, postgresql } = this.url;
     modal = openModal(<div>
-      <div style={{border: 'solid 1px green', padding: 5, margin: 5}}>
-        <div style={{color: '#000000'}}>MYSQL配置示例：↓</div>
-        <div style={{color: 'green'}}>driver_class：
-          <span style={{color: 'red', userSelect: 'text'}}>{mysql.driverClass}</span>
+      <div style={{ border: 'solid 1px green', padding: 5, margin: 5 }}>
+        <div style={{ color: '#000000' }}>MYSQL配置示例：↓</div>
+        <div style={{ color: 'green' }}>driver_class：
+          <span style={{ color: 'red', userSelect: 'text' }}>{mysql.driverClass}</span>
         </div>
-        <div style={{color: 'green'}}>url：<span style={{color: 'red', userSelect: 'text'}}>{mysql.url}</span></div>
+        <div style={{ color: 'green' }}>url：<span style={{ color: 'red', userSelect: 'text' }}>{mysql.url}</span></div>
       </div>
-      <div style={{border: 'solid 1px green', padding: 5, margin: 5}}>
-        <div style={{color: '#000000'}}>ORACLE配置示例：↓</div>
-        <div style={{color: 'green'}}>driver_class：
-          <span style={{color: 'red', userSelect: 'text'}}>{oracle.driverClass}</span>
+      <div style={{ border: 'solid 1px green', padding: 5, margin: 5 }}>
+        <div style={{ color: '#000000' }}>ORACLE配置示例：↓</div>
+        <div style={{ color: 'green' }}>driver_class：
+          <span style={{ color: 'red', userSelect: 'text' }}>{oracle.driverClass}</span>
         </div>
-        <div style={{color: 'green'}}>url：<span style={{color: 'red', userSelect: 'text'}}>{oracle.url}</span></div>
+        <div style={{ color: 'green' }}>url：<span style={{ color: 'red', userSelect: 'text' }}>{oracle.url}</span></div>
       </div>
-      <div style={{border: 'solid 1px green', padding: 5, margin: 5}}>
-        <div style={{color: '#000000'}}>SQLServer配置示例：↓</div>
-        <div style={{color: 'green'}}>driver_class：
-          <span style={{color: 'red', userSelect: 'text'}}>{sqlserver.driverClass}</span>
+      <div style={{ border: 'solid 1px green', padding: 5, margin: 5 }}>
+        <div style={{ color: '#000000' }}>SQLServer配置示例：↓</div>
+        <div style={{ color: 'green' }}>driver_class：
+          <span style={{ color: 'red', userSelect: 'text' }}>{sqlserver.driverClass}</span>
         </div>
-        <div style={{color: 'green'}}>url：<span style={{color: 'red', userSelect: 'text'}}>{sqlserver.url}</span></div>
+        <div style={{ color: 'green' }}>url：<span style={{ color: 'red', userSelect: 'text' }}>{sqlserver.url}</span></div>
       </div>
-      <div style={{border: 'solid 1px green', padding: 5, margin: 5}}>
-        <div style={{color: '#000000'}}>PostgreSQL配置示例：↓</div>
-        <div style={{color: 'green'}}>driver_class：
-          <span style={{color: 'red', userSelect: 'text'}}>{postgresql.driverClass}</span>
+      <div style={{ border: 'solid 1px green', padding: 5, margin: 5 }}>
+        <div style={{ color: '#000000' }}>PostgreSQL配置示例：↓</div>
+        <div style={{ color: 'green' }}>driver_class：
+          <span style={{ color: 'red', userSelect: 'text' }}>{postgresql.driverClass}</span>
         </div>
-        <div style={{color: 'green'}}>url：<span style={{color: 'red', userSelect: 'text'}}>{postgresql.url}</span></div>
+        <div style={{ color: 'green' }}>url：<span style={{ color: 'red', userSelect: 'text' }}>{postgresql.url}</span></div>
       </div>
     </div>, {
       title: 'JDBC配置示例',
@@ -355,7 +315,7 @@ export default class JDBCConfig extends React.Component{
     //   }
     // });
   };
-  render(){
+  render() {
     const { dataSource } = this.props;
     const { selectedTrs, data } = this.state;
     // properties
@@ -398,16 +358,16 @@ export default class JDBCConfig extends React.Component{
                   onChange={this._defaultDBChange}
                 >
                   <Radio
-                    wrapperStyle={{width: 28}}
+                    wrapperStyle={{ width: 28 }}
                     value={d.key}
-                    radioStyle={{width: '98%'}}
-                    //onClick={e => this._trClick(e, d.key)}
+                    radioStyle={{ width: '98%' }}
+                  //onClick={e => this._trClick(e, d.key)}
                   >
                     <span
                       className='pdman-jdbc-config-left-db-list-item-index'
                     >{index + 1}</span>
-                    <Input onChange={e => this._onDBChange(d.key, e, 'name')} value={d.name}/>
-                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type} style={{width:'200px'}}>
+                    <Input onChange={e => this._onDBChange(d.key, e, 'name')} value={d.name} />
+                    <Select onChange={e => this._onDBChange(d.key, e, 'type')} defaultValue={d.type} style={{ width: '200px' }}>
                       {
                         database
                           .map(db => (<option key={db.code} value={db.code}>{db.code}</option>))
@@ -420,63 +380,37 @@ export default class JDBCConfig extends React.Component{
           }
         </div>
       </div>
-      <div className='pdman-jdbc-config-right' style={{display: selectedTrs.length > 0 ? '' : 'none'}}>
+      <div className='pdman-jdbc-config-right' style={{ display: selectedTrs.length > 0 ? '' : 'none' }}>
         <div className='pdman-jdbc-config-right-com'>
           <div className='pdman-jdbc-config-right-com-label'>
-            <span title='目前mysql,sqlserver,oracle,postgresql无需配置'>自定义驱动:</span>
-          </div>
-          <div className='pdman-jdbc-config-right-com-input'>
-            <input
-              style={{width: '80%'}}
-              onChange={e => this._onChange('customer_driver', e)}
-              value={_object.get(selectJDBC, 'properties.customer_driver', '')}
-              placeholder='目前mysql,sqlserver,oracle,postgresql无需配置'
-            />
-            <Button
-              style={{width: '20%', height: '27px'}}
-              onClick={this._selectJar}
-              title='点击选择jar包(目前mysql,sqlserver,oracle,postgresql无需配置)'
-            >
-              ...
-            </Button>
-          </div>
-        </div>
-        <div className='pdman-jdbc-config-right-com'>
-          <div className='pdman-jdbc-config-right-com-label'>
-            <span>
-              <span
-                onClick={this._showHelp}
-                title='点击查看帮助'
-                style={{marginRight: 10, color: 'green', cursor: 'pointer'}}
-              >
-                <Icon type='fa-exclamation-circle'/>
-              </span>
-              <span className='pdman-jdbc-config-right-com-label-require'>driver-class:</span>
-            </span>
-          </div>
-          <div className='pdman-jdbc-config-right-com-input'>
-            <input
-              onChange={e => this._onChange('driver_class_name', e)}
-              value={_object.get(selectJDBC, 'properties.driver_class_name', '')}
-            />
-          </div>
-        </div>
-        <div className='pdman-jdbc-config-right-com'>
-          <div className='pdman-jdbc-config-right-com-label'>
-            <span>
-              <span
-                onClick={this._showHelp}
-                title='点击查看帮助'
-                style={{marginRight: 10, color: 'green', cursor: 'pointer'}}
-              >
-                <Icon type='fa-exclamation-circle'/>
-              </span>
-              <span className='pdman-jdbc-config-right-com-label-require'>url:</span></span>
+            <span className='pdman-jdbc-config-right-com-label-require'>url:</span>
           </div>
           <div className='pdman-jdbc-config-right-com-input'>
             <input
               onChange={e => this._onChange('url', e)}
               value={_object.get(selectJDBC, 'properties.url', '')}
+            />
+          </div>
+        </div>
+        <div className='pdman-jdbc-config-right-com'>
+          <div className='pdman-jdbc-config-right-com-label'>
+            <span className='pdman-jdbc-config-right-com-label-require'>port:</span>
+          </div>
+          <div className='pdman-jdbc-config-right-com-input'>
+            <input
+              onChange={e => this._onChange('port', e)}
+              value={_object.get(selectJDBC, 'properties.port', '')}
+            />
+          </div>
+        </div>
+        <div className='pdman-jdbc-config-right-com'>
+          <div className='pdman-jdbc-config-right-com-label'>
+            <span className='pdman-jdbc-config-right-com-label-require'>database:</span>
+          </div>
+          <div className='pdman-jdbc-config-right-com-input'>
+            <input
+              onChange={e => this._onChange('database', e)}
+              value={_object.get(selectJDBC, 'properties.database', '')}
             />
           </div>
         </div>

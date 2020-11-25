@@ -477,8 +477,8 @@ export default class DatabaseVersion extends React.Component {
       });
     });
   }
-  _getConfigData = () => {
-    histroy.readH();
+  _getConfigData = async () => {
+    return histroy.readH();
   };
   _saveConfigData = (data) => {
     histroy.writeH(data)

@@ -1,3 +1,4 @@
+import { download } from '@/utils/download';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -520,25 +521,7 @@ export default class App extends React.Component {
         if (value.length === 0) {
           Modal.error({title: '导出失败', message: '请选择导出的内容'})
         } else {
-          // TODO
-          // dialog.showSaveDialog({
-          //   title: '保存SQL文件',
-          //   filters: [
-          //     { name: 'PDMan', extensions: ['sql'] },
-          //   ],
-          // }, (file) => {
-          //   if (file) {
-          //     const data = modal.com.getData();
-          //     writeFile(file, data).then(() => {
-          //       //btn.setLoading(false);
-          //       Message.success({title: `SQL文件导出成功！导出路径：[${file}]`});
-          //       modal && modal.close();
-          //     }).catch(() => {
-          //       Message.success({title: 'SQL文件导出失败！'});
-          //       //btn.setLoading(false);
-          //     });
-          //   }
-          // });
+          download(`export.sql`,modal.com.getData())
         }
       };
       const onCancel = () => {

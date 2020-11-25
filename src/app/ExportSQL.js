@@ -163,10 +163,10 @@ export default class ExportSQL extends React.Component {
       },
     });
   };
-  _getConfigData = () => {
+  _getConfigData = async () => {
     return history.readH()
   };
-  _saveConfigData = (data) => {
+  _saveConfigData = async (data) => {
     return history.writeH(data)
   };
   _getProject = (project, type) => {
