@@ -7,7 +7,7 @@ import demo from '../demo';
 import { fileExist, fileExistPromise, readFile, storeJson,readFilePromise, saveFilePromise, writeFile } from '../utils/json';
 import { getCurrentVersion, getVersion } from '../utils/update';
 import CreatePro from './CreatePro';
-import defaultData from './defaultData';
+import defaultData from './defaultData.json';
 import Header from './Header';
 import App from './index';
 import './style/home.less';

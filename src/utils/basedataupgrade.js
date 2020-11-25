@@ -1,5 +1,5 @@
 import _object from 'lodash/object';
-import defaultData from '../app/defaultData';
+import defaultData from '../app/defaultData.json';
 
 const upgradeVersionTo2 = (dataSource, cb) => {
   // v2.0.0 bate 当前版本新增了多个模板信息，之前版本的template已经弃用

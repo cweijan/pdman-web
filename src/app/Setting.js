@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import _object from 'lodash/object';
 import * as Com from '../components';
-import defaultData from './defaultData';
+import defaultData from './defaultData.json';
 import JavaHomeConfig from './JavaHomeConfig';
 import SQLConfig from './SQLConfig';
 import WORDConfig from './WORDConfig';

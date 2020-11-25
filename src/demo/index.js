@@ -1,4 +1,4 @@
-import standard from './student.pdman';
+import standard from './student.pdman.json';
 
 const demo = {
   standard,

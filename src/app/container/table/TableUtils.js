@@ -1,6 +1,6 @@
 import React from 'react';
 import _object from 'lodash/object';
-import defaultData from '../../defaultData';
+import defaultData from '../../defaultData.json';
 import { openModal, Modal } from '../../../components';
 
 import { Input } from 'antd';

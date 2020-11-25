@@ -1,7 +1,7 @@
 import React from 'react';
 import _object from 'lodash/object';
 import { Code } from '../../../components';
-import defaultData from '../../defaultData';
+import defaultData from '../../defaultData.json';
 
 import './style/index.less';
 
