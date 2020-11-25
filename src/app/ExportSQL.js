@@ -20,6 +20,7 @@ import { fileExist, fileExistPromise, readFilePromise, saveFilePromise } from '.
 import defaultConfig from '../profile';
 import { addOnResize } from '../../src/utils/listener';
 import history from '@/service/history';
+import { post } from '@/service/ajax';
 
 const { Radio } = RadioGroup;
 const { execFile } = require('child_process');
@@ -208,27 +209,6 @@ export default class ExportSQL extends React.Component {
     }
     return tempResult;
   };
-  _connectJDBC = (selectJDBC, cb, cmd) => {
-    const configData = this._getJavaConfig();
-    const value = configData.JAVA_HOME;
-    // const defaultPath = ipcRenderer.sendSync('jarPath');
-    const defaultPath = '';
-    const jar = configData.DB_CONNECTOR || defaultPath;
-    const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
-    const customerDriver = _object.get(selectJDBC, 'properties.customer_driver', '');
-    const commend = [
-      '-Dfile.encoding=utf-8',
-      '-jar', jar, cmd,
-      ...this._getParam(selectJDBC),
-    ];
-    if (customerDriver) {
-      commend.unshift(`-Xbootclasspath/a:${customerDriver}`);
-    }
-    execFile(tempValue, commend,
-      (error, stdout, stderr) => {
-        cb && cb(this._parseResult(stderr, stdout));
-      });
-  };
   _getProperties = (obj) => {
     if (typeof obj === 'string') {
       return obj;
@@ -243,125 +223,105 @@ export default class ExportSQL extends React.Component {
     });
     const { project, dataSource } = this.props;
     const dbData = _object.get(dataSource, 'profile.dbs', []).filter(d => d.defaultDB)[0];
-    // todo
-    // const temp = app.getPath('temp');
-    const temp = '';
-    const proName = this._getProject(project, 'name');
     if (dbData) {
-      const name = _object.get(dbData, 'name', 'untitled');
-      const fileName = `${proName}-${name}-exec-temp.sql`;
-      let tempPath = `${temp}${this.split}${fileName}`;
-      fileExistPromise(tempPath, true, this.state.data, '.sql')
-        .then(async () => {
-          if (dbData) {
-            this._connectJDBC({
-              ...dbData,
-              properties: {
-                ...(dbData.properties || {}),
-                sql: tempPath,
-              },
-            }, async (result) => {
-              this.setState({
-                loading: false,
-              });
-              if (result.status === 'SUCCESS') {
-                Modal.success({
-                  title: '执行成功',
-                  message: <div
-                    onKeyDown={e => this._onKeyDown(e)}
-                  >
-                    <div
-                      style={{
-                        height: '30px',
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Input
-                        onChange={this._searchValueChange}
-                        wrapperStyle={{ width: 'auto' }}
-                      />
-                      <Icon
-                        type='fa-search'
-                        style={{ marginLeft: 10, cursor: 'pointer' }}
-                        onClick={this._search}
-                      />
-                      <span
-                        ref={instance => this.countDom = instance}
-                        style={{ marginLeft: 10, cursor: 'pointer' }}
-                      >
-                        0/0
-                      </span>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
-                    </div>
-                    <Code
-                      ref={(instance) => {
-                        if (instance) {
-                          this.code = instance.dom;
-                          this.tempHtml = this.code.innerHTML;
-                        }
-                      }}
-                      style={{ height: 400 }}
-                      data={this._getProperties(result.body || result)}
-                    />
-                  </div>
-                });
-                if (await fileExist(tempPath)) {
-                  fs.unlinkSync(tempPath);
-                }
-              } else {
-                Modal.error({
-                  title: '执行失败',
-                  message: <div
-                    onKeyDown={e => this._onKeyDown(e)}
-                  >
-                    <div
-                      style={{
-                        height: '30px',
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Input
-                        onChange={this._searchValueChange}
-                        wrapperStyle={{ width: 'auto' }}
-                      />
-                      <Icon
-                        type='fa-search'
-                        style={{ marginLeft: 10, cursor: 'pointer' }}
-                        onClick={this._search}
-                      />
-                      <span
-                        ref={instance => this.countDom = instance}
-                        style={{ marginLeft: 10, cursor: 'pointer' }}
-                      >
-                        0/0
-                      </span>
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
-                      <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
-                    </div>
-                    <Code
-                      ref={(instance) => {
-                        if (instance) {
-                          this.code = instance.dom;
-                          this.tempHtml = this.code.innerHTML;
-                        }
-                      }}
-                      style={{ height: 400 }}
-                      data={this._getProperties(result.body || result)}
-                    />
-                  </div>
-                  ,
-                });
-              }
-            }, 'sqlexec');
-          } else if (await fileExist(tempPath)) {
+      post("/api/db/execute", { ...dbData.properties, sql: escape(this.state.data) }).then(async result=>{
+        this.setState({
+          loading: false,
+        });
+        if (result.success) {
+          Modal.success({
+            title: '执行成功',
+            message: <div
+              onKeyDown={e => this._onKeyDown(e)}
+            >
+              <div
+                style={{
+                  height: '30px',
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}
+              >
+                <Input
+                  onChange={this._searchValueChange}
+                  wrapperStyle={{ width: 'auto' }}
+                />
+                <Icon
+                  type='fa-search'
+                  style={{ marginLeft: 10, cursor: 'pointer' }}
+                  onClick={this._search}
+                />
+                <span
+                  ref={instance => this.countDom = instance}
+                  style={{ marginLeft: 10, cursor: 'pointer' }}
+                >
+                  0/0
+                </span>
+                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
+                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
+              </div>
+              <Code
+                ref={(instance) => {
+                  if (instance) {
+                    this.code = instance.dom;
+                    this.tempHtml = this.code.innerHTML;
+                  }
+                }}
+                style={{ height: 400 }}
+                data={this._getProperties(result.body || result)}
+              />
+            </div>
+          });
+          if (await fileExist(tempPath)) {
             fs.unlinkSync(tempPath);
           }
-        });
+        } else {
+          Modal.error({
+            title: '执行失败',
+            message: <div
+              onKeyDown={e => this._onKeyDown(e)}
+            >
+              <div
+                style={{
+                  height: '30px',
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}
+              >
+                <Input
+                  onChange={this._searchValueChange}
+                  wrapperStyle={{ width: 'auto' }}
+                />
+                <Icon
+                  type='fa-search'
+                  style={{ marginLeft: 10, cursor: 'pointer' }}
+                  onClick={this._search}
+                />
+                <span
+                  ref={instance => this.countDom = instance}
+                  style={{ marginLeft: 10, cursor: 'pointer' }}
+                >
+                  0/0
+                </span>
+                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
+                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
+              </div>
+              <Code
+                ref={(instance) => {
+                  if (instance) {
+                    this.code = instance.dom;
+                    this.tempHtml = this.code.innerHTML;
+                  }
+                }}
+                style={{ height: 400 }}
+                data={this._getProperties(result.body || result)}
+              />
+            </div>
+            ,
+          });
+        }
+      })
     } else {
       this.setState({
         loading: false,
