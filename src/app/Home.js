@@ -85,8 +85,8 @@ export default class Home extends React.Component {
     const tempArray = tempItem.split('/');
     return tempArray[tempArray.length - 1];
   };
-  _onOk = async (path) => {
-    path = `${path}.pdman.json`
+  _onOk = async (basePath) => {
+    const path = `${basePath}.pdman.json`
 
     if (await fileExist(path)) {
       alert('创建项目失败, 该项目已经存在了!');
@@ -112,7 +112,7 @@ export default class Home extends React.Component {
         this.setState({
           dataSource: res,
           flag: false,
-          project: this.projectName,
+          project: basePath,
           closeProject: false,
           changeDataType: 'reset',
           error: false,
