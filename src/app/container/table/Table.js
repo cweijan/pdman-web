@@ -5,7 +5,6 @@ import * as Com from '../../../components';
 import TableRow from './TableRow';
 import { uuid } from '../../../utils/uuid';
 import { moveArrayPositionByFuc } from '../../../utils/array';
-import DataTypeHelp from '../datatype/help';
 import clipboard  from '../../../utils/clipboard';
 
 const { Modal, openMask } = Com;
@@ -181,9 +180,6 @@ export default class Table extends React.Component {
         return header;
       }),
     });
-  };
-  _showCreateType = () => {
-    openMask(<DataTypeHelp />);
   };
   _relationNoShowClick = (e, key, code, value) => {
     if (key) {
@@ -397,12 +393,6 @@ export default class Table extends React.Component {
                               title='是否在关系图中显示'
                             />}
                         </div>
-                        <Com.Icon
-                          title='创建新的数据类型'
-                          onClick={this._showCreateType}
-                          type='fa-question-circle-o'
-                          style={{ display: column.code === 'type' ? '' : 'none', color: 'green' }}
-                        />
                         <Com.Icon
                           onClick={() => this._columnClick('right', index)}
                           type='arrowright'

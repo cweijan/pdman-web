@@ -34,13 +34,11 @@
     "prop-types": "^15.6.1",
     "react": "^16.14.0",
     "react-ace": "^6.1.1",
-    "react-app-polyfill": "^1.0.6",
-    "react-dev-utils": "^10.2.1",
     "react-dom": "^16.14.0"
   },
   "scripts": {
     "dev": "webpack serve --progress",
-    "build": "webpack -p --progress"
+    "build": "webpack --progress --mode=production"
   },
   "babel": {
     "presets": [

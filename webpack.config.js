@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const isProd = process.argv.indexOf('-p') >= 0;
+const isProd = process.argv.indexOf('--mode=production') >= 0;
 
 process.env.NODE_ENV = isProd ? "production" : "development";
 
@@ -18,7 +18,7 @@ module.exports = {
     },
     entry: './src/index.js',
     output: {
-        filename: 'js/[name].bundle.[hash:8].js',
+        filename: 'public/js/[name].bundle.[hash:8].js',
         path: path.resolve(__dirname, './build')
     },
     module: {
@@ -53,7 +53,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
         new HtmlWebpackPlugin({ inject: true, template: './public/index.html', filename: 'index.html' }),
-        new CopyWebpackPlugin({ patterns: ['./public'] }),
+        new CopyWebpackPlugin({ patterns: [{from:'./public',to:'public'}] }),
         new MiniCssExtractPlugin()
     ],
     watch: !isProd,
