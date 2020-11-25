@@ -5,9 +5,8 @@ import * as serviceWorker from './serviceWorker';
 import Loading from './app/Loading';
 
 ReactDOM.render(
-  <React.StrictMode>
     <Loading />
-  </React.StrictMode>,
+  ,
   document.getElementById('root')
 );
 

@@ -252,7 +252,7 @@ export default class ExportSQL extends React.Component {
       const fileName = `${proName}-${name}-exec-temp.sql`;
       let tempPath = `${temp}${this.split}${fileName}`;
       fileExistPromise(tempPath, true, this.state.data, '.sql')
-        .then(() => {
+        .then(async () => {
           if (dbData) {
             this._connectJDBC({
               ...dbData,
@@ -260,7 +260,7 @@ export default class ExportSQL extends React.Component {
                 ...(dbData.properties || {}),
                 sql: tempPath,
               },
-            }, (result) => {
+            }, async (result) => {
               this.setState({
                 loading: false,
               });
@@ -308,7 +308,7 @@ export default class ExportSQL extends React.Component {
                     />
                   </div>
                 });
-                if (fileExist(tempPath)) {
+                if (await fileExist(tempPath)) {
                   fs.unlinkSync(tempPath);
                 }
               } else {
@@ -358,7 +358,7 @@ export default class ExportSQL extends React.Component {
                 });
               }
             }, 'sqlexec');
-          } else if (fileExist(tempPath)) {
+          } else if (await fileExist(tempPath)) {
             fs.unlinkSync(tempPath);
           }
         });

@@ -512,7 +512,7 @@ export default class DatabaseVersion extends React.Component{
       });
     }).catch(() => {});
   };
-  _checkBaseVersion = () => {
+  _checkBaseVersion = async () => {
     const { props } = this;
     // 判断基线版本文件是否存在
     // .project.version/XXX-base.pdman.json
@@ -520,7 +520,7 @@ export default class DatabaseVersion extends React.Component{
     const path = this._getProject(props.project, 'path');
     this.basePathDir = `${path}${this.split}.${name}.version${this.split}`;
     this.basePath = `${this.basePathDir}${name}-base.pdman.json`;
-    const base = fileExist(this.basePath);
+    const base = await fileExist(this.basePath);
     if (!base) {
       // Message.error({title: '当前项目不存在基线版本，请先初始化基线'});
       this.setState({
@@ -710,7 +710,7 @@ export default class DatabaseVersion extends React.Component{
     // 构建最终文件名【项目名-数据库名-版本号】
     let tempPath = `${temp}${this.split}${fileName}`;
     fileExistPromise(tempPath, true, data, '.sql')
-      .then(() => {
+      .then(async () => {
         if (path) {
           // Message.success({title: `SQL文件生成成功！[${tempPath}]`});
         }
@@ -732,7 +732,7 @@ export default class DatabaseVersion extends React.Component{
               ...sqlParam,
             },
             showModal: true,
-          }, (result) => {
+          }, async (result) => {
             cb && cb();
             this.setState({
               synchronous: {
@@ -783,7 +783,7 @@ export default class DatabaseVersion extends React.Component{
                     data={cmd === 'updateVersion' ? '标记成功！' : this._getProperties(result.body || result)}
                   />
                 </div>});
-              if (fileExist(tempPath)) {
+              if (await fileExist(tempPath)) {
                 !path && fs.unlinkSync(tempPath);
                 // console.log(`${temp}${this.split}pdman-${version}.sql`);
                 // 同步成功后再一次检查数据库版本
@@ -836,7 +836,7 @@ export default class DatabaseVersion extends React.Component{
               });
             }
           }, cmd);
-        } else if (fileExist(tempPath)){
+        } else if (await fileExist(tempPath)){
           !path && fs.unlinkSync(tempPath);
         }
       });

@@ -1,19 +1,31 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import {axios} from "./request";
+import { axios } from "./request";
+import { post } from '@/service/ajax';
 
 // 判断文件是否存在
 function fileExist(filePath) {
-  axios.post('/app/file-exist', {
-    file: 'asd'
-  }).then(res => {
-    console.log(res)
+  return post('/api/exists', {
+    path: filePath
   })
-  return false;
 }
 
-function fileExistPromise(filePath, isCreate, obj, file = '.json') {
+async function fileExistPromise(filePath, isCreate, obj, file = '.json') {
+  post("/api/save", {
+    path: filePath,
+    content: JSON.stringify(obj)
+  })
+  return filePath.endsWith(file) ? obj : filePath;
+}
+
+// 异步保存json文件返回Promise
+async function saveFilePromise(jsonObj, filePath) {
+  post("/api/save", {
+    path: filePath,
+    content: JSON.stringify(jsonObj)
+  })
+  return jsonObj;
 }
 
 function checkFileExistPromise(filePath) {
@@ -55,12 +67,10 @@ function saveFileSync(jsonObj, filePath) {
 
 // 异步保存json文件返回Promise
 function storeJson(jsonObj, filePath) {
-  localStorage.setItem(filePath,JSON.stringify(jsonObj))
+  localStorage.setItem(filePath, JSON.stringify(jsonObj))
 }
 
-// 异步保存json文件返回Promise
-function saveFilePromise(jsonObj, filePath) {
-}
+
 // 异步保存json文件通过回调
 function saveFileCall(jsonObj, filePath, callBack) {
 }

@@ -1,18 +1,25 @@
 import React from 'react';
 import { Button } from '../components';
+import api from '../service/api';
+
 import './style/create.less';
 
 export default class CreatePro extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.split = process.platform === 'win32' ? '\\' : '/';
     this.state = {
-      // value: `${app.getPath('home')}${this.split}demo`,
-      // TODO 创建工程
-      value: `${this.split}demo`,
+      value: ``,
     };
   }
-  componentDidMount(){
+  async init() {
+    const systemInfo = await api.systemInfo()
+    this.split = systemInfo.platform === 'win32' ? '\\' : '/';
+    this.setState({
+      value: `${systemInfo.homedir}${this.split}pdman${this.split}demo`,
+    })
+  }
+  componentDidMount() {
+    this.init()
     const { onChange } = this.props;
     onChange && onChange(this.state.value);
   }
@@ -60,7 +67,7 @@ export default class CreatePro extends React.Component {
   };
   _onOk = () => {
     const { onOk } = this.props;
-    onOk && onOk();
+    onOk && onOk(this.state.value);
   };
   render() {
     const { style } = this.props;
@@ -89,13 +96,13 @@ export default class CreatePro extends React.Component {
             路径:
           </div>
           <div className='pdman-create-right-com-input'>
-            <input onChange={this._onChange} value={this.state.value}/>
+            <input onChange={this._onChange} value={this.state.value} />
           </div>
           <div className='pdman-create-right-com-button'>
             <Button onClick={this._iconClick}>...</Button>
           </div>
         </div>
-        <div className='pdman-create-right-footer' style={{right:'100px'}}>
+        <div className='pdman-create-right-footer' style={{ right: '100px' }}>
           <Button onClick={this._closeCreatePro}>Cancel</Button>
         </div>
         <div className='pdman-create-right-footer'>

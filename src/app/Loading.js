@@ -30,10 +30,10 @@ export default class Loading extends React.Component{
       ],
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     // webFrame.setVisualZoomLevelLimits(1, 1);
     // setTimeout(() => {
-      if (fileExist(this.historyPath)) {
+      if (await fileExist(this.historyPath)) {
         readFilePromise(this.historyPath).then((res) => {
           this.setState({
             histories: res.histories || [],

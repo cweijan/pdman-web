@@ -41,19 +41,26 @@ module.exports = {
         compress: false,
         hot: true,
         open: true,
-        port: 3000
+        port: 3000,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8000',
+                secure: false,
+                changeOrigin: true
+            }
+        }
     },
     devtool: isProd ? false : 'source-map',
     resolve: {
         extensions: ['.js', '.css', 'less'],
         alias: {
-            '@': path.resolve(__dirname, '../src')
+            '@': path.resolve(__dirname, './src')
         }
     },
     plugins: [
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
         new HtmlWebpackPlugin({ inject: true, template: './public/index.html', filename: 'index.html' }),
-        new CopyWebpackPlugin({ patterns: [{from:'./public',to:'public'}] }),
+        new CopyWebpackPlugin({ patterns: [{ from: './public', to: 'public' }] }),
         new MiniCssExtractPlugin()
     ],
     watch: !isProd,
