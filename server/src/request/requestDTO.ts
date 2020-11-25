@@ -7,6 +7,7 @@ export class ConnnectDTO {
     url: string;
     port: number;
     username: string;
+    database: string;
     password: string;
     type: string;
 }

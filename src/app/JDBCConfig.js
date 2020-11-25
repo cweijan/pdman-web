@@ -24,7 +24,7 @@ export default class JDBCConfig extends React.Component {
     this.url = {
       mysql: {
         url: '127.0.0.1',
-        username:'root',
+        username: 'root',
         port: 3306,
         driverClass: 'com.mysql.jdbc.Driver',
       },
@@ -226,20 +226,18 @@ export default class JDBCConfig extends React.Component {
     this.setState({
       loading: true,
     });
-    post('/api/db/connect', properties).then(res=>{
-      // todo 逻辑处理
-      console.log(res)
-      // if (tempResult.status !== 'SUCCESS') {
-      //   Modal.error({title: '连接失败', message: tempResult.body || tempResult});
-      // } else {
-      //   Modal.success({title: '连接成功', message: `${tempResult.body}!数据库连接设置配置正确`});
-      // }
+    post('/api/db/connect', properties).then(res => {
+      if (res.success) {
+        Modal.success({ title: '连接成功', message: `数据库连接配置成功` });
+      } else {
+        Modal.error({ title: '连接失败', message: res.msg });
+      }
       this.setState({
         loading: false,
       });
     });
 
-   
+
   };
   _defaultDBChange = (value) => {
     const { data } = this.state;
