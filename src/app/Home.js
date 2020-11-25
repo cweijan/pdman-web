@@ -271,12 +271,13 @@ export default class Home extends React.Component{
         // });
       }
     } else {
-      const extensions = [];
-      if (process.platform === 'darwin') {
-        extensions.push('json');
-      } else {
-        extensions.push('pdman.json');
-      }
+      alert("示例项目不可保存!")
+      // const extensions = [];
+      // if (process.platform === 'darwin') {
+      //   extensions.push('json');
+      // } else {
+      //   extensions.push('pdman.json');
+      // }
       // dialog.showSaveDialog({
       //   title: `${data ? 'Save as' : 'Create Project'}`,
       //   filters: [
