@@ -432,9 +432,7 @@ export default class Setting extends React.Component {
       <div className={`${prefix}-data-table-content-tab`}>
 
         <Button type={this.state.tabShow === 'fields'?'':'unactive'} onClick={() => this._tabClick('fields')} >默认属性</Button>
-        <Button type={this.state.tabShow === 'java'?'':'unactive'} onClick={() => this._tabClick('java')} >JAVA环境配置</Button>
         <Button type={this.state.tabShow === 'SQL'?'':'unactive'} onClick={() => this._tabClick('SQL')} >SQL分隔符配置</Button>
-        <Button type={this.state.tabShow === 'word'?'':'unactive'} onClick={() => this._tabClick('word')} >WORD模板配置</Button>
         {/*<div*/}
         {/*onClick={() => this._tabClick('register')}*/}
         {/*className={`${prefix}-data-table-content-tab${this.state.tabShow === 'register' ? '-selected' : '-unselected'}`}*/}

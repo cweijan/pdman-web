@@ -1,11 +1,12 @@
+import history from '@/service/history';
+import { download } from '@/utils/download';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
-import defaultConfig from '../profile';
 import { Icon, Message, Modal } from '../components';
 import demo from '../demo';
-import { fileExist, fileExistPromise, readFile, storeJson, readFilePromise, saveFilePromise, writeFile } from '../utils/json';
-import { getCurrentVersion, getVersion } from '../utils/update';
+import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
+import { getVersion } from '../utils/update';
 import CreatePro from './CreatePro';
 import defaultData from './defaultData.json';
 import Header from './Header';
@@ -17,10 +18,6 @@ export default class Home extends React.Component {
     super(props);
     this.projectName = '';
     this.split = process.platform === 'win32' ? '\\' : '/';
-    // this.configPath = app.getPath('userData');
-    // TODO
-    this.configPath = "";
-    this.historyPath = `${this.configPath}${this.split}${defaultConfig.configPath}`;
     this.state = {
       projectDemo: '',
       histories: props.histories || [],
@@ -106,18 +103,15 @@ export default class Home extends React.Component {
       this.setState({
         histories: temp,
       });
-      saveFilePromise({
-        histories: temp,
-      }, this.historyPath).then(() => {
-        this.setState({
-          dataSource: res,
-          flag: false,
-          project: basePath,
-          closeProject: false,
-          changeDataType: 'reset',
-          error: false,
-          projectDemo: '',
-        });
+      history.writeH(temp)
+      this.setState({
+        dataSource: res,
+        flag: false,
+        project: basePath,
+        closeProject: false,
+        changeDataType: 'reset',
+        error: false,
+        projectDemo: '',
       });
     })
   };
@@ -134,22 +128,20 @@ export default class Home extends React.Component {
       display: '',
     });
   };
-  _delete = (e, history, type) => {
+  _delete = (e, historyNew, type) => {
     e && e.stopPropagation();
     const { histories } = this.state;
     let temp = [...histories];
     if (type === 'all') {
       temp = [];
     } else {
-      temp = temp.filter(h => h !== history.split('.pdman.json')[0]);
+      temp = temp.filter(h => h !== historyNew.split('.pdman.json')[0]);
     }
     this.setState({
       histories: temp,
     }, () => {
       // 保存最新的历史记录
-      saveFilePromise({
-        histories: temp,
-      }, this.historyPath);
+      history.writeH(temp)
     });
   };
   _checkDatabase = (database = []) => {
@@ -173,6 +165,7 @@ export default class Home extends React.Component {
       }).catch((e) => {
       });
     } else {
+      alert(`项目${path}不存在, 打开失败!`)
       this._delete(null, path);
     }
   };
@@ -200,9 +193,7 @@ export default class Home extends React.Component {
       projectDemo: '',
     });
     // 将其存储到历史记录中
-    storeJson({
-      histories: temp,
-    }, this.historyPath);
+    history.writeH(temp)
   };
   _openProject = (path, callBack, type) => {
     console.log('open')
@@ -235,6 +226,7 @@ export default class Home extends React.Component {
       input.accept = '.json';
       input.oninput = (e) => {
         const file = e.target.files[0];
+        // TODO 拿不到文件路径
         var reader = new FileReader();
         reader.readAsText(file, "UTF-8");
         reader.onload = (fileContent) => {
@@ -248,7 +240,12 @@ export default class Home extends React.Component {
   _saveProject = (path, data, cb, dataHistory, selectCb) => {
     // 保存项目
     const { project } = this.state;
-    if (path && project) {
+    if (!path && !project) {
+      alert("示例项目不可保存!")
+      return;
+    }
+
+    if (path) {
       const tempData = { ...data };
       if (!tempData) {
         // 保存时增加数据为空提示，防止生成空文件
@@ -266,43 +263,14 @@ export default class Home extends React.Component {
             cb && cb();
           });
         }).catch(() => {
-          Message.error({title: '保存失败'});
+          Message.error({ title: '保存失败' });
         });
       }
     } else {
-      alert("示例项目不可保存!")
-      // const extensions = [];
-      // if (process.platform === 'darwin') {
-      //   extensions.push('json');
-      // } else {
-      //   extensions.push('pdman.json');
-      // }
-      // dialog.showSaveDialog({
-      //   title: `${data ? 'Save as' : 'Create Project'}`,
-      //   filters: [
-      //     { name: 'PDMan', extensions: extensions },
-      //   ],
-      // }, (file) => {
-      //   if (file) {
-      //     selectCb && selectCb();
-      //     fileExistPromise(file, true, data).then(() => {
-      //       this.setState({
-      //         dataSource: data || {
-      //           modules: [],
-      //           dataTypeDomains: defaultData.profile.defaultDataTypeDomains,
-      //         },
-      //         changeDataType: 'update',
-      //         dataHistory,
-      //         project: file.split('.pdman.json')[0],
-      //       }, () => {
-      //         cb && cb();
-      //       });
-      //     }).catch(() => {
-      //       Message.error({title: '保存失败'});
-      //     });
-      //   }
-      // });
+      download(project + ".json", JSON.stringify(data, null, 2))
     }
+
+
   };
   _createClose = () => {
     this.setState({
@@ -633,7 +601,6 @@ export default class Home extends React.Component {
           dataHistory={this.state.dataHistory}
           saveProjectSome={this._saveProjectSome}
           closeProject={this._closeProject}
-          historyPath={this.historyPath}
           columnOrder={this.props.columnOrder}
           writeFile={writeFile}
           openDir={this._openDir}

@@ -248,9 +248,11 @@ function ajax(options) {
                     }
 
                     if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
-                        success(xhr.response);
+                        // TODO 默认将结果视为json
+                        const response = typeof xhr.response == 'undefined' ? JSON.parse(xhr.responseText) : xhr.response
+                        success(response);
                         complete(xhr)
-                        resolve(xhr.response)
+                        resolve(response)
                     } else {
                         error(xhr);
                         complete(xhr)

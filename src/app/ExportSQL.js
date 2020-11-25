@@ -19,6 +19,7 @@ import { getAllDataSQLByFilter } from '../utils/json2code';
 import { fileExist, fileExistPromise, readFilePromise, saveFilePromise } from '../utils/json';
 import defaultConfig from '../profile';
 import { addOnResize } from '../../src/utils/listener';
+import history from '@/service/history';
 
 const { Radio } = RadioGroup;
 const { execFile } = require('child_process');
@@ -29,7 +30,6 @@ export default class ExportSQL extends React.Component {
     this.split = process.platform === 'win32' ? '\\' : '/';
     // this.configPath = app.getPath('userData');
     this.configPath = '';
-    this.historyPath = `${this.configPath}${this.split}${defaultConfig.userPath}`;
     this.state = {
       selectTable: null,
       export: 'all',
@@ -164,10 +164,10 @@ export default class ExportSQL extends React.Component {
     });
   };
   _getConfigData = () => {
-    return readFilePromise(this.historyPath);
+    return history.readH()
   };
   _saveConfigData = (data) => {
-    return saveFilePromise(data, this.historyPath);
+    return history.writeH(data)
   };
   _getProject = (project, type) => {
     const tempItem = project.replace(/\\/g, '/');

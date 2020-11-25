@@ -101,6 +101,7 @@ export default class App extends React.Component {
         if (this.flag) {
           if (evt.code === 'KeyS') {
             this._saveAll();
+            evt.preventDefault()
           } else if(evt.code === 'KeyE') {
             // 关闭当前打开的tab
             const { show } = this.state;
