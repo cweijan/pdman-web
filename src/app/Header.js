@@ -47,7 +47,6 @@ export default class Header extends React.Component{
           <div className='pdman-header-left-icon'>
             {}
           </div>
-          {/*<Icon type='roic-pdman' style={{color: '#3091E3'}}/>*/}
           <div className='pdman-header-left-project'>
             {projectDemo ? `当前为演示项目:${projectDemo}` : project || '无打开的项目'}
           </div>

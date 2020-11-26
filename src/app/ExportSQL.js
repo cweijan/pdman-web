@@ -1,26 +1,19 @@
-import React from 'react';
+import { post } from '@/service/ajax';
+import history from '@/service/history';
+import { message } from 'antd';
 import _object from 'lodash/object';
-import fs from 'fs';
-
+import React from 'react';
+import { addOnResize } from '../../src/utils/listener';
 import {
   Button,
   Checkbox,
-  Editor,
-  RadioGroup,
+  Code, Editor,
+  Modal, openModal, RadioGroup,
   Select,
-  TreeSelect,
-  openModal,
-  Modal,
-  Input,
-  Icon,
-  Code,
+  TreeSelect
 } from '../components';
 import { getAllDataSQLByFilter } from '../utils/json2code';
-import { fileExist, fileExistPromise, readFilePromise, saveFilePromise } from '../utils/json';
-import defaultConfig from '../profile';
-import { addOnResize } from '../../src/utils/listener';
-import history from '@/service/history';
-import { post } from '@/service/ajax';
+
 
 const { Radio } = RadioGroup;
 const { execFile } = require('child_process');
@@ -178,14 +171,6 @@ export default class ExportSQL extends React.Component {
     }
     return tempArray.splice(0, tempArray.length - 1).join(this.split);
   };
-  _getJavaConfig = () => {
-    const { dataSource } = this.props;
-    const dataSourceConfig = _object.get(dataSource, 'profile.javaConfig', {});
-    if (!dataSourceConfig.JAVA_HOME) {
-      dataSourceConfig.JAVA_HOME = process.env.JAVA_HOME || process.env.JER_HOME || '';
-    }
-    return dataSourceConfig;
-  };
   _getParam = (selectJDBC) => {
     const { dataSource } = this.props;
     const paramArray = [];
@@ -209,104 +194,24 @@ export default class ExportSQL extends React.Component {
     }
     return tempResult;
   };
-  _getProperties = (obj) => {
-    if (typeof obj === 'string') {
-      return obj;
-    } else if (Array.isArray(obj)) {
-      return obj.map(o => `${o[0]}:${o[1]}`).join('\n');
-    }
-    return Object.keys(obj).map(f => `${f}:${obj[f]}`).join('\n');
-  };
   _execSql = () => {
     this.setState({
       loading: true,
     });
     const { project, dataSource } = this.props;
     const dbData = _object.get(dataSource, 'profile.dbs', []).filter(d => d.defaultDB)[0];
+    const sql = escape(this.state.data);
     if (dbData) {
-      post("/api/db/execute", { ...dbData.properties, sql: escape(this.state.data) }).then(async result=>{
+      post("/api/db/execute", { ...dbData.properties, sql }).then(async result => {
         this.setState({
           loading: false,
         });
         if (result.success) {
-          Modal.success({
-            title: '执行成功',
-            message: <div
-              onKeyDown={e => this._onKeyDown(e)}
-            >
-              <div
-                style={{
-                  height: '30px',
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                }}
-              >
-                <Input
-                  onChange={this._searchValueChange}
-                  wrapperStyle={{ width: 'auto' }}
-                />
-                <Icon
-                  type='fa-search'
-                  style={{ marginLeft: 10, cursor: 'pointer' }}
-                  onClick={this._search}
-                />
-                <span
-                  ref={instance => this.countDom = instance}
-                  style={{ marginLeft: 10, cursor: 'pointer' }}
-                >
-                  0/0
-                </span>
-                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
-                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
-              </div>
-              <Code
-                ref={(instance) => {
-                  if (instance) {
-                    this.code = instance.dom;
-                    this.tempHtml = this.code.innerHTML;
-                  }
-                }}
-                style={{ height: 400 }}
-                data={this._getProperties(result.body || result)}
-              />
-            </div>
-          });
-          if (await fileExist(tempPath)) {
-            fs.unlinkSync(tempPath);
-          }
+            message.success('执行成功!');
         } else {
           Modal.error({
             title: '执行失败',
-            message: <div
-              onKeyDown={e => this._onKeyDown(e)}
-            >
-              <div
-                style={{
-                  height: '30px',
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                }}
-              >
-                <Input
-                  onChange={this._searchValueChange}
-                  wrapperStyle={{ width: 'auto' }}
-                />
-                <Icon
-                  type='fa-search'
-                  style={{ marginLeft: 10, cursor: 'pointer' }}
-                  onClick={this._search}
-                />
-                <span
-                  ref={instance => this.countDom = instance}
-                  style={{ marginLeft: 10, cursor: 'pointer' }}
-                >
-                  0/0
-                </span>
-                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowdown' onClick={this._selectNext} />
-                <Icon style={{ marginLeft: 10, cursor: 'pointer' }} type='arrowup' onClick={this._selectPre} />
-              </div>
+            message:
               <Code
                 ref={(instance) => {
                   if (instance) {
@@ -315,9 +220,8 @@ export default class ExportSQL extends React.Component {
                   }
                 }}
                 style={{ height: 400 }}
-                data={this._getProperties(result.body || result)}
+                data={result.msg}
               />
-            </div>
             ,
           });
         }

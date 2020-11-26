@@ -44,7 +44,7 @@ module.exports = {
         port: 3000,
         proxy: {
             '/api': {
-                target: 'http://localhost:8000',
+                target: 'http://[::1]:8000',
                 secure: false,
                 changeOrigin: true
             }

@@ -2,6 +2,7 @@ import history from '@/service/history';
 import { download } from '@/utils/download';
 import _object from 'lodash/object';
 import React from 'react';
+import { message as aMessage } from 'antd';
 import ReactDom from 'react-dom';
 import { Icon, Message, Modal } from '../components';
 import demo from '../demo';
@@ -86,7 +87,7 @@ export default class Home extends React.Component {
     const path = `${basePath}.pdman.json`
 
     if (await fileExist(path)) {
-      alert('创建项目失败, 该项目已经存在了!');
+      aMessage.error('创建项目失败, 该项目已经存在了!');
       return;
     }
 
@@ -165,7 +166,7 @@ export default class Home extends React.Component {
       }).catch((e) => {
       });
     } else {
-      alert(`项目${path}不存在, 打开失败!`)
+      aMessage.error(`项目${path}不存在, 打开失败!`)
       this._delete(null, path);
     }
   };
@@ -537,7 +538,6 @@ export default class Home extends React.Component {
             <div className='pdman-home-right' style={{ display: display === 'none' ? '' : 'none' }}>
               <div className='pdman-home-right-logo'>
                 <div className='pdman-home-right-logo-img'>{ }</div>
-                {/*<Icon type='roic-pdman' style={{fontSize: '50px', color: '#3091E3'}}/>*/}
                 <div className='pdman-home-right-logo-title'>
                   <div className='pdman-home-right-logo-title-main'>PDMan</div>
                 </div>

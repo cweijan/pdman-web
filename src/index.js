@@ -4,9 +4,15 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Loading from './app/Loading';
 
+
+import 'antd/dist/antd.css';
+
+/**
+ * antd参考文档: https://ant.design/components/overview-cn/
+ */
+
 ReactDOM.render(
-    <Loading />
-  ,
+    <Loading />,
   document.getElementById('root')
 );
 
