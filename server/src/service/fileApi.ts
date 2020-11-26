@@ -35,7 +35,7 @@ module.exports = (app: express.Application) => {
         if (fs.existsSync(path)) {
             res.send(fs.readFileSync(path, 'utf8'));
         } else {
-            res.send("")
+            res.json({})
         }
 
     });
