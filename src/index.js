@@ -4,7 +4,7 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Loading from './app/Loading';
 
-
+import './assert/antd/iconfont.css'
 import 'antd/dist/antd.css';
 
 /**
