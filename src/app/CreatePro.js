@@ -14,9 +14,9 @@ export default class CreatePro extends React.Component {
   async init() {
     const systemInfo = await api.systemInfo()
     this.split = systemInfo.platform === 'win32' ? '\\' : '/';
-    this.setState({
-      value: `${systemInfo.homedir}${this.split}pdman${this.split}demo`,
-    })
+    const value = `${systemInfo.homedir}${this.split}pdman${this.split}demo`;
+    this.setState({ value })
+    this.props.onChange(this.state.value);
   }
   componentDidMount() {
     this.init()
@@ -102,12 +102,12 @@ export default class CreatePro extends React.Component {
             <Button onClick={this._iconClick}>...</Button>
           </div>
         </div>
-        <div className='pdman-create-right-footer' style={{ right: '100px' }}>
+        {/* <div className='pdman-create-right-footer' style={{ right: '100px' }}>
           <Button onClick={this._closeCreatePro}>Cancel</Button>
         </div>
         <div className='pdman-create-right-footer'>
           <Button onClick={this._onOk}>Create</Button>
-        </div>
+        </div> */}
       </div>
     </div>);
   }

@@ -4,7 +4,8 @@ import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { Icon, Modal } from '../components';
+import { open, getFileHandle, write } from "@/service/fileSaver";
+import { Icon, Modal, openModal } from '../components';
 import demo from '../demo';
 import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
 import CreatePro from './CreatePro';
@@ -13,6 +14,13 @@ import Header from './Header';
 import App from './index';
 import './style/home.less';
 
+/**
+ * todo
+ * 1. 返回主页时刷新历史记录
+ * 2. 历史记录列表项调整, 适配两种历史类型
+ * 3. 历史记录需要去重
+ * 4. 历史删除逻辑
+ */
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -20,7 +28,8 @@ export default class Home extends React.Component {
     this.split = process.platform === 'win32' ? '\\' : '/';
     this.state = {
       projectDemo: '',
-      histories: props.histories || [],
+      projectHandler: null,
+      histories: [],
       dataSource: {
         modules: [],
         dataTypeDomains: defaultData.profile.defaultDataTypeDomains,
@@ -34,7 +43,11 @@ export default class Home extends React.Component {
       register: {},
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    const histories = await history.readNew()
+    this.setState({
+      histories: histories
+    })
     // 设置快捷方式
     this.dom = ReactDom.findDOMNode(this.instance);
     this.dom && this.dom.focus();
@@ -71,11 +84,13 @@ export default class Home extends React.Component {
     const tempArray = tempItem.split('/');
     return tempArray[tempArray.length - 1];
   };
-  _onOk = async (basePath) => {
+  _onOk = async (model) => {
+    const basePath = this.projectName
     const path = `${basePath}.pdman.json`
 
     if (await fileExist(path)) {
       aMessage.error('创建项目失败, 该项目已经存在了!');
+      model.close()
       return;
     }
 
@@ -89,32 +104,29 @@ export default class Home extends React.Component {
       if (!temp.includes(this.projectName)) {
         temp.unshift(this.projectName);
       }
-      this.setState({
-        histories: temp,
-      });
-      history.writeH(temp)
+      history.store(this.state.projectHandler, this.projectName)
       this.setState({
         dataSource: res,
         flag: false,
         project: basePath,
+        projectHandler: null,
         closeProject: false,
         changeDataType: 'reset',
         error: false,
         projectDemo: '',
       });
+      model.close()
     })
   };
   _onChange = (value) => {
     this.projectName = value;
   };
-  _createObject = () => {
-    /*// 新建项目
-    showModal(<CreatePro onChange={this._onChange}/>, {
+  _createObject = async () => {
+    const s = await history.readNew()
+    console.log(s)
+    openModal(<CreatePro onChange={this._onChange} />, {
       onOk: this._onOk,
       title: '新建项目',
-    });*/
-    this.setState({
-      display: '',
     });
   };
   _delete = (e, historyNew, type) => {
@@ -184,7 +196,7 @@ export default class Home extends React.Component {
     // 将其存储到历史记录中
     history.writeH(temp)
   };
-  _openProject = (path, callBack, type) => {
+  _openProject = async (path, callBack, type) => {
     // 打开项目
     if (path || type) {
       if (type) {
@@ -209,20 +221,13 @@ export default class Home extends React.Component {
       } else {
         extensions.push('pdman.json');
       }
-      var input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      input.oninput = (e) => {
-        const file = e.target.files[0];
-        // TODO 拿不到文件路径
-        var reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = (fileContent) => {
-          this.readData(file.name, JSON.parse(fileContent.target.result), callBack)
-        }
 
-      }
-      input.click();
+      const { fileHandle, file, text } = await open()
+      history.store(fileHandle, null)
+      this.setState({
+        projectHandler: fileHandle
+      })
+      this.readData(file.name, JSON.parse(text), callBack)
     }
   };
   _saveProject = (path, data, cb, dataHistory, selectCb) => {
@@ -242,7 +247,9 @@ export default class Home extends React.Component {
           message: '保存失败，请重试！',
         });
       } else {
-        fileExistPromise(path, true, tempData).then(() => {
+        const fileHandler = this.state.projectHandler;
+        const promise = fileHandler ? write(fileHandler, tempData) : fileExistPromise(path, true, tempData);
+        promise.then(() => {
           this.setState({
             dataSource: tempData,
             changeDataType: 'update',
@@ -250,7 +257,8 @@ export default class Home extends React.Component {
           }, () => {
             cb && cb();
           });
-        }).catch(() => {
+        }).catch((e) => {
+          console.log(e)
           aMessage.error('保存失败')
         });
       }
@@ -501,12 +509,12 @@ export default class Home extends React.Component {
               <div className='pdman-home-left-list'>
                 {
                   (histories || []).map(item => (
-                    <div className='pdman-home-left-list-item' key={item} onClick={() => this._openProject(item)}>
-                      <div className='pdman-home-left-list-item-name'>{this._getProjectName(item)}</div>
+                    <div className='pdman-home-left-list-item' key={item.name} onClick={() => this._openProject(item.name)}>
+                      <div className='pdman-home-left-list-item-name'>{item.name}</div>
                       <div className='pdman-home-left-list-item-icon'>
-                        <Icon type='close' onClick={e => this._delete(e, item)} />
+                        <Icon type='close' onClick={e => this._delete(e, item.name)} />
                       </div>
-                      <div className='pdman-home-left-list-item-path'>{item}</div>
+                      {/* <div className='pdman-home-left-list-item-path'>{item.name}</div> */}
                     </div>
                   ))
                 }
@@ -553,21 +561,7 @@ export default class Home extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className='pdman-home-right-footer'>
-                {/* <span onClick={() => this._openUrl('http://www.pdman.cn')}>官方网站</span> */}
-                {/*<div className='pdman-home-right-footer-config' onClick={this._openDev}>
-                  <Icon type='setting'/><span>调试</span>
-                </div>*/}
-                {/*<div className='pdman-home-right-footer-help'>{}
-                </div>*/}
-              </div>
             </div>
-            <CreatePro
-              close={this._createClose}
-              onChange={this._onChange}
-              style={{ display: this.state.display, width: '100%' }}
-              onOk={this._onOk}
-            />
           </div>
         </div>
       );

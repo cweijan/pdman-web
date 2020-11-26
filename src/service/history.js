@@ -1,13 +1,14 @@
-import { string } from "prop-types";
+import { get, set } from 'idb-keyval';
+
 
 const readH = () => {
-    const history = localStorage.getItem('history')
-    console.log(history ? history.split(",") : [])
-    return history ? history.split(",") : [];
-
+    return []
 }
 
 const writeH = (content) => {
+
+}
+const writeNew = (content) => {
     if (typeof content == 'string') {
         localStorage.setItem("history", content)
     } else {
@@ -15,6 +16,25 @@ const writeH = (content) => {
     }
 }
 
+const readNew = async () => {
+    const history = await get('history');
+    return history ? history : []
+}
+
+const storeHistory = async (fileHandler, projectName) => {
+
+    const histories = await get('history') || []
+
+    if (fileHandler) {
+        histories.push({ type: 'file', handler: fileHandler, name: fileHandler.name })
+    } else {
+        histories.push({ type: 'create', name: projectName })
+    }
+
+    set('history', histories)
+
+}
+
 export default {
-    readH, writeH
+    readH, writeH, readNew, writeNew, store: storeHistory
 }

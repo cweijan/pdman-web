@@ -1568,7 +1568,7 @@ export default class App extends React.Component {
                       className='tools-content-clickeable'
                       onClick={() => this._saveAs()}
                     >
-                      <Icon type='fa-save' style={{ marginRight: 5, color: '#9291CD' }} />另存为
+                      <Icon type='fa-save' style={{ marginRight: 5, color: '#9291CD' }} />导出工程
                     </div>
                     <div
                       className='tools-content-clickeable'
