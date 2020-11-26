@@ -18,8 +18,8 @@ module.exports = {
     },
     entry: './src/index.js',
     output: {
-        filename: 'public/js/[name].bundle.[hash:8].js',
-        path: path.resolve(__dirname, './server/build')
+        filename: 'js/[name].bundle.[hash:8].js',
+        path: path.resolve(__dirname, './server/build/public')
     },
     module: {
         rules: [
@@ -60,8 +60,8 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
         new HtmlWebpackPlugin({ inject: true, template: './index.html', filename: 'index.html' }),
-        new CopyWebpackPlugin({ patterns: [{ from: './public', to: 'public' }] }),
-        new MiniCssExtractPlugin({ filename: 'public/[name].css',})
+        new CopyWebpackPlugin({ patterns: ['./public'] }),
+        new MiniCssExtractPlugin({ filename: '[name].css',})
     ],
     watch: !isProd,
     optimization: {

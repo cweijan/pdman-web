@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'))
 
-app.get(['/', "/index.html", '/index'], (req, res) => {
-  res.send(readFileSync(__dirname + '/index.html', 'utf8'))
+app.get(['/','/index'], (req, res) => {
+  res.send(readFileSync(__dirname + '/public/index.html', 'utf8'))
 })
 
 app.get('/api/info', (req, res) => {
