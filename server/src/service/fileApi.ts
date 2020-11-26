@@ -1,3 +1,4 @@
+import { PageHeader } from "antd";
 import * as express from "express";
 import * as fs from 'fs';
 import { basename, resolve } from 'path';
@@ -16,18 +17,27 @@ module.exports = (app: express.Application) => {
         res.send(true);
     });
 
-
-    app.post('/api/read', function (req, res, next) {
+    app.post('/api/read/dir', function (req, res, next) {
 
         const path = req.body.path;
-        if (fs.lstatSync(path).isDirectory()) {
+        if (fs.existsSync(path)) {
             res.send(fs.readdirSync(path).map(file => {
                 return req.body.baseName ? basename(file) : file;
             }))
-            return;
+        } else {
+            res.send([])
+        }
+    });
+
+    app.post('/api/read', function (req, res, next) {
+        const path = req.body.path;
+
+        if (fs.existsSync(path)) {
+            res.send(fs.readFileSync(path, 'utf8'));
+        } else {
+            res.send("")
         }
 
-        res.send(fs.readFileSync(path, 'utf8'));
     });
 
     app.post('/api/delete', function (req, res, next) {

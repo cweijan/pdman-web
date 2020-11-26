@@ -109,7 +109,7 @@ function saveFileCall(jsonObj, filePath, callBack) {
 
 
 function getDirListPromise(dir, baseName) {
-  return post("/api/read", {
+  return post("/api/read/dir", {
     path: dir,
     baseName,
   })

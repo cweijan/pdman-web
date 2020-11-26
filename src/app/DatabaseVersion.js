@@ -31,10 +31,6 @@ class ChangeCode extends React.Component {
       flagSynchronous: false,
     };
   }
-  _onSave = () => {
-    const { data } = this.props;
-    download(`export.sql`, this.data || data)
-  };
   _valueChange = (e) => {
     this.data = e.target.value;
   };
@@ -110,6 +106,17 @@ class ChangeCode extends React.Component {
             </div>
           </div>
           <div className='pdman-data-tab-content'>
+          <Button
+              loading={again}
+              title='不会更新数据库中的版本号'
+              style={{
+                display: version && compareStringVersion(version, dbVersion) <= 0 ? '' : 'none',
+                marginLeft: 10,
+              }}
+              onClick={() => this._execSQL(false, 'again')}
+            >
+              {again ? '正在执行' : '立即执行'}
+            </Button>
             <Button
               loading={synchronous}
               title='会更新数据库中的版本号'
@@ -132,18 +139,6 @@ class ChangeCode extends React.Component {
             >
               {flagSynchronous ? '正在标记为同步' : '标记为同步'}
             </Button>
-            <Button
-              loading={again}
-              title='不会更新数据库中的版本号'
-              style={{
-                display: version && compareStringVersion(version, dbVersion) <= 0 ? '' : 'none',
-                marginLeft: 10,
-              }}
-              onClick={() => this._execSQL(false, 'again')}
-            >
-              {again ? '正在执行' : '直接执行'}
-            </Button>
-            <Button style={{ marginBottom: 10 }} key="save" onClick={this._onSave}>导出到文件</Button>
             <Editor
               height='300px'
               width={width === '50%' ?
@@ -487,24 +482,13 @@ export default class DatabaseVersion extends React.Component {
   };
   _checkBaseVersion = async () => {
     const { props } = this;
-    // 判断基线版本文件是否存在
-    // .project.version/XXX-base.pdman.json
     const name = this._getProject(props.project, 'name');
     const path = this._getProject(props.project, 'path');
     this.basePathDir = `${path}${this.split}.${name}.version${this.split}`;
     this.basePath = `${this.basePathDir}${name}-base.pdman.json`;
-    const base = await fileExist(this.basePath);
-    if (!base) {
-      aMessage.error('当前项目不存在基线版本，请先初始化基线');
-      this.setState({
-        init: true,
-      });
-    } else {
-      // 读取版本信息
-      this.setState({
-        init: false,
-      });
-    }
+    this.setState({
+      init: false,
+    });
   };
   _onKeyDown = (e) => {
     if (e.keyCode === 13) {
@@ -832,41 +816,6 @@ export default class DatabaseVersion extends React.Component {
       }
     }
   };
-  _initBase = (message, cb) => {
-    let tempValue = {};
-    const onChange = (value) => {
-      tempValue = value;
-    };
-    openModal(<DatabaseVersionContext versions={this.state.versions} onChange={onChange} />, {
-      title: '版本信息',
-      onOk: (modal) => {
-        if (!tempValue.version || !tempValue.message) {
-          Modal.error({ title: '操作失败', message: '版本号和版本描述不能为空', width: 200 });
-        } else {
-          cb && cb();
-          const { dataSource } = this.props;
-          // 基线文件只需要存储modules信息
-          fileExistPromise(this.basePath, true, {
-            modules: dataSource.modules || [],
-            ...tempValue,
-            date: moment().format('YYYY/M/D H:m:s'),
-          }).then(() => {
-            aMessage.success(message || '初始化基线成功')
-            modal && modal.close();
-            this._getVersionMessage();
-            // 更新版本表
-            this._dropVersionTable(tempValue);
-            this._saveNewVersion((changes) => {
-              this.setState({
-                changes,
-                init: false,
-              });
-            });
-          });
-        }
-      },
-    });
-  };
   _dropVersionTable = () => {
     const dbData = this._getCurrentDBData();
     if (!dbData) {
@@ -894,20 +843,6 @@ export default class DatabaseVersion extends React.Component {
         }
       }, 'rebaseline');
     }
-  };
-  _rebuild = () => {
-    Modal.confirm({
-      title: '重建基线',
-      message: '重建基线将会清除当前项目的所有版本信息，该操作不可逆，是否继续？',
-      onOk: (modal) => {
-        modal.close();
-        // 重新初始化
-        this._initBase('重建基线成功', () => {
-          // 删除目录
-          deleteDirectoryFile(this.basePathDir);
-        });
-      }
-    });
   };
   _getAllTable = (dataSource) => {
     return (dataSource.modules || []).reduce((a, b) => {
@@ -1192,7 +1127,8 @@ export default class DatabaseVersion extends React.Component {
     const { dataSource } = this.props;
     let tempChanges = [...changes];
     let tempValue = {
-      upgradeType: 'rebuild',
+      // TODO rebuild -> increment
+      upgradeType: 'increment',
       ...(configData.synchronous || {}),
     };
     if (tempValue.upgradeType === 'rebuild') {
@@ -1349,7 +1285,7 @@ export default class DatabaseVersion extends React.Component {
   _synchronousConfig = () => {
     const { configData } = this.state;
     let tempValue = {
-      upgradeType: 'rebuild',
+      upgradeType: 'increment',
       readDBType: 'read',
       sqlPath: '',
       ...(configData.synchronous || {}),
@@ -1532,21 +1468,21 @@ export default class DatabaseVersion extends React.Component {
     const currentDB = this._getCurrentDB();
     return (<div className='pdman-db-version'>
       <div className='pdman-db-version-opt-container'>
-        <div className='pdman-db-version-opt'>
-          <div
+        <div className='pdman-db-version-opt' style={{marginLeft:"30px"}}>
+          {/* <div
             className='pdman-db-version-opt-synchronous pdman-db-version-opt-wrapper'
             onClick={this._synchronousConfig}
           >
             <span className='pdman-db-version-opt-synchronous-icon'>{ }</span>
+            
             <span className='pdman-db-version-opt-synchronous-name'>同步配置</span>
-          </div>
+          </div> */}
           <div
-            className='pdman-db-version-opt-init  pdman-db-version-opt-wrapper'
-            style={{ display: init ? '' : 'none' }}
-            onClick={() => this._initBase()}
+            className='pdman-db-version-opt-compare  pdman-db-version-opt-wrapper'
+            onClick={this._customerVersionCheck}
           >
-            <span className='pdman-db-version-opt-init-icon'>{ }</span>
-            <span className='pdman-db-version-opt-init-name'>初始化基线</span>
+            <span className='pdman-db-version-opt-compare-icon'>{ }</span>
+            <span className='pdman-db-version-opt-compare-name'>任意版本比较</span>
           </div>
           <div
             className='pdman-db-version-opt-save  pdman-db-version-opt-wrapper'
@@ -1556,23 +1492,8 @@ export default class DatabaseVersion extends React.Component {
             <span className='pdman-db-version-opt-save-icon'>{ }</span>
             <span className='pdman-db-version-opt-save-name'>保存新版本</span>
           </div>
-          <div
-            className='pdman-db-version-opt-rebuild  pdman-db-version-opt-wrapper'
-            style={{ display: init ? 'none' : '' }}
-            onClick={this._rebuild}
-          >
-            <span className='pdman-db-version-opt-rebuild-icon'>{ }</span>
-            <span className='pdman-db-version-opt-rebuild-name'>重建基线</span>
-          </div>
-          <div
-            className='pdman-db-version-opt-compare  pdman-db-version-opt-wrapper'
-            onClick={this._customerVersionCheck}
-          >
-            <span className='pdman-db-version-opt-compare-icon'>{ }</span>
-            <span className='pdman-db-version-opt-compare-name'>任意版本比较</span>
-          </div>
         </div>
-        {/*<div className='pdman-db-version-opt'>
+        <div className='pdman-db-version-opt'>
           <span style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
           切换数据库：
             <Select value={currentDB} style={{minWidth: 200}} onChange={this._dbChange}>
@@ -1582,7 +1503,7 @@ export default class DatabaseVersion extends React.Component {
               }
             </Select>
           </span>
-        </div>*/}
+        </div>
       </div>
       {
         versionData ? <div
