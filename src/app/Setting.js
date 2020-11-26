@@ -3,6 +3,7 @@ import ReactDom from 'react-dom';
 import _object from 'lodash/object';
 import * as Com from '../components';
 import defaultData from './defaultData.json';
+import { message as aMessage } from 'antd';
 import SQLConfig from './SQLConfig';
 import WORDConfig from './WORDConfig';
 import { Button } from 'antd';
@@ -191,7 +192,7 @@ export default class Setting extends React.Component {
             return;
           }
           clipboard.writeText(JSON.stringify(clipboardData));
-          Com.Message.success({ title: '数据表列已经成功复制到粘贴板' });
+          aMessage.success('数据表列已经成功复制到粘贴板')
         } else if (e.keyCode === 86) {
           try {
             const tempData = JSON.parse(clipboard.readText());

@@ -1,6 +1,6 @@
 
 import _object from 'lodash/object';
-import { Message } from '../components';
+import { message as aMessage } from 'antd';
 import doT from 'dot';
 
 const getFieldType = (datatype, type, code) => {
@@ -423,7 +423,7 @@ const getCodeByRebuildTableTemplate = (dataSource, changes, code, oldDataSource)
       })
     });
   } catch (e) {
-    Message.error({title: '数据库模板出错，请参考Dot.js配置模板信息'});
+    aMessage.error("数据库模板出错，请参考Dot.js配置模板信息")
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;
@@ -434,7 +434,7 @@ export const getCodeByChanges = (dataSource, changes, code, oldDataSource = {}) 
   try {
     sqlString = generateUpdateSql(dataSource, changes, code, oldDataSource)
   } catch (e) {
-    Message.error({title: '数据库模板出错，请参考Dot.js配置模板信息'});
+    aMessage.error("数据库模板出错，请参考Dot.js配置模板信息")
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;
@@ -453,7 +453,7 @@ export const getCodeByDataTable = (dataSource, module, dataTable, code, template
       sqlString = getCodeByChanges(dataSource, changes, code, oldDataSource);
     }
   } catch (e) {
-    Message.error({title: '数据库模板出错，请参考Dot.js配置模板信息'});
+    aMessage.error("数据库模板出错，请参考Dot.js配置模板信息")
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;
@@ -688,7 +688,7 @@ export const getDataByTemplate = (data, template) => {
   try {
     sqlString = getTemplateString(template, data);
   } catch (e) {
-    Message.error({title: '数据库模板出错，请参考Dot.js配置模板信息'});
+    aMessage.error("数据库模板出错，请参考Dot.js配置模板信息")
     sqlString = JSON.stringify(e.message);
   }
   return sqlString;

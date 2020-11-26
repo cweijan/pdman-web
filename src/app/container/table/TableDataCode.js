@@ -1,15 +1,15 @@
-import React from 'react';
+import { Button, message as aMessage } from 'antd';
 import _object from 'lodash/object';
+import React from 'react';
 import * as Com from '../../../components';
-import { getCodeByDataTable } from '../../../utils/json2code';
+import clipboard from '../../../utils/clipboard';
 import { getCurrentVersionData } from '../../../utils/dbversionutils';
+import { getCodeByDataTable } from '../../../utils/json2code';
 
-import { Button } from 'antd';
 
-import clipboard  from '../../../utils/clipboard';
 
-export default class TableDataCode extends React.Component{
-  constructor(props){
+export default class TableDataCode extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       codesTabShow: 'MYSQL',
@@ -18,7 +18,7 @@ export default class TableDataCode extends React.Component{
     };
     this._getChanges(props);
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     if (nextProps.dataSource !== this.props.dataSource) {
       // 数据发生了变化
       this._getChanges(nextProps);
@@ -30,7 +30,7 @@ export default class TableDataCode extends React.Component{
       });
     }
   }
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     return (nextState.changes !== this.state.changes)
       || (nextState.dataTable !== this.state.dataTable)
       || (nextState.codesTabShow !== this.state.codesTabShow)
@@ -50,7 +50,7 @@ export default class TableDataCode extends React.Component{
   };
   _copyClick = (data) => {
     clipboard.writeText(data);
-    Com.Message.success({title: '代码经成功复制到粘贴板'});
+    aMessage.success('代码经成功复制到粘贴板')
   };
   _getTableCode = (code, templateShow) => {
     const { changes = [], oldDataSource, dataTable } = this.state;
@@ -105,20 +105,20 @@ export default class TableDataCode extends React.Component{
           {
             // 根据数据库的数量来生成数据类型
             database.map(db => (
-              <Button key={db.code} type={codesTabShow==db.code?'':'unactive'} onClick={() => this._codesTabClick(db.code)} >{db.code}</Button>
+              <Button key={db.code} type={codesTabShow == db.code ? '' : 'unactive'} onClick={() => this._codesTabClick(db.code)} >{db.code}</Button>
             ))
           }
         </div>
-        <div style={{height: height - 184, overflow: 'auto'}}>
+        <div style={{ height: height - 184, overflow: 'auto' }}>
           {
             database.map(db => (
               <div
                 key={`${db.code}-code`}
-                style={{display: currentCode === db.code ? '' : 'none'}}
+                style={{ display: currentCode === db.code ? '' : 'none' }}
               >
                 <div
                   className={`${prefix}-data-table-content-tab`}
-                  style={{marginTop: 5, fontSize: 12, marginBottom: 0}}
+                  style={{ marginTop: 5, fontSize: 12, marginBottom: 0 }}
                 >
                   {/* <div
                     onClick={() => this._templateTabClick('createTableTemplate')}
@@ -172,19 +172,19 @@ export default class TableDataCode extends React.Component{
                   </div> */}
                 </div>
                 <div className={`${prefix}-data-tab-content`}>
-                  <div style={{display: 'flex', padding: 5}}>
+                  <div style={{ display: 'flex', padding: 5 }}>
                     <Com.Icon
                       type='copy1'
-                      style={{cursor: 'pointer'}}
+                      style={{ cursor: 'pointer' }}
                       title='点击复制到粘贴板'
                       onClick={() => this._copyClick(
                         this._getTableCode(currentCode, templateShow))}
                     />
                   </div>
-                  <div style={{height: height - 242, overflow: 'auto'}}>
+                  <div style={{ height: height - 242, overflow: 'auto' }}>
                     <Com.Code
                       language={db.code !== 'Java' ? 'SQL' : 'Java'}
-                      style={{minHeight: height - 242, width: '100%'}}
+                      style={{ minHeight: height - 242, width: '100%' }}
                       data={this._getTableCode(db.code, templateShow)}
                     />
                   </div>

@@ -1,8 +1,7 @@
 import React from 'react';
-
-import { Button, Message } from '../components';
-import { copyFileSync } from '../utils/json';
+import { Button } from '../components';
 import './style/word.less';
+
 
 
 

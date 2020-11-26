@@ -9,7 +9,6 @@ export { default as TextArea } from './textarea';
 export { default as Checkbox } from './checkbox';
 export { default as Select } from './select';
 export { default as Modal } from './modal/Modal';
-export { default as Message } from './message';
 export { default as Code } from './code';
 export { default as Editor } from './editor';
 export { default as SimpleTab } from './simpletab';

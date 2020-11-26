@@ -1,6 +1,7 @@
 import React from 'react';
 import _object from 'lodash/object';
 
+import { message as aMessage } from 'antd';
 import * as Com from '../../../components';
 import TableRow from './TableRow';
 import { uuid } from '../../../utils/uuid';
@@ -68,7 +69,7 @@ export default class Table extends React.Component {
             return;
           }
           clipboard.writeText(JSON.stringify(clipboardData));
-          Com.Message.success({ title: '数据表列已经成功复制到粘贴板' });
+          aMessage.success("数据表列已经成功复制到粘贴板")
         } else if (e.keyCode === 86) {
           try {
             const tempData = JSON.parse(clipboard.readText());

@@ -1,4 +1,5 @@
 import { download } from '@/utils/download';
+import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -8,7 +9,7 @@ import { generateHtml } from '../../src/utils/generatehtml';
 import { addOnResize } from '../../src/utils/listener';
 import { generate } from '../../src/utils/markdown';
 import { saveImage } from '../../src/utils/relation2file';
-import { Button, Context, Icon, Input, Message, Modal, openModal, Tab, Tree } from '../components';
+import { Button, Context, Icon, Input, Modal, openModal, Tab, Tree } from '../components';
 import { ensureDirectoryExistence } from '../utils/json';
 import Database from './container/database';
 import DataType from './container/datatype';
@@ -117,7 +118,7 @@ export default class App extends React.Component {
         project && saveProject(`${project}.pdman.json`, {
           ...data,
         }, () => {
-          Message.success({ title: '项目基础数据已经成功自动更新到最新！' })
+          aMessage.success("项目基础数据已经成功自动更新到最新!")
         });
       }
     });
@@ -257,7 +258,7 @@ export default class App extends React.Component {
         dbs: tempDBs,
       },
     }, () => {
-      Message.success({ title: '数据库连接信息已经成功保存！' });
+      aMessage.success('数据库连接信息已经成功保存！')
       callback && callback();
     });
   };
@@ -337,7 +338,7 @@ export default class App extends React.Component {
     table && table.promiseSave((err) => {
       //Modal.success({title: '保存成功', message: '保存成功', width: 200})
       if (!err) {
-        Message.success({ title: '保存成功' });
+        aMessage.success('保存成功')
       }
     }).catch(err => {
       Modal.error({ title: '保存失败', message: err, width: 300 });
@@ -436,10 +437,10 @@ export default class App extends React.Component {
             writeFile(`${dir}/${projectName}.html`, dataSource).then(() => {
               modal && modal.close();
               btn && btn.setLoading(false);
-              Message.success({ title: `html导出成功！导出目录：[${dir}]` });
+              aMessage.success(`html导出成功！导出目录：[${dir}]`)
             }).catch(() => {
               modal && modal.close();
-              Message.success({ title: 'html导出失败！' });
+              aMessage.error("html导出失败!")
               btn && btn.setLoading(false);
             });
           });
@@ -497,7 +498,6 @@ export default class App extends React.Component {
     this._exportFile('SQL');
   };
   _readPDMfile = () => {
-    Message.error({ title: '此功能正在玩命开发中，敬请期待...' });
   };
   _readDB = () => {
     let modal = null;
@@ -586,7 +586,7 @@ export default class App extends React.Component {
         };
         // 2.将剩余的数据表放置于新模块
         saveProject(`${project}.pdman.json`, tempData, () => {
-          Message.success({ title: '操作成功！' })
+          aMessage.success('操作成功!')
         });
       }
     };
@@ -613,14 +613,14 @@ export default class App extends React.Component {
         callBack && callBack();
         if (!this.errors || this.errors.length === 0) {
           //Modal.success({title: '保存成功', message: '保存成功', width: 200})
-          !callBack && Message.success({ title: '保存成功' });
+          !callBack && aMessage.success('保存成功');
         } else {
           Modal.error({ title: '保存失败', message: this.errors.join(',') })
         }
       });
     } else {
       if (project) {
-        !callBack && Message.success({ title: '保存成功' });
+        !callBack && aMessage.success('保存成功');
         callBack && callBack();
       } else {
         saveProject('', dataSource);
@@ -669,7 +669,7 @@ export default class App extends React.Component {
     const { show } = this.state;
     this.relationInstance[show] && this.relationInstance[show].saveData(() => {
       //Modal.success({title: '保存成功', message: '保存成功', width: 200})
-      Message.success({ title: '保存成功' });
+      aMessage.success("保存成功")
     });
   };
   _undo = () => {
@@ -1469,7 +1469,7 @@ export default class App extends React.Component {
         //   if (file) {
         //     const { show } = this.state;
         //     this.relationInstance[show] && this.relationInstance[show].exportImg(file, type, () => {
-        //       Message.success({title: '图片导出成功！'})
+              // aMessage.success( '图片导出成功！')
         //     });
         //   }
         // });

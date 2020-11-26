@@ -1,10 +1,10 @@
 import history from '@/service/history';
 import { download } from '@/utils/download';
+import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import React from 'react';
-import { message as aMessage } from 'antd';
 import ReactDom from 'react-dom';
-import { Icon, Message, Modal } from '../components';
+import { Icon, Modal } from '../components';
 import demo from '../demo';
 import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
 import CreatePro from './CreatePro';
@@ -251,7 +251,7 @@ export default class Home extends React.Component {
             cb && cb();
           });
         }).catch(() => {
-          Message.error({ title: '保存失败' });
+          aMessage.error('保存失败')
         });
       }
     } else {
@@ -484,7 +484,7 @@ export default class Home extends React.Component {
     // ipcRenderer.sendSync('headerType', 'openDev');
   };
   _cloneProject = () => {
-    Message.warning({ title: '该功能正在开发中，敬请期待！' });
+    aMessage.error("该功能正在开发中，敬请期待！")
   };
   render() {
     if (this.state.flag || this.state.error || this.state.closeProject) {
