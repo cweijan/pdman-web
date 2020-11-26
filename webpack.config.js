@@ -59,9 +59,9 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-        new HtmlWebpackPlugin({ inject: true, template: './public/index.html', filename: 'index.html' }),
+        new HtmlWebpackPlugin({ inject: true, template: './index.html', filename: 'index.html' }),
         new CopyWebpackPlugin({ patterns: [{ from: './public', to: 'public' }] }),
-        new MiniCssExtractPlugin()
+        new MiniCssExtractPlugin({ filename: 'public/[name].css',})
     ],
     watch: !isProd,
     optimization: {
