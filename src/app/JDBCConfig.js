@@ -3,6 +3,7 @@ import _object from 'lodash/object';
 import React from 'react';
 import { Button, Icon, Input, Modal, openModal, RadioGroup, Select } from '../components';
 import { uuid } from '../utils/uuid';
+import { message as aMessage } from 'antd';
 import './style/jdbc.less';
 
 const Radio = RadioGroup.Radio;
@@ -192,9 +193,9 @@ export default class JDBCConfig extends React.Component {
     });
     post('/api/db/connect', properties).then(res => {
       if (res.success) {
-        Modal.success({ title: '连接成功', message: `数据库连接配置成功` });
+        aMessage.success('数据库连接配置成功')
       } else {
-        Modal.error({ title: '连接失败', message: res.msg });
+        aMessage.error(res.msg)
       }
       this.setState({
         loading: false,
