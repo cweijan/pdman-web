@@ -7,6 +7,7 @@
     "dev": "ts-node --project tsconfig.json --files src/index.ts",
     "build": "tsc"
   },
+  "bin": "./build/index.js",
   "author": "",
   "license": "ISC",
   "dependencies": {

@@ -11,6 +11,8 @@ yarn.lock
 # testing
 /coverage
 
+.pdman.json
+
 # production
 /build
 

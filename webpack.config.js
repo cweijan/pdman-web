@@ -19,7 +19,7 @@ module.exports = {
     entry: './src/index.js',
     output: {
         filename: 'public/js/[name].bundle.[hash:8].js',
-        path: path.resolve(__dirname, './build')
+        path: path.resolve(__dirname, './server/build')
     },
     module: {
         rules: [
