@@ -7,7 +7,6 @@ import ReactDom from 'react-dom';
 import { Icon, Message, Modal } from '../components';
 import demo from '../demo';
 import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
-import { getVersion } from '../utils/update';
 import CreatePro from './CreatePro';
 import defaultData from './defaultData.json';
 import Header from './Header';
@@ -46,17 +45,6 @@ export default class Home extends React.Component {
         }
       }
     };
-    // 获取当前版本信息
-    getVersion((res) => {
-    });
-    // 读取注册号
-    // readFile(`${this.configPath + this.split}register`).then((data) => {
-    //   this.setState({
-    //     register: {
-    //       code: data.toString(),
-    //     },
-    //   });
-    // });
   }
 
   componentWillUnmount() {
@@ -197,7 +185,6 @@ export default class Home extends React.Component {
     history.writeH(temp)
   };
   _openProject = (path, callBack, type) => {
-    console.log('open')
     // 打开项目
     if (path || type) {
       if (type) {

@@ -4,11 +4,9 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { moveArrayPosition } from '../../src/utils/array';
 import { upgrade } from '../../src/utils/basedataupgrade';
-//import { generatepdf } from '../../src/utils/generatepdf';
 import { generateHtml } from '../../src/utils/generatehtml';
 import { addOnResize } from '../../src/utils/listener';
 import { generate } from '../../src/utils/markdown';
-import { generateByJar } from '../../src/utils/office';
 import { saveImage } from '../../src/utils/relation2file';
 import { Button, Context, Icon, Input, Message, Modal, openModal, Tab, Tree } from '../components';
 import { ensureDirectoryExistence } from '../utils/json';
@@ -33,13 +31,13 @@ const DatabaseUtils = Database.Utils;
 const TreeNode = Tree.TreeNode;
 const TabPane = Tab.TabPane;
 const menus = [
-  { name: '新增', key: 'new', icon: <Icon type='addfolder' style={{color: '#008000', marginRight: 5}}/>},
-  { name: '重命名', key: 'rename', icon: <Icon type='fa-undo' style={{color: '#F96B36', marginRight: 5}}/> },
-  { name: '删除', key: 'delete', icon: <Icon type='delete' style={{color: '#FF0000', marginRight: 5}}/> },
-  { name: '复制', key: 'copy', icon: <Icon type='copy1' style={{color: '#0078D7', marginRight: 5}}/> },
-  { name: '剪切', key: 'cut', icon: <Icon type='fa-cut' style={{color: '#D2B3AF', marginRight: 5}}/> },
-  { name: '粘贴', key: 'paste', icon: <Icon type='fa-paste' style={{color: '#6968E1', marginRight: 5}}/> },
-  { name: '打开', key: 'open', icon: <Icon type='folderopen' style={{color: '#C3D6E8', marginRight: 5}}/> },
+  { name: '新增', key: 'new', icon: <Icon type='addfolder' style={{ color: '#008000', marginRight: 5 }} /> },
+  { name: '重命名', key: 'rename', icon: <Icon type='fa-undo' style={{ color: '#F96B36', marginRight: 5 }} /> },
+  { name: '删除', key: 'delete', icon: <Icon type='delete' style={{ color: '#FF0000', marginRight: 5 }} /> },
+  { name: '复制', key: 'copy', icon: <Icon type='copy1' style={{ color: '#0078D7', marginRight: 5 }} /> },
+  { name: '剪切', key: 'cut', icon: <Icon type='fa-cut' style={{ color: '#D2B3AF', marginRight: 5 }} /> },
+  { name: '粘贴', key: 'paste', icon: <Icon type='fa-paste' style={{ color: '#6968E1', marginRight: 5 }} /> },
+  { name: '打开', key: 'open', icon: <Icon type='folderopen' style={{ color: '#C3D6E8', marginRight: 5 }} /> },
 ];
 export default class App extends React.Component {
   constructor(props) {
@@ -64,7 +62,7 @@ export default class App extends React.Component {
     this.tableInstance = {};
   }
   componentDidMount() {
-    
+
     // 增加监听窗口大小的事件
     // console.log(this.props);
     // window.PDMan.loading(window, this.props);
@@ -103,7 +101,7 @@ export default class App extends React.Component {
           if (evt.code === 'KeyS') {
             this._saveAll();
             evt.preventDefault()
-          } else if(evt.code === 'KeyE') {
+          } else if (evt.code === 'KeyE') {
             // 关闭当前打开的tab
             const { show } = this.state;
             show && this._tabClose(show);
@@ -119,23 +117,23 @@ export default class App extends React.Component {
         project && saveProject(`${project}.pdman.json`, {
           ...data,
         }, () => {
-          Message.success({title: '项目基础数据已经成功自动更新到最新！'})
+          Message.success({ title: '项目基础数据已经成功自动更新到最新！' })
         });
       }
     });
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     if (nextProps.project !== this.props.project) {
       // window.PDMan.loading(window, nextProps);
     }
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.flag = false;
   }
   asyncRun = (events = [], errors) => {
     // 顺序执行方法，方法返回的必须是promise
     const asyncRunEvents = async () => {
-      for (let i = 0; i< events.length; i++) {
+      for (let i = 0; i < events.length; i++) {
         await events[i]().catch((err) => {
           errors.push(err);
         });
@@ -171,7 +169,7 @@ export default class App extends React.Component {
         }),
       });
     } else if ((tabFoldingLength !== 0)
-      && (this.weight - 25 >= ((tabShowLength + 1) * 151))){
+      && (this.weight - 25 >= ((tabShowLength + 1) * 151))) {
       const firstFoldingTab = tabs.filter(tab => tab.folding)[0];
       this.flag && this.setState({
         tabs: tabs.map((tab) => {
@@ -227,7 +225,7 @@ export default class App extends React.Component {
   _saveAs = (status) => {
     const { saveProject, dataSource } = this.props;
     this._saveAll(() => {
-      let tempDataSource = {...dataSource};
+      let tempDataSource = { ...dataSource };
       if (status === 'filterDBS') {
         // 去除数据库信息
         tempDataSource = {
@@ -259,7 +257,7 @@ export default class App extends React.Component {
         dbs: tempDBs,
       },
     }, () => {
-      Message.success({title: '数据库连接信息已经成功保存！'});
+      Message.success({ title: '数据库连接信息已经成功保存！' });
       callback && callback();
     });
   };
@@ -297,7 +295,8 @@ export default class App extends React.Component {
                 m && m.close();
                 modal && modal.close();
               });
-            }});
+            }
+          });
         } else {
           this._updateDBs(tempDBs, () => {
             m && m.close();
@@ -338,10 +337,10 @@ export default class App extends React.Component {
     table && table.promiseSave((err) => {
       //Modal.success({title: '保存成功', message: '保存成功', width: 200})
       if (!err) {
-        Message.success({title: '保存成功'});
+        Message.success({ title: '保存成功' });
       }
     }).catch(err => {
-      Modal.error({title: '保存失败', message: err, width: 300});
+      Modal.error({ title: '保存失败', message: err, width: 300 });
     });
   };
   _getProjectName = (item) => {
@@ -413,77 +412,19 @@ export default class App extends React.Component {
           });
         });
       });
-    } else if (type === 'Word' || type === 'PDF') {
+    } else if (type === 'PDF') {
+      // TODO 增加pdf导出
+      Modal.error({
+        title: '导出失败！',
+        message: `暂时不支持PDF导出！`
+      })
       const { project, projectDemo } = this.props;
-      if (!project && projectDemo) {
-        Modal.error({
-          title: '导出失败！',
-          message: `当前项目为演示项目${projectDemo}，无法直接导出${type},请先进行保存操作！`
-        })
-      } else {
-        const postfix = type === 'Word' ? 'doc' : 'pdf';
-        openDir((dir) => {
-          // 保存图片
-          const modal = this._showExportMessage(dir);
-          btn && btn.setLoading(true);
-          const projectName = projectDemo || this._getProjectName(project);
-          saveImage(dataSource, columnOrder, writeFile, (images) => {
-            const imagesPath = `${dir}/${projectName}_files/`;
-            Promise.all(Object.keys(images).map(mo => {
-              const base64Data = images[mo].replace(/^data:image\/\w+;base64,/, "");
-              const dataBuffer = Buffer.from(base64Data, 'base64');
-              return new Promise((res) => {
-                // 判断图片目录是否存在
-                ensureDirectoryExistence(imagesPath);
-                writeFile(`${imagesPath}${mo}.png`, dataBuffer).then(() => {
-                  res();
-                });
-              });
-            })).then(() => {
-              // 图片保存成功
-              // const defaultPath = ipcRenderer.sendSync('wordPath');
-              // TODO
-              const defaultPath = '';
-              const templatePath = _object.get(dataSource, 'profile.wordTemplateConfig') || defaultPath;
-              generateByJar(dataSource, {
-                pdmanfile: `${project}.pdman.json`,
-                doctpl: templatePath,
-                imgdir: imagesPath,
-                imgext: '.png',
-                out: `${dir}/${projectName}.${postfix}`,
-              }, (error, stdout, stderr) => {
-                const result = (stdout || stderr);
-                let tempResult = '';
-                try {
-                  tempResult = JSON.parse(result);
-                } catch (e) {
-                  tempResult = result;
-                }
-                btn && btn.setLoading(false);
-                modal && modal.close();
-                if (tempResult.status !== 'SUCCESS') {
-                  Modal.error({
-                    title: `${type}导出失败!请重试！`,
-                    message: `出错原因：${tempResult.body || tempResult}，可前往\${user.home}/logs/pdman目录查看出错日志`,
-                  });
-                } else {
-                  Modal.success({
-                    title: `${type}导出成功！`,
-                    message: `文件存储目录：[${dir}]`
-                  });
-                }
-              }, 'gendocx');
-            });
-          }, (err) => {
-            modal && modal.close();
-            btn && btn.setLoading(false);
-            Modal.error({
-              title: `${type}导出失败!请重试！`,
-              message: `出错原因：${err.message}`,
-            });
-          });
-        });
-      }
+      // if (!project && projectDemo) {
+      //   Modal.error({
+      //     title: '导出失败！',
+      //     message: `当前项目为演示项目${projectDemo}，无法直接导出${type},请先进行保存操作！`
+      //   })
+      // } 
     } else if (type === 'Html') {
       openDir((dir) => {
         // 保存图片
@@ -495,10 +436,10 @@ export default class App extends React.Component {
             writeFile(`${dir}/${projectName}.html`, dataSource).then(() => {
               modal && modal.close();
               btn && btn.setLoading(false);
-              Message.success({title: `html导出成功！导出目录：[${dir}]`});
+              Message.success({ title: `html导出成功！导出目录：[${dir}]` });
             }).catch(() => {
               modal && modal.close();
-              Message.success({title: 'html导出失败！'});
+              Message.success({ title: 'html导出失败！' });
               btn && btn.setLoading(false);
             });
           });
@@ -519,9 +460,9 @@ export default class App extends React.Component {
         const exportConfig = modal.com.getValue();
         const value = exportConfig.value;
         if (value.length === 0) {
-          Modal.error({title: '导出失败', message: '请选择导出的内容'})
+          Modal.error({ title: '导出失败', message: '请选择导出的内容' })
         } else {
-          download(`export.sql`,modal.com.getData())
+          download(`export.sql`, modal.com.getData())
         }
       };
       const onCancel = () => {
@@ -537,18 +478,17 @@ export default class App extends React.Component {
         title: 'SQL导出配置',
         footer: [
           //<Button key="ok" onClick={onOk} type="primary" style={{marginTop: 10}}>保存</Button>,
-          <Button key="cancel" onClick={onCancel} style={{marginLeft: 10, marginTop: 10}}>关闭</Button>
+          <Button key="cancel" onClick={onCancel} style={{ marginLeft: 10, marginTop: 10 }}>关闭</Button>
         ],
       });
     }
   };
   _export = () => {
     // 打开弹窗，选择导出html或者word
-    openModal(<div style={{textAlign: 'center', padding: 10}}>
+    openModal(<div style={{ textAlign: 'center', padding: 10 }}>
       <Button icon='HTML' onClick={(btn) => this._exportFile('Html', btn)}>导出HTML</Button>
-      <Button icon='wordfile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Word', btn)}>导出WORD</Button>
-      <Button icon='pdffile1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
-      <Button icon='file1' style={{marginLeft: 40}} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button>
+      <Button icon='pdffile1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
+      <Button icon='file1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button>
     </div>, {
       title: '文件导出'
     })
@@ -557,7 +497,7 @@ export default class App extends React.Component {
     this._exportFile('SQL');
   };
   _readPDMfile = () => {
-    Message.error({title: '此功能正在玩命开发中，敬请期待...'});
+    Message.error({ title: '此功能正在玩命开发中，敬请期待...' });
   };
   _readDB = () => {
     let modal = null;
@@ -604,7 +544,7 @@ export default class App extends React.Component {
         });
         let tempKeys = [...keys];
         modal && modal.close();
-        let tempData = {...dataSource};
+        let tempData = { ...dataSource };
         // 1.循环所有已知的数据表
         let modules = (tempData.modules || []).map(m => ({
           ...m,
@@ -617,7 +557,7 @@ export default class App extends React.Component {
             return dbEntity || e;
           })
         }));
-        if (modules.map(m => m.name).includes(module.code)){
+        if (modules.map(m => m.name).includes(module.code)) {
           // 如果该模块已经存在了
           modules = modules.map(m => {
             if (m.name === module.code) {
@@ -646,11 +586,11 @@ export default class App extends React.Component {
         };
         // 2.将剩余的数据表放置于新模块
         saveProject(`${project}.pdman.json`, tempData, () => {
-          Message.success({title: '操作成功！'})
+          Message.success({ title: '操作成功！' })
         });
       }
     };
-    modal = openModal(<ReadDB {...this.props} success={success}/>, {
+    modal = openModal(<ReadDB {...this.props} success={success} />, {
       title: '解析已有数据库',
       footer: [<Button key="cancel" onClick={onClickCancel}>关闭</Button>]
     })
@@ -673,14 +613,14 @@ export default class App extends React.Component {
         callBack && callBack();
         if (!this.errors || this.errors.length === 0) {
           //Modal.success({title: '保存成功', message: '保存成功', width: 200})
-          !callBack && Message.success({title: '保存成功'});
+          !callBack && Message.success({ title: '保存成功' });
         } else {
-          Modal.error({title: '保存失败', message: this.errors.join(',')})
+          Modal.error({ title: '保存失败', message: this.errors.join(',') })
         }
       });
     } else {
       if (project) {
-        !callBack && Message.success({title: '保存成功'});
+        !callBack && Message.success({ title: '保存成功' });
         callBack && callBack();
       } else {
         saveProject('', dataSource);
@@ -729,7 +669,7 @@ export default class App extends React.Component {
     const { show } = this.state;
     this.relationInstance[show] && this.relationInstance[show].saveData(() => {
       //Modal.success({title: '保存成功', message: '保存成功', width: 200})
-      Message.success({title: '保存成功'});
+      Message.success({ title: '保存成功' });
     });
   };
   _undo = () => {
@@ -794,7 +734,7 @@ export default class App extends React.Component {
       if (!showTab.folding) {
         return show;
       }
-      return this._checkShowTab(tabs,  tabs[showTabIndex === 0 ? 0 : (showTabIndex - 1)].key)
+      return this._checkShowTab(tabs, tabs[showTabIndex === 0 ? 0 : (showTabIndex - 1)].key)
     }
     return show;
   };
@@ -802,9 +742,9 @@ export default class App extends React.Component {
     const { tabs, show, tools } = this.state;
     const tempValue = [].concat(value);
     if (tempValue.length > 0) {
-      const result =  tempValue.reduce((a, b) => {
+      const result = tempValue.reduce((a, b) => {
         return this._getTabsAndShow(a.tabs, b);
-      }, {tabs});
+      }, { tabs });
       this.setState({
         tabs: result.tabs,
         show: this._checkShowTab(result.tabs, ((show === value) && result.show && result.show.key) || show),
@@ -896,9 +836,9 @@ export default class App extends React.Component {
         saveProject(`${project}.pdman.json`, data);
       });
     } else if (value.startsWith('database&data&')) {
-        DatabaseUtils.renameDatabase(value.split('database&data&')[1], dataSource, (data) => {
-          saveProject(`${project}.pdman.json`, data);
-        });
+      DatabaseUtils.renameDatabase(value.split('database&data&')[1], dataSource, (data) => {
+        saveProject(`${project}.pdman.json`, data);
+      });
     } else {
       const types = ['map&', 'entity&'];
       const tempValue = this._getTabKey(value, types);
@@ -942,10 +882,10 @@ export default class App extends React.Component {
     // 计算需要复制的内容
     if (checked.length > 1) {
       contextMenus = [{
-        name: <span><Icon type='copy1' style={{color: '#0078D7', marginRight: 5}}/>复制</span>,
+        name: <span><Icon type='copy1' style={{ color: '#0078D7', marginRight: 5 }} />复制</span>,
         key: `multiple&copy&${value}`,
         checked
-        }]
+      }]
     } else {
       if (value.startsWith('module&')) {
         contextMenus = contextMenus.concat(menus.map((menu) => {
@@ -968,13 +908,13 @@ export default class App extends React.Component {
           return {
             ...menu,
             name: <span>{
-              menu.key === 'new' ? <Icon type='fa-table' style={{color: '#008000', marginRight: 5}}/> : menu.icon
+              menu.key === 'new' ? <Icon type='fa-table' style={{ color: '#008000', marginRight: 5 }} /> : menu.icon
             }{menu.key === 'new' ? '新增数据表' : menu.name}</span>,
             key: `${menu.key}&${value}`,
           };
         }).filter(menu => !menu.key.startsWith('open&') &&
           !menu.key.startsWith('delete&') && !menu.key.startsWith('rename&')));
-      } else if (value.startsWith('datatype&data&')){
+      } else if (value.startsWith('datatype&data&')) {
         contextMenus = contextMenus.concat(menus.map((menu) => {
           return {
             ...menu,
@@ -995,7 +935,7 @@ export default class App extends React.Component {
           return {
             ...menu,
             name: <span>{
-              menu.key === 'new' ? <Icon type='fa-table' style={{color: '#008000', marginRight: 5}}/> : menu.icon
+              menu.key === 'new' ? <Icon type='fa-table' style={{ color: '#008000', marginRight: 5 }} /> : menu.icon
             }
               {menu.key === 'new' ? '新增数据表' : menu.name}</span>,
             key: `${menu.key}&${value}`,
@@ -1182,7 +1122,7 @@ export default class App extends React.Component {
                 });
               });
             }
-          });break;
+          }); break;
       case 'copy': tableUtils.copyTable(module, table, dataSource); break;
       case 'cut': tableUtils.cutTable(module, table, dataSource); break;
       case 'paste': tableUtils.pasteTable(module, dataSource, (data) => {
@@ -1279,7 +1219,7 @@ export default class App extends React.Component {
     const dropType = drop.split('&')[0];
     const dragType = drag.split('&')[0];
     if (dropType !== dragType) {
-      Modal.error({title: '移动失败', message: '数据类型和数据库之间数据不可移动', width: 300})
+      Modal.error({ title: '移动失败', message: '数据类型和数据库之间数据不可移动', width: 300 })
     } else {
       const dropKey = drop.split('&')[2];
       const dragKey = drag.split('&')[2];
@@ -1300,7 +1240,7 @@ export default class App extends React.Component {
     if (drag.split('&')[0] === 'module') {
       const dragModule = drag.split('&')[1];
       if (drop.split('&')[0] !== 'module') {
-        Modal.error({title: '移动失败', message: '模块不能与非模块之间移动'})
+        Modal.error({ title: '移动失败', message: '模块不能与非模块之间移动' })
       } else {
         const dropModule = drop.split('&')[1];
         const { saveProject, dataSource, project } = this.props;
@@ -1325,7 +1265,7 @@ export default class App extends React.Component {
         if (!dropEntity) {
           message = '无法移动至非数据表！'
         }
-        Modal.error({title: '移动失败', message: message, width: 200});
+        Modal.error({ title: '移动失败', message: message, width: 200 });
       } else if (dropModule !== dragModule && dropModule && dragModule) {
         /*Modal.confirm({
           title: '确定移动吗',
@@ -1365,7 +1305,7 @@ export default class App extends React.Component {
                 return n;
               }));
             }
-          } else if(relationModuleName === dropModule){
+          } else if (relationModuleName === dropModule) {
             // 放置的模块
             // 获取所有的节点
             if (this.relationInstance[r]) {
@@ -1512,7 +1452,7 @@ export default class App extends React.Component {
     this.relationInstance[show] && this.relationInstance[show].searchNodes(e.target.value);
   };
   _exportImage = () => {
-    openModal(<ExportImg/>, {
+    openModal(<ExportImg />, {
       title: '选择图片导出类型',
       onOk: (modal, com) => {
         modal.close();
@@ -1550,13 +1490,13 @@ export default class App extends React.Component {
         <div className='pdman-home-header'>
           <div
             className='pdman-home-header-save'
-            style={{display: tools === 'dbversion' ? 'none' : ''}}
+            style={{ display: tools === 'dbversion' ? 'none' : '' }}
             onClick={() => this._saveAll()}
           >
-            <span><Icon type="save"/></span>
+            <span><Icon type="save" /></span>
             <span>保存</span>
           </div>
-          <div className='pdman-home-header-menu' style={{paddingLeft: tools === 'dbversion' ? '60px' : '0'}}>
+          <div className='pdman-home-header-menu' style={{ paddingLeft: tools === 'dbversion' ? '60px' : '0' }}>
             <header>
               <div className="options-wrapper">
                 <div>
@@ -1586,7 +1526,7 @@ export default class App extends React.Component {
                     <li
                       className={`other-options-menu-tools ${tools === 'dbversion' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
-                      onClick={() =>this._menuClick('dbversion')}
+                      onClick={() => this._menuClick('dbversion')}
                     >
                       <span><u>模</u>型版本</span>
                     </li>
@@ -1594,7 +1534,7 @@ export default class App extends React.Component {
                   <Icon
                     type='logout'
                     title='关闭当前项目'
-                    style={{float: 'right', marginRight: 5, paddingTop: 1, cursor: 'pointer'}}
+                    style={{ float: 'right', marginRight: 5, paddingTop: 1, cursor: 'pointer' }}
                     onClick={this._closeProject}
                   />
                 </div>
@@ -1608,15 +1548,15 @@ export default class App extends React.Component {
               closeContextMenu={this._closeContextMenu}
               onClick={this._contextClick}
             />
-            <div className="tools-content" style={{display: tools === 'dbversion' ? 'none' : ''}}>
-              <div className="tools-content-tab" style={{display: (tools === 'file' || tools === 'entity') ? '' : 'none'}}>
+            <div className="tools-content" style={{ display: tools === 'dbversion' ? 'none' : '' }}>
+              <div className="tools-content-tab" style={{ display: (tools === 'file' || tools === 'entity') ? '' : 'none' }}>
                 <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
                       onClick={this._open}
                     >
-                      <Icon type='folderopen' style={{marginRight: 5, color: '#FFCA28'}}/>打开
+                      <Icon type='folderopen' style={{ marginRight: 5, color: '#FFCA28' }} />打开
                     </div>
                     {/* <div
                       className='tools-content-clickeable'
@@ -1628,13 +1568,13 @@ export default class App extends React.Component {
                       className='tools-content-clickeable'
                       onClick={() => this._saveAs()}
                     >
-                      <Icon type='fa-save' style={{marginRight: 5, color: '#9291CD'}}/>另存为
+                      <Icon type='fa-save' style={{ marginRight: 5, color: '#9291CD' }} />另存为
                     </div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._setting()}
                     >
-                      <Icon type='setting' style={{marginRight: 5}}/>设置
+                      <Icon type='setting' style={{ marginRight: 5 }} />设置
                     </div>
                   </div>
                   <div className='tools-content-group-name'>
@@ -1647,12 +1587,12 @@ export default class App extends React.Component {
                       className='tools-content-clickeable'
                       onClick={() => this._JDBCConfig()}
                     >
-                      <Icon type='fa-link' style={{marginRight: 5}}/>数据库连接
+                      <Icon type='fa-link' style={{ marginRight: 5 }} />数据库连接
                     </div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._readDB()}
-                    ><Icon type="fa-hand-lizard-o"/>逆向解析</div>
+                    ><Icon type="fa-hand-lizard-o" />逆向解析</div>
                   </div>
                   <div className='tools-content-group-name'>
                     配置
@@ -1660,46 +1600,42 @@ export default class App extends React.Component {
                 </div>
                 <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
-                  <div
+                    <div
                       className='tools-content-clickeable'
                       onClick={() => this._exportSQL()}
-                    ><Icon type="fa-database"/>执行SQL</div>
+                    ><Icon type="fa-database" />执行SQL</div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._export()}
-                    ><Icon type="export"/>导出文档</div>
-                    {/* <div
-                      className='tools-content-clickeable'
-                      onClick={() => this._saveAs('filterDBS')}
-                    ><Icon type="file1"/>导出JSON</div> */}
+                    ><Icon type="export" />导出文档</div>
                   </div>
                   <div className='tools-content-group-name'>
                     导出
                   </div>
                 </div>
               </div>
-              <div className="tools-content-tab" style={{display: tabs.length > 0 && tools === 'map' ? '' : 'none'}}>
+              <div className="tools-content-tab" style={{ display: tabs.length > 0 && tools === 'map' ? '' : 'none' }}>
                 <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._onZoom('add')}
                     >
-                      <Icon type="fa-search-plus"/>
+                      <Icon type="fa-search-plus" />
                       放大
                     </div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._onZoom('sub')}
                     >
-                      <Icon type="fa-search-minus"/>
+                      <Icon type="fa-search-minus" />
                       缩小
                     </div>
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._onZoom('normal')}
                     >
-                      <Icon type="fa-search"/>
+                      <Icon type="fa-search" />
                       原始大小
                     </div>
                   </div>
@@ -1712,11 +1648,11 @@ export default class App extends React.Component {
                     <div
                       className={`tools-content-${clicked === 'drag' ? 'clicked' : 'clickeable'}`}
                       onClick={() => this._changeMode('drag')}
-                    ><Icon type="fa-arrows"/>拖拽模式</div>
+                    ><Icon type="fa-arrows" />拖拽模式</div>
                     <div
                       className={`tools-content-${clicked === 'edit' ? 'clicked' : 'clickeable'}`}
                       onClick={() => this._changeMode('edit')}
-                    ><Icon type="fa-edit"/>编辑模式</div>
+                    ><Icon type="fa-edit" />编辑模式</div>
                   </div>
                   <div className='tools-content-group-name'>
                     模式
@@ -1727,7 +1663,7 @@ export default class App extends React.Component {
                     <div
                       className='tools-content-clickeable'
                       onClick={() => this._exportImage()}
-                    ><Icon type="fa-file-image-o"/>导出图片</div>
+                    ><Icon type="fa-file-image-o" />导出图片</div>
                   </div>
                   <div className='tools-content-group-name'>
                     导出
@@ -1737,12 +1673,12 @@ export default class App extends React.Component {
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
-                      style={{flexGrow: 1, textAlign: 'right'}}
+                      style={{ flexGrow: 1, textAlign: 'right' }}
                     ><Input
-                      onChange={this._relationSearch}
-                      style={{margin: '10px 10px 0 0', borderRadius: 3}}
-                      placeholder='在图上找表'
-                    /></div>
+                        onChange={this._relationSearch}
+                        style={{ margin: '10px 10px 0 0', borderRadius: 3 }}
+                        placeholder='在图上找表'
+                      /></div>
                   </div>
                   <div className='tools-content-group-name'>
                     搜索
@@ -1792,7 +1728,7 @@ export default class App extends React.Component {
             </div>
           </div>
         </div>
-        <div className="tools-work-content" style={{display: tools === 'dbversion' ? 'none' : ''}}>
+        <div className="tools-work-content" style={{ display: tools === 'dbversion' ? 'none' : '' }}>
           <div
             className="tools-left-tab"
             style={{ width: width === 0 ? 20 : '20%', minWidth: width === 0 ? 20 : 200, background: '#EBEEF2' }}
@@ -1800,22 +1736,22 @@ export default class App extends React.Component {
           >
             <div className="tools-left-tab-header">
               <div className="tools-left-tab-header-icons">
-                <Icon title='收起左侧树图' type="verticleright" onClick={this._closeLeftTab}/>
-                <Icon title='重新加载项目' type="reload1" onClick={this._refresh} style={{display: width === 0 ? 'none' : ''}}/>
+                <Icon title='收起左侧树图' type="verticleright" onClick={this._closeLeftTab} />
+                <Icon title='重新加载项目' type="reload1" onClick={this._refresh} style={{ display: width === 0 ? 'none' : '' }} />
               </div>
-              <div className="tools-left-tab-header-tab-names" style={{display: width === 0 ? 'none' : ''}}>
+              <div className="tools-left-tab-header-tab-names" style={{ display: width === 0 ? 'none' : '' }}>
                 <span
                   className={`${tab === 'table' ? 'menu-tab-tools-edit-active' : ''}`}
                   onClick={() => this._leftTabChange('table')}
-                ><Icon type='fa-th' style={{marginRight: 5}}/>数据表</span>
+                ><Icon type='fa-th' style={{ marginRight: 5 }} />数据表</span>
                 <span
                   className={`${tab === 'domain' ? 'menu-tab-tools-edit-active' : ''}`}
                   onClick={() => this._leftTabChange('domain')}
-                ><Icon type='fa-th-list' style={{marginRight: 5}}/>数据域</span>
+                ><Icon type='fa-th-list' style={{ marginRight: 5 }} />数据域</span>
               </div>
             </div>
-            <div className="tools-left-tab-body" style={{display: width === 0 ? 'none' : ''}}>
-              <div className="tools-left-tab-body-table" style={{display: tab === 'table' ? '' : 'none'}}>
+            <div className="tools-left-tab-body" style={{ display: width === 0 ? 'none' : '' }}>
+              <div className="tools-left-tab-body-table" style={{ display: tab === 'table' ? '' : 'none' }}>
                 {
                   (dataSource.modules || []).length > 0 ? <Tree
                     showSearch
@@ -1838,7 +1774,7 @@ export default class App extends React.Component {
                               type='fa-wpforms'
                               style={{ marginRight: 2, color: '#50B011' }}
                             />关系图</span>}
-                            value={`map&${module.name}/关系图`}/>
+                            value={`map&${module.name}/关系图`} />
                           <TreeNode
                             name='数据表'
                             value={`table&${module.name}&数据表`}
@@ -1851,11 +1787,11 @@ export default class App extends React.Component {
                                     realName={realName}
                                     key={entity.title}
                                     name={<span>
-                                    <Icon
-                                      type='fa-table'
-                                      style={{ marginRight: 2, color: '#1B8CDC' }}
-                                    />{realName}</span>}
-                                    value={`entity&${module.name}&${entity.title}`}/>
+                                      <Icon
+                                        type='fa-table'
+                                        style={{ marginRight: 2, color: '#1B8CDC' }}
+                                      />{realName}</span>}
+                                    value={`entity&${module.name}&${entity.title}`} />
                                 )
                               })}
                           </TreeNode>
@@ -1863,28 +1799,28 @@ export default class App extends React.Component {
                       })
                     }
                   </Tree> : <span onClick={this._emptyClick} className='tools-left-tab-body-domain-empty-span'>
-                    <Icon type='addfolder'/>无模块点击新增</span>
+                      <Icon type='addfolder' />无模块点击新增</span>
                 }
               </div>
-              <div className="tools-left-tab-body-domain"  style={{display: tab === 'domain' ? '' : 'none'}}>
+              <div className="tools-left-tab-body-domain" style={{ display: tab === 'domain' ? '' : 'none' }}>
                 <Tree onContextMenu={this._onContextMenu} onDoubleClick={this._onDoubleClick} onDrop={this._onDrop}>
                   {
-                    ([{name: '数据类型', type: 'datatype'}, {name: '数据库', type: 'database'}]).map((type) => {
+                    ([{ name: '数据类型', type: 'datatype' }, { name: '数据库', type: 'database' }]).map((type) => {
                       return (<TreeNode key={type.name} name={type.name} value={`${type.type}&${type.name}`}>
                         {
                           (dataSource.dataTypeDomains &&
-                          dataSource.dataTypeDomains[type.type] || [])
-                          .map(data => (
-                            <TreeNode
-                              key={data.code || data.name}
-                              realName={`${data.name || data.code}${data.defaultDatabase ? '(默认)' : ''}`}
-                              name={<span>
-                                <Icon
-                                  type={type.type === 'datatype' ? 'fa-viacoin' : 'fa-database'}
-                                  style={{ marginRight: 2, color: type.type === 'datatype' ? '#3BB359' : '#E17729' }}
-                                />{`${data.name || data.code}${data.defaultDatabase ? '(默认)' : ''}`}</span>
-                              }
-                              value={`${type.type}&data&${data.code || data.name}`}/>))
+                            dataSource.dataTypeDomains[type.type] || [])
+                            .map(data => (
+                              <TreeNode
+                                key={data.code || data.name}
+                                realName={`${data.name || data.code}${data.defaultDatabase ? '(默认)' : ''}`}
+                                name={<span>
+                                  <Icon
+                                    type={type.type === 'datatype' ? 'fa-viacoin' : 'fa-database'}
+                                    style={{ marginRight: 2, color: type.type === 'datatype' ? '#3BB359' : '#E17729' }}
+                                  />{`${data.name || data.code}${data.defaultDatabase ? '(默认)' : ''}`}</span>
+                                }
+                                value={`${type.type}&data&${data.code || data.name}`} />))
                         }
                       </TreeNode>);
                     })
@@ -1893,11 +1829,11 @@ export default class App extends React.Component {
               </div>
             </div>
           </div>
-          <div className="tools-left-border" onMouseDown={this._onMouseDown}>{}</div>
+          <div className="tools-left-border" onMouseDown={this._onMouseDown}>{ }</div>
           <div
             className="tools-right-paint"
             ref={instance => this.instance = instance}
-            style={{width: width === 0 ? 'calc(100% - 20px)' : '80%', minWidth: 200}}
+            style={{ width: width === 0 ? 'calc(100% - 20px)' : '80%', minWidth: 200 }}
           >
             {
               tabs.filter(lefttab => !lefttab.folding).length === 0 ?
@@ -1954,7 +1890,7 @@ export default class App extends React.Component {
           </div>
         </div>
         {
-          tools === 'dbversion' ? <DatabaseVersion project={project} dataSource={dataSource} saveProject={saveProject}/> : ''
+          tools === 'dbversion' ? <DatabaseVersion project={project} dataSource={dataSource} saveProject={saveProject} /> : ''
         }
       </div>
     );

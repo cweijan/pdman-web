@@ -3,11 +3,9 @@ import ReactDom from 'react-dom';
 import _object from 'lodash/object';
 import * as Com from '../components';
 import defaultData from './defaultData.json';
-import JavaHomeConfig from './JavaHomeConfig';
 import SQLConfig from './SQLConfig';
 import WORDConfig from './WORDConfig';
 import { Button } from 'antd';
-//import Register from './Register';
 import clipboard  from '../utils/clipboard';
 
 import './style/setting.less';
@@ -575,9 +573,6 @@ export default class Setting extends React.Component {
               </tbody>
             </table>
           </div>
-        </div>
-        <div style={{ width: '100%', display: this.state.tabShow === 'java' ? '' : 'none' }}>
-          <JavaHomeConfig onChange={this._javaHomeChange} data={this.javaConfig} project={project} />
         </div>
         <div style={{ width: '100%', display: this.state.tabShow === 'SQL' ? '' : 'none' }}>
           <SQLConfig onChange={this._sqlSeparatorChange} data={this.sqlConfig} />

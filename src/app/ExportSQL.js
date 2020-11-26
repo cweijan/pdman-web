@@ -16,7 +16,6 @@ import { getAllDataSQLByFilter } from '../utils/json2code';
 
 
 const { Radio } = RadioGroup;
-const { execFile } = require('child_process');
 
 export default class ExportSQL extends React.Component {
   constructor(props) {

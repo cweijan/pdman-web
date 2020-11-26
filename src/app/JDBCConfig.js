@@ -5,10 +5,6 @@ import { Button, Icon, Input, Modal, openModal, RadioGroup, Select } from '../co
 import { uuid } from '../utils/uuid';
 import './style/jdbc.less';
 
-
-
-const { execFile } = require('child_process');
-
 const Radio = RadioGroup.Radio;
 
 export default class JDBCConfig extends React.Component {
@@ -188,38 +184,6 @@ export default class JDBCConfig extends React.Component {
       //console.log(this.state.data);
       onChange && onChange(this.state.data.map(field => _object.omit(field, ['key'])));
     });
-  };
-  _getParam = (selectJDBC) => {
-    const paramArray = [];
-    const properties = _object.get(selectJDBC, 'properties', {});
-    Object.keys(properties).forEach((pro) => {
-      if (pro !== 'customer_driver') {
-        paramArray.push(`${pro}=${properties[pro]}`);
-      }
-    });
-    return paramArray;
-  };
-  _getJAVAVersion = (java, cb) => {
-    const minVersion = ['1', '8'];
-    execFile(java, ['-version'],
-      (error, stdout, stderr) => {
-        if (error) {
-          Modal.error({ title: '获取JDK版本失败！', message: error.message || error });
-          cb && cb(error);
-        } else {
-          const versionNumber = (stderr.match(/"(\S+)"/g)[0] || '');
-          // 2.获取版本号的第一，第二位
-          const currentVersion = (versionNumber.split('.') || []).map(v => v.replace('"', ''));
-          let flag = false;
-          if (currentVersion[0] === minVersion[0]) {
-            // 如果版本号第一位相等
-            flag = currentVersion[1] >= minVersion[1];
-          } else {
-            flag = currentVersion[0] >= minVersion[0];
-          }
-          cb && cb(null, flag, versionNumber);
-        }
-      });
   };
   _connectJDBC = (selectJDBC) => {
     const { properties = {} } = (selectJDBC || {});

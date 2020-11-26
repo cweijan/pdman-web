@@ -173,20 +173,6 @@ class Database extends React.Component{
         />
       </div>
       <div className={`${prefix}-database-summary-item`}>
-        <span  className={`${prefix}-database-summary-item-name`}>生成至文档</span>
-        <Checkbox
-          value={_object.get(value, 'fileShow', false)}
-          wrapperStyle={{width: 'auto', marginRight: 5}}
-          style={{alignSelf: 'center'}}
-          onChange={e => this._valueChange(e, 'fileShow')}
-        />
-        <span
-          style={{whiteSpace: 'nowrap', color: '#36AC55', textOverflow: 'ellipsis'}}
-        >
-          (勾选此项，将会在生成的文档中显示该数据库所对应的字段类型)
-        </span>
-      </div>
-      <div className={`${prefix}-database-summary-item`}>
         <span  className={`${prefix}-database-summary-item-name`}>设为默认数据库</span>
         <Checkbox
           value={_object.get(value, 'defaultDatabase', false)}

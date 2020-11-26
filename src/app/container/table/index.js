@@ -250,6 +250,10 @@ class DataTable extends React.Component {
     </div>);
   }
 }
+
+/**
+ * PropTypes: 用于类型检测, 类型不匹配时抛异常
+ */
 DataTable.contextTypes = {
   height: PropTypes.number,
   width: PropTypes.number,
