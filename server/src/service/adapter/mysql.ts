@@ -1,30 +1,35 @@
 import * as mysql from "mysql";
-import { ConnnectDTO, ExecuteDTO } from "../../request/requestDTO";
+import { ExecuteDTO } from "../../request/requestDTO";
 import { DbAdapter } from "./DbAdapater";
 
 export class MysqlApi implements DbAdapter {
 
-    public execute(option: ExecuteDTO) {
+    public execute(option: ExecuteDTO, connection?: mysql.Connection):Promise<any> {
 
-        var connection = mysql.createConnection({
-            host: option.url,
-            user: option.username,
-            password: option.password,
-            database: option.database,
-            multipleStatements: true
-        });
-        connection.connect();
+        if (!connection) {
+            var connection = mysql.createConnection({
+                host: option.url,
+                user: option.username,
+                password: option.password,
+                database: option.database,
+                multipleStatements: true
+            });
+            connection.connect();
+        }
         return new Promise(async res => {
             const sql = unescape(option.sql)
-            const sqlList: string[] = sql.match(/(?:[^;"']+|["'][^"']*["'])+/g).filter((s) => (s.trim() != '' && s.trim() != ';'))
-            if (sqlList.length > 1) {
+            const sqlList: string[] = sql.match(/(?:[^;"']+|["'][^"']*["'])+/g)?.filter((s) => (s.trim() != '' && s.trim() != ';'))
+            if (sqlList?.length > 1) {
                 const error = await this.runBatch(connection, sqlList)
-                res({ error })
+                res({ error, connection })
+                return;
+            }
+            if (!sqlList) {
+                res({ connection })
                 return;
             }
             connection.query(sql, (error, results, fields) => {
-                res({ error, results, fields })
-                connection.end();
+                res({ error, results, fields, connection })
             });
         })
 

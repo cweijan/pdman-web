@@ -12,9 +12,7 @@ module.exports = {
     mode: isProd ? 'production' : 'development',
     context: path.resolve(__dirname, './'),
     node: {
-        fs: 'empty', net: 'empty', tls: 'empty',
-        child_process: 'empty', dns: 'empty',
-        global: true, __dirname: true
+        fs: 'empty', child_process: 'empty'
     },
     entry: './src/index.js',
     output: {

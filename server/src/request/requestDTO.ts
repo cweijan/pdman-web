@@ -16,8 +16,8 @@ export class ExecuteDTO extends ConnnectDTO{
     sql: string;
 }
 
-export class NewVersionDTO extends ConnnectDTO{
-    name: string;
-    mark: string;
+export class NewVersionDTO extends ExecuteDTO{
+    cmd: string;
     version: string;
+    message: string;
 }
