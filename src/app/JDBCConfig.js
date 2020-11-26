@@ -186,7 +186,7 @@ export default class JDBCConfig extends React.Component {
       onChange && onChange(this.state.data.map(field => _object.omit(field, ['key'])));
     });
   };
-  _connectJDBC = (selectJDBC) => {
+  _connect = (selectJDBC) => {
     const { properties = {} } = (selectJDBC || {});
     this.setState({
       loading: true,
@@ -403,7 +403,7 @@ export default class JDBCConfig extends React.Component {
           <div className='pdman-jdbc-config-right-com-button-test'>
             <Button
               loading={this.state.loading}
-              onClick={() => this._connectJDBC(selectJDBC)}
+              onClick={() => this._connect(selectJDBC)}
             >
               {this.state.loading ? '正在连接' : '测试'}
             </Button>

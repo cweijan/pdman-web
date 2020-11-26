@@ -1,6 +1,5 @@
 import { post } from '@/service/ajax';
 import histroy from '@/service/history';
-import { download } from '@/utils/download';
 import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import moment from 'moment';
@@ -8,15 +7,12 @@ import React from 'react';
 import { Button, Code, Editor, Icon, Input, Modal, openModal, RadioGroup, Select, TextArea } from '../components';
 import { checkVersionData } from '../utils/dbversionutils';
 import {
-  deleteDirectoryFile,
-  deleteJsonFile, fileExist, fileExistPromise,
+  deleteJsonFile, fileExistPromise,
   getDirListPromise, readFilePromise
 } from '../utils/json';
 import { getAllDataSQL, getCodeByChanges } from '../utils/json2code';
 import { compareStringVersion } from '../utils/string';
 import './style/dbVersion.less';
-
-const { execFile } = require('child_process');
 
 const { Radio } = RadioGroup;
 
@@ -592,44 +588,6 @@ export default class DatabaseVersion extends React.Component {
     });
     return paramArray;
   };
-  _connectJDBC = (selectJDBC, cb, cmd) => {
-    //const { project } = this.props;
-    const configData = this._getJavaConfig();
-    const value = configData.JAVA_HOME;
-    // todo
-    // const defaultPath = ipcRenderer.sendSync('jarPath');
-    const defaultPath = '';
-    const jar = configData.DB_CONNECTOR || defaultPath;
-    const tempValue = value ? `${value}${this.split}bin${this.split}java` : 'java';
-    let modal = null;
-    const onOk = () => {
-      modal && modal.close();
-    };
-    if (selectJDBC.showModal) {
-      modal = openModal(<Code
-        style={{ height: 300 }}
-        data={`执行同步命令：${tempValue} -Dfile.encoding=utf-8 -jar ${jar} ${cmd} ${this._getParam(selectJDBC).join(' ')}`}
-      />, {
-        title: '开始同步，同步结束后当前窗口将会自动关闭！',
-        footer: [<Button style={{ marginTop: 10 }} key="ok" onClick={onOk} type="primary">关闭</Button>],
-      });
-    }
-    const customerDriver = _object.get(selectJDBC, 'properties.customer_driver', '');
-    const commend = [
-      '-Dfile.encoding=utf-8',
-      '-jar', jar, cmd,
-      ...this._getParam(selectJDBC),
-    ];
-    if (customerDriver) {
-      commend.unshift(`-Xbootclasspath/a:${customerDriver}`);
-    }
-    execFile(tempValue, commend,
-      (error, stdout, stderr) => {
-        modal && modal.close();
-        const result = this._parseResult(stderr, stdout);
-        cb && cb(result);
-      });
-  };
   _getProperties = (obj) => {
     if (typeof obj === 'string') {
       return obj;
@@ -814,34 +772,6 @@ export default class DatabaseVersion extends React.Component {
           });
         }
       }
-    }
-  };
-  _dropVersionTable = () => {
-    const dbData = this._getCurrentDBData();
-    if (!dbData) {
-      this.setState({
-        dbVersion: '',
-      });
-      Modal.error({
-        title: '初始化数据库版本表失败',
-        message: '无法获取到数据库信息，请切换尝试数据库'
-      });
-    } else {
-      this._connectJDBC({
-        ...dbData,
-        properties: {
-          ...(dbData.properties || {}),
-          version: 'v0.0.0',
-          version_desc: '默认版本，新增的版本不能低于此版本',
-        },
-      }, (result) => {
-        if (result.status !== 'SUCCESS') {
-          aMessage.error('初始化数据表失败')
-        } else {
-          aMessage.success('初始化数据表成功')
-          this._getDBVersion();
-        }
-      }, 'rebaseline');
     }
   };
   _getAllTable = (dataSource) => {
