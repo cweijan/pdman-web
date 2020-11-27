@@ -189,7 +189,7 @@ export default class Home extends React.Component {
     // 将其存储到历史记录中
     history.writeH(temp)
   };
-  openExistsProject = async () => {
+  openExistsProject = async (callBack) => {
     const extensions = [];
     if (process.platform === 'darwin') {
       extensions.push('json');
@@ -202,6 +202,7 @@ export default class Home extends React.Component {
       projectHandler: fileHandle
     })
     this.readData(file.name, JSON.parse(text))
+    callBack && callBack()
   };
   openHistory = async (history) => {
     if (history.type == "file") {
@@ -237,6 +238,8 @@ export default class Home extends React.Component {
       } else {
         this._readData(`${path}.pdman.json`, callBack);
       }
+    }else{
+      this.openExistsProject(callBack)
     }
   };
   _saveProject = (path, data, cb, dataHistory, selectCb) => {

@@ -40,6 +40,9 @@ export default class ExportSQL extends React.Component {
     };
   }
   componentDidMount() {
+    if( _object.get(this.props.dataSource, 'profile.dbs', []).length==0){
+      message.error("请先配置数据库连接!")
+    }
     this._getConfigData().then((res) => {
       this.userData = res;
       const exportSqlDefault = this.userData.exportSqlDefault || {};

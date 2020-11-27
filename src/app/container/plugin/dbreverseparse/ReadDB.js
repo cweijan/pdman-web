@@ -3,6 +3,7 @@ import _object from 'lodash/object';
 import { Select, Button, Modal, openModal } from '../../../../components';
 import './style/readdb.less';
 import Parse from './Parse';
+import { message } from 'antd';
 
 // 从已有的数据库中获取表信息
 export default class ReadDB extends React.Component{
@@ -13,6 +14,9 @@ export default class ReadDB extends React.Component{
       currentDB: this._getCurrentDB(this.dbs),
       dataFormat: 'DEFAULT',
     };
+    if(this.dbs.length==0){
+      message.error("请先配置数据库连接!")
+    }
   }
   _getCurrentDB = (dbs) => {
     const db = dbs.filter(d => d.defaultDB)[0];
@@ -54,14 +58,14 @@ export default class ReadDB extends React.Component{
     const { currentDB, dataFormat } = this.state;
     return (
       <div className='pdman-readdb'>
-        <div className='pdman-readdb-db-select-dataFormat'>
+        {/* <div className='pdman-readdb-db-select-dataFormat'>
           <span className='pdman-readdb-db-select-dataFormat-span'>表名格式：</span>
           <Select value={dataFormat} onChange={this._dataFormatChange}>
             <option value='DEFAULT'>不处理</option>
             <option value='UPPERCASE'>全大写</option>
             <option value='LOWCASE'>全小写</option>
           </Select>
-        </div>
+        </div> */}
         <div className='pdman-readdb-db-select'>
           <span className='pdman-readdb-db-select-span'>请选择需要解析的数据库：</span>
           <Select value={currentDB} style={{minWidth: 200}} onChange={this._dbChange}>
