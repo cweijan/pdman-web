@@ -23,14 +23,28 @@ const readNew = async () => {
 
 const storeHistory = async (fileHandler, projectName) => {
 
-    const histories = await get('history') || []
-
+    // 创建历史记录
+    let history;
     if (fileHandler) {
-        histories.push({ type: 'file', handler: fileHandler, name: fileHandler.name })
+        history = { type: 'file', handler: fileHandler, name: fileHandler.name }
     } else {
-        histories.push({ type: 'create', name: projectName })
+        history = { type: 'create', name: projectName }
     }
 
+    const histories = await get('history') || []
+    // 如果历史记录存在, 则进行更新
+    for (let index = 0; index < histories.length; index++) {
+        const oldHistory = histories[index];
+        if (oldHistory.name == history.name) {
+            histories[index] = history;
+            set('history', histories)
+            return;
+        }
+    }
+
+
+    // 如果历史记录不存在, push一条
+    histories.push(history)
     set('history', histories)
 
 }

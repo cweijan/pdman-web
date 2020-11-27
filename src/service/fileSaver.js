@@ -86,7 +86,36 @@ export async function write(fileHandler, content) {
     return writeFile(fileHandler, content)
 }
 
+
+/**
+ * Verify the user has granted permission to read or write to the file, if
+ * permission hasn't been granted, request permission.
+ *
+ * @param {FileSystemFileHandle} fileHandle File handle to check.
+ * @param {boolean} withWrite True if write permission should be checked.
+ * @return {boolean} True if the user has granted read/write permission.
+ */
+export async function verifyPermission(fileHandle, withWrite) {
+    const opts = {};
+    if (withWrite) {
+      opts.writable = true;
+      // For Chrome 86 and later...
+      opts.mode = 'readwrite';
+    }
+    // Check if we already have permission, if so, return true.
+    if (await fileHandle.queryPermission(opts) === 'granted') {
+      return true;
+    }
+    // Request permission to the file, if the user grants permission, return true.
+    if (await fileHandle.requestPermission(opts) === 'granted') {
+      return true;
+    }
+    // The user did nt grant permission, return false.
+    return false;
+  }
+
 export default {
     open: getFileHandle,
-    write
+    write,
+    verifyPermission
 }

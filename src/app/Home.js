@@ -4,7 +4,7 @@ import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { open, getFileHandle, write } from "@/service/fileSaver";
+import { open, getFileHandle, write,verifyPermission } from "@/service/fileSaver";
 import { Icon, Modal, openModal } from '../components';
 import demo from '../demo';
 import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
@@ -18,7 +18,7 @@ import './style/home.less';
  * todo
  * 1. 返回主页时刷新历史记录
  * 2. 历史记录列表项调整, 适配两种历史类型
- * 3. 历史记录需要去重
+ * 3. 历史记录需要去重 done
  * 4. 历史删除逻辑
  */
 export default class Home extends React.Component {
@@ -99,11 +99,6 @@ export default class Home extends React.Component {
       modules: defaultData.profile.defaultModules,
     }).then((res) => {
       // 保存的用户配置
-      const { histories } = this.state;
-      const temp = [...histories];
-      if (!temp.includes(this.projectName)) {
-        temp.unshift(this.projectName);
-      }
       history.store(this.state.projectHandler, this.projectName)
       this.setState({
         dataSource: res,
@@ -122,8 +117,6 @@ export default class Home extends React.Component {
     this.projectName = value;
   };
   _createObject = async () => {
-    const s = await history.readNew()
-    console.log(s)
     openModal(<CreatePro onChange={this._onChange} />, {
       onOk: this._onOk,
       title: '新建项目',
@@ -196,6 +189,36 @@ export default class Home extends React.Component {
     // 将其存储到历史记录中
     history.writeH(temp)
   };
+  openExistsProject = async () => {
+    const extensions = [];
+    if (process.platform === 'darwin') {
+      extensions.push('json');
+    } else {
+      extensions.push('pdman.json');
+    }
+    const { fileHandle, file, text } = await open()
+    history.store(fileHandle, null)
+    this.setState({
+      projectHandler: fileHandle
+    })
+    this.readData(file.name, JSON.parse(text), callBack)
+  };
+  openHistory = async (history) => {
+    if (history.type == "file") {
+      const fileHandle = history.handler
+      console.log(fileHandle)
+      console.log(await fileHandle.getFile())
+      verifyPermission(fileHandle,true)
+      this.setState({
+        projectHandler: fileHandle
+      })
+      const file = await fileHandle.getFile()
+      const text = await file.text()
+      this.readData(file.name, JSON.parse(text))
+    } else {
+      this._readData(`${file.name}.pdman.json`);
+    }
+  };
   _openProject = async (path, callBack, type) => {
     // 打开项目
     if (path || type) {
@@ -214,20 +237,6 @@ export default class Home extends React.Component {
       } else {
         this._readData(`${path}.pdman.json`, callBack);
       }
-    } else {
-      const extensions = [];
-      if (process.platform === 'darwin') {
-        extensions.push('json');
-      } else {
-        extensions.push('pdman.json');
-      }
-
-      const { fileHandle, file, text } = await open()
-      history.store(fileHandle, null)
-      this.setState({
-        projectHandler: fileHandle
-      })
-      this.readData(file.name, JSON.parse(text), callBack)
     }
   };
   _saveProject = (path, data, cb, dataHistory, selectCb) => {
@@ -497,6 +506,7 @@ export default class Home extends React.Component {
   render() {
     if (this.state.flag || this.state.error || this.state.closeProject) {
       const { histories, project, display } = this.state;
+      console.log(histories)
       return (
         <div tabIndex="0" className='pdman-home-content' ref={instance => this.instance = instance}>
           <Header project={project} disableMaximize />
@@ -509,7 +519,7 @@ export default class Home extends React.Component {
               <div className='pdman-home-left-list'>
                 {
                   (histories || []).map(item => (
-                    <div className='pdman-home-left-list-item' key={item.name} onClick={() => this._openProject(item.name)}>
+                    <div className='pdman-home-left-list-item' key={item.name} onClick={() => this.openHistory(item)}>
                       <div className='pdman-home-left-list-item-name'>{item.name}</div>
                       <div className='pdman-home-left-list-item-icon'>
                         <Icon type='close' onClick={e => this._delete(e, item.name)} />
@@ -555,7 +565,7 @@ export default class Home extends React.Component {
                   </div>
                   <div
                     className='pdman-home-right-opts-names-name'
-                    onClick={() => this._openProject()}
+                    onClick={() => this.openExistsProject()}
                   >
                     <span>打开项目</span>
                   </div>
