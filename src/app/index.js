@@ -427,6 +427,7 @@ export default class App extends React.Component {
       //   })
       // } 
     } else if (type === 'Html') {
+      // TODO 实现保存HTML逻辑
       openDir((dir) => {
         // 保存图片
         const modal = this._showExportMessage(dir);
@@ -488,8 +489,8 @@ export default class App extends React.Component {
     // 打开弹窗，选择导出html或者word
     openModal(<div style={{ textAlign: 'center', padding: 10 }}>
       <Button icon='HTML' onClick={(btn) => this._exportFile('Html', btn)}>导出HTML</Button>
-      <Button icon='pdffile1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
-      <Button icon='file1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button>
+      {/* <Button icon='pdffile1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('PDF', btn)}>导出PDF</Button>
+      <Button icon='file1' style={{ marginLeft: 40 }} onClick={(btn) => this._exportFile('Markdown', btn)}>导出MARKDOWN</Button> */}
     </div>, {
       title: '文件导出'
     })
@@ -1593,12 +1594,16 @@ export default class App extends React.Component {
                       className='tools-content-clickeable'
                       onClick={() => this._readDB()}
                     ><Icon type="fa-hand-lizard-o" />逆向解析</div>
+                     <div
+                      className='tools-content-clickeable'
+                      onClick={() => this._exportSQL()}
+                    ><Icon type="fa-database" />执行SQL</div>
                   </div>
                   <div className='tools-content-group-name'>
                     配置
                   </div>
                 </div>
-                <div className='tools-content-group'>
+                {/* <div className='tools-content-group'>
                   <div className='tools-content-group-content'>
                     <div
                       className='tools-content-clickeable'
@@ -1612,7 +1617,7 @@ export default class App extends React.Component {
                   <div className='tools-content-group-name'>
                     导出
                   </div>
-                </div>
+                </div> */}
               </div>
               <div className="tools-content-tab" style={{ display: tabs.length > 0 && tools === 'map' ? '' : 'none' }}>
                 <div className='tools-content-group'>
