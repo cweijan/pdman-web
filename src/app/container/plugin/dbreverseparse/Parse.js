@@ -15,14 +15,12 @@ export default class Parse extends React.Component {
     };
   }
   componentDidMount() {
-    const { dataSource, db = {}, dataFormat } = this.props;
+    const { db = {}, dataFormat } = this.props;
     // TODO
     post("/api/db/reverse/parse", {
       ...db.properties,
-      ...dataSource,
       flag: dataFormat,
-    }).then(res => {
-      const result = (stdout || stderr);
+    }).then(result => {
       let tempResult = '';
       try {
         tempResult = JSON.parse(result);
