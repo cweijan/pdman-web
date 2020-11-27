@@ -89,7 +89,14 @@ module.exports = (app: express.Application) => {
                 body: {
                     dbType: "MYSQL",
                     properties: {},
-                    dataTypeMap: {},
+                    dataTypeMap: {
+                        // 每个field, 上面的properties留空即可
+                        // "DATE": {
+                        //     "name": "DATE",
+                        //     "code": "DATE",
+                        //     "type": "DATE"
+                        // },
+                    },
                     module: {
                         name: "逆向解析",
                         code: 'reverse_parse',
