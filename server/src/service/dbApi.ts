@@ -56,38 +56,45 @@ module.exports = (app: express.Application) => {
     });
 
     app.post('/api/db/reverse/parse', function (req, res, next) {
+        const option = req.body
         pressError(res, async () => {
 
-            if (false) {
-                res.json({
-                    dbType: "MYSQL",
-                    properties: {},
-                    dataTypeMap: {},
-                    module: {
-                        name: "逆向解析",
-                        code: 'reverse_parse',
-                        entities: [
-                            {
-                                title: '',
-                                chnname: '',
-                                fields: [{
-                                    name: '',
-                                    type: '',
-                                    chnname: '',
-                                    remark: '',
-                                    pk: false,
-                                    notNull: false,
-                                    autoIncrement: false,
-                                    defaultValue: ''
-                                }]
-                            }
-                        ]
-                    }
-                })
-            }
+
+            const { result: tables, connection } = await mysqlApi.execute({ ...option, sql: `SELECT table_comment comment,TABLE_NAME name FROM information_schema.TABLES  WHERE TABLE_SCHEMA = '${option.database}' and TABLE_TYPE<>'VIEW' order by table_name;` })
+
+            const entities = tables.map(async (table) => {
+
+                const { result: columns } = await mysqlApi.execute({ ...option, sql: `SELECT COLUMN_NAME name,DATA_TYPE simpleType,COLUMN_TYPE type,COLUMN_COMMENT comment,COLUMN_KEY \`key\`,IS_NULLABLE nullable,CHARACTER_MAXIMUM_LENGTH maxLength,COLUMN_DEFAULT defaultValue,EXTRA extra FROM information_schema.columns WHERE table_schema = '${option.database}' AND table_name = '${table}' ORDER BY ORDINAL_POSITION;` }, connection)
+                return {
+                    title: table.name,
+                    chnname: table.comment,
+                    fields: columns.map(column => {
+                        return {
+                            name: column.name,
+                            type: column.type,
+                            chnname: column.comment,
+                            remark: '',
+                            pk: column.key == "PRI",
+                            notNull: column.nullable != "YES",
+                            autoIncrement: column.extra.toLowerCase() == "auto_incremen",
+                            defaultValue: column.defaultValue
+                        }
+                    })
+                }
+            })
+
+            res.json({
+                dbType: "MYSQL",
+                properties: {},
+                dataTypeMap: {},
+                module: {
+                    name: "逆向解析",
+                    code: 'reverse_parse',
+                    entities
+                }
+            })
 
 
-            res.json(req.body);
         })
     });
 

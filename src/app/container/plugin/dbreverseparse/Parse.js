@@ -1,10 +1,10 @@
 import React from 'react';
 import _object from 'lodash/object';
-import { generateByJar } from '../../../../utils/office';
-import { Modal, TreeSelect, Icon  } from '../../../../components';
+import { Modal, TreeSelect, Icon } from '../../../../components';
+import { post } from '@/service/ajax';
 
-export default class Parse extends React.Component{
-  constructor(props){
+export default class Parse extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       flag: true,
@@ -16,10 +16,12 @@ export default class Parse extends React.Component{
   }
   componentDidMount() {
     const { dataSource, db = {}, dataFormat } = this.props;
-    generateByJar(dataSource, {
+    // TODO
+    post("/api/db/reverse/parse", {
       ...db.properties,
+      ...dataSource,
       flag: dataFormat,
-    }, (error, stdout, stderr) => {
+    }).then(res => {
       const result = (stdout || stderr);
       let tempResult = '';
       try {
@@ -37,17 +39,17 @@ export default class Parse extends React.Component{
         this.setState({
           status: 'FAILED',
         });
-        Modal.error({title: '数据库解析失败！', message: tempResult.body || tempResult});
+        Modal.error({ title: '数据库解析失败！', message: tempResult.body || tempResult });
       }
       this.setState({
         flag: false,
       });
-    }, 'dbReverseParse');
+    })
   }
   getSelectedEntity = (cb) => {
     // 增加提示
     const { exists, data } = this.state;
-    if (this.state.keys.some(k => exists.includes(k.title))){
+    if (this.state.keys.some(k => exists.includes(k.title))) {
       Modal.confirm({
         title: '温馨提示',
         message: '勾选的数据表中包含模型中已经存在的数据表，继续操作将会覆盖模型中的数据，是否继续？',
@@ -82,8 +84,8 @@ export default class Parse extends React.Component{
   };
   _titleRender = (c) => {
     const { exists } = this.state;
-    if (exists.includes(c.title)){
-      return <span style={{color: 'red'}}>{c.chnname || c.title}({c.title})[已存在]</span>;
+    if (exists.includes(c.title)) {
+      return <span style={{ color: 'red' }}>{c.chnname || c.title}({c.title})[已存在]</span>;
     }
     return `${c.chnname || c.title}(${c.title})`;
   };
@@ -111,22 +113,22 @@ export default class Parse extends React.Component{
     const { data, flag, status, exists } = this.state;
     const module = _object.get(data, 'module', '');
     return (<div>
-      <div style={{textAlign: 'center'}}>
+      <div style={{ textAlign: 'center' }}>
         {
-          flag ? <div><Icon className='anticon-spin' type='loading1' style={{marginRight: 5}}/>
+          flag ? <div><Icon className='anticon-spin' type='loading1' style={{ marginRight: 5 }} />
             正在解析数据库，请稍后。。。(请勿关闭当前弹窗！)</div> : null
         }
       </div>
       {
         !flag && (status === 'SUCCESS' ?
-          <div style={{textAlign: 'center'}}>解析结束：当前解析数据库【{data.dbType}】</div> :
-          <div style={{textAlign: 'center'}}>解析结束：解析失败</div>)
+          <div style={{ textAlign: 'center' }}>解析结束：当前解析数据库【{data.dbType}】</div> :
+          <div style={{ textAlign: 'center' }}>解析结束：解析失败</div>)
       }
       <div>
         {
-          !flag && <span style={{color: 'green'}}>解析结果：{status === 'SUCCESS' ?
-            <span>共解析出【<span style={{color: '#000000'}}>{module.entities.length}</span>】张数据表，
-            当前模型中已经存在的有【<span style={{color: 'red'}}>{exists.length}</span>】张表，请勾选需要添加到模型中的数据表！
+          !flag && <span style={{ color: 'green' }}>解析结果：{status === 'SUCCESS' ?
+            <span>共解析出【<span style={{ color: '#000000' }}>{module.entities.length}</span>】张数据表，
+            当前模型中已经存在的有【<span style={{ color: 'red' }}>{exists.length}</span>】张表，请勾选需要添加到模型中的数据表！
             </span> : '失败'}</span>
         }
         {
