@@ -57,6 +57,36 @@ module.exports = (app: express.Application) => {
 
     app.post('/api/db/reverse/parse', function (req, res, next) {
         pressError(res, async () => {
+
+            if (false) {
+                res.json({
+                    dbType: "MYSQL",
+                    properties: {},
+                    dataTypeMap: {},
+                    module: {
+                        name: "逆向解析",
+                        code: 'reverse_parse',
+                        entities: [
+                            {
+                                title: '',
+                                chnname: '',
+                                fields: [{
+                                    name: '',
+                                    type: '',
+                                    chnname: '',
+                                    remark: '',
+                                    pk: false,
+                                    notNull: false,
+                                    autoIncrement: false,
+                                    defaultValue: ''
+                                }]
+                            }
+                        ]
+                    }
+                })
+            }
+
+
             res.json(req.body);
         })
     });
