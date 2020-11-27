@@ -1,6 +1,6 @@
 {
   "name": "pdman",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Pdman Web Version",
   "main": "build/index.js",
   "scripts": {
@@ -14,14 +14,14 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "mysql": "^2.18.1",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.1.2"
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
     "@types/express": "^4.17.9",
     "@types/mysql": "^2.15.15",
-    "@types/node": "^14.14.9"
+    "@types/node": "^14.14.9",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
   }
 }
