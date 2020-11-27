@@ -9,11 +9,11 @@ const input = args[0];
 const port = input ? input : 8000;
 
 const app: express.Application = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '100mb' }));
 app.use(express.static(__dirname + '/public'))
 
-app.get(['/','/index'], (req, res) => {
+app.get(['/', '/index'], (req, res) => {
   res.send(readFileSync(__dirname + '/public/index.html', 'utf8'))
 })
 

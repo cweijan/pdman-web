@@ -60,6 +60,8 @@ module.exports = (app: express.Application) => {
         pressError(res, async () => {
 
 
+            const dataTypeMap={};
+
             const { error, results: tables, connection } = await mysqlApi.execute({ ...option, sql: `SELECT table_comment comment,TABLE_NAME name FROM information_schema.TABLES  WHERE TABLE_SCHEMA = '${option.database}' and TABLE_TYPE<>'VIEW' order by table_name;` })
 
             const entities = await Promise.all(tables.map(async (table) => {
@@ -69,6 +71,11 @@ module.exports = (app: express.Application) => {
                     title: table.name,
                     chnname: table.comment,
                     fields: await Promise.all(columns.map(column => {
+                        dataTypeMap[column.type]={
+                            name: column.type,
+                            code: column.type,
+                            type: column.type
+                        }
                         return {
                             name: column.name,
                             type: column.type,
@@ -89,14 +96,7 @@ module.exports = (app: express.Application) => {
                 body: {
                     dbType: "MYSQL",
                     properties: {},
-                    dataTypeMap: {
-                        // 每个field, 上面的properties留空即可
-                        // "DATE": {
-                        //     "name": "DATE",
-                        //     "code": "DATE",
-                        //     "type": "DATE"
-                        // },
-                    },
+                    dataTypeMap,
                     module: {
                         name: "逆向解析",
                         code: 'reverse_parse',
