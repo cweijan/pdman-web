@@ -201,7 +201,7 @@ export default class Home extends React.Component {
     this.setState({
       projectHandler: fileHandle
     })
-    this.readData(file.name, JSON.parse(text), callBack)
+    this.readData(file.name, JSON.parse(text))
   };
   openHistory = async (history) => {
     if (history.type == "file") {
