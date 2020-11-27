@@ -1,14 +1,14 @@
 {
-  "name": "pdman-web-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "pdman",
+  "version": "1.0.3",
+  "description": "Pdman Web Version",
+  "main": "build/index.js",
   "scripts": {
     "dev": "ts-node --project tsconfig.json --files src/index.ts",
     "build": "tsc"
   },
-  "bin": "./build/index.js",
-  "author": "",
+  "bin": "build/index.js",
+  "author": "cweijan",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",

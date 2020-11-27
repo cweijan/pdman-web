@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import * as express from "express";
 import bodyParser = require('body-parser');
 import { bindFileApi, bindDbApi } from "./service/index";
