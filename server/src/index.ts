@@ -12,6 +12,13 @@ const app: express.Application = express();
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ extended: false, limit: '100mb' }));
 app.use(express.static(__dirname + '/public'))
+app.use((_, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Content-Security-Policy", "default-src 'self'; script-src *");
+  next();
+});
+
 
 app.get(['/', '/index'], (req, res) => {
   res.send(readFileSync(__dirname + '/public/index.html', 'utf8'))
@@ -27,7 +34,9 @@ app.get('/api/info', (req, res) => {
 bindFileApi(app)
 bindDbApi(app)
 
-app.listen(port, function () {
-  console.log(`App is listening on port ${port}!`);
+app.listen(port, () => {
+  var url = `http://localhost:${port}`;
+  var start = (process.platform == 'darwin' ? 'open' : process.platform == 'win32' ? 'start' : 'xdg-open');
+  require('child_process').exec(start + ' ' + url);
 });
 
