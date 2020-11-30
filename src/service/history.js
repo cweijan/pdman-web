@@ -8,12 +8,8 @@ const readH = () => {
 const writeH = (content) => {
 
 }
-const writeNew = (content) => {
-    if (typeof content == 'string') {
-        localStorage.setItem("history", content)
-    } else {
-        localStorage.setItem("history", JSON.stringify(content))
-    }
+const writeNew = (histories) => {
+    set('history', histories)
 }
 
 const readNew = async () => {

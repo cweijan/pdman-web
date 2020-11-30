@@ -126,16 +126,17 @@ export default class Home extends React.Component {
     e && e.stopPropagation();
     const { histories } = this.state;
     let temp = [...histories];
+    console.log(temp)
     if (type === 'all') {
       temp = [];
     } else {
-      temp = temp.filter(h => h !== historyNew.split('.pdman.json')[0]);
+      temp = temp.filter(h => h.name !== historyNew);
     }
     this.setState({
       histories: temp,
     }, () => {
       // 保存最新的历史记录
-      history.writeH(temp)
+      history.writeNew(temp)
     });
   };
   _checkDatabase = (database = []) => {
