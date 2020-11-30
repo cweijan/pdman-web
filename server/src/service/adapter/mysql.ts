@@ -12,7 +12,8 @@ export class MysqlApi implements DbAdapter {
                 user: option.username,
                 password: option.password,
                 database: option.database,
-                multipleStatements: true
+                multipleStatements: true,
+                connectTimeout:5000
             });
             connection.connect();
         }

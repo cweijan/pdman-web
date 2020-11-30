@@ -32,7 +32,8 @@
     "prop-types": "^15.6.1",
     "react": "^16.14.0",
     "react-ace": "^6.1.1",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "url": "^0.11.0"
   },
   "scripts": {
     "dev": "webpack serve --progress",

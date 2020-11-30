@@ -1,6 +1,7 @@
 import * as express from "express";
 import { ConnnectDTO, ExecuteDTO, NewVersionDTO } from "../request/requestDTO";
 import { MysqlApi } from "./adapter/mysql";
+var nodeUrl = require('url');
 
 function pressError(res: express.Response, fun: Function) {
     try {
@@ -14,13 +15,19 @@ module.exports = (app: express.Application) => {
 
     const mysqlApi = new MysqlApi()
 
-
-
+    app.use((req, _, next) => {
+        const opt=req.body;
+        if(opt.url && opt.url.startsWith('jdbc:')){
+            opt.url=nodeUrl.parse(opt.url.replace('jdbc:','')).hostname;
+        }
+        next();
+      });
+      
     app.post('/api/db/connect', async (req, res, next) => {
         pressError(res, async () => {
             const option: ConnnectDTO = req.body
             const { error, connection } = await mysqlApi.execute({ ...option, sql: 'SELECT 1 + 1 AS solution' })
-            res.json({ success: error == null, msg: error?.sqlMessage })
+            res.json({ success: error == null, msg: error?.sqlMessage||error?.message })
             connection.end()
         })
     });

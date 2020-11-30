@@ -13,6 +13,7 @@ import defaultData from './defaultData.json';
 import Header from './Header';
 import App from './index';
 import './style/home.less';
+import { convertOldDbs } from '@/service/db';
 
 /**
  * todo
@@ -171,6 +172,7 @@ export default class Home extends React.Component {
     // 把当前的项目插入到第一条数据
     temp.unshift(project);
     callBack && callBack();
+    convertOldDbs(res.profile.dbs)
     this.setState({
       // histories: temp,
       flag: false,
