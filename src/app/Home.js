@@ -4,7 +4,7 @@ import { message as aMessage } from 'antd';
 import _object from 'lodash/object';
 import React from 'react';
 import ReactDom from 'react-dom';
-import { open, getFileHandle, write,verifyPermission } from "@/service/fileSaver";
+import { open, getFileHandle, write, verifyPermission } from "@/service/fileSaver";
 import { Icon, Modal, openModal } from '../components';
 import demo from '../demo';
 import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
@@ -172,7 +172,7 @@ export default class Home extends React.Component {
     temp.unshift(project);
     callBack && callBack();
     this.setState({
-      histories: temp,
+      // histories: temp,
       flag: false,
       dataSource: {
         ...res,
@@ -198,9 +198,10 @@ export default class Home extends React.Component {
       extensions.push('pdman.json');
     }
     const { fileHandle, file, text } = await open()
-    history.store(fileHandle, null)
+    let newHistories =await history.store(fileHandle, file.name)
     this.setState({
-      projectHandler: fileHandle
+      projectHandler: fileHandle,
+      histories: newHistories
     })
     this.readData(file.name, JSON.parse(text))
     callBack && callBack()
@@ -208,10 +209,10 @@ export default class Home extends React.Component {
   openHistory = async (history) => {
     if (history.type == "file") {
       const fileHandle = history.handler
-      await verifyPermission(fileHandle,true)
       this.setState({
         projectHandler: fileHandle
       })
+      await verifyPermission(fileHandle, true)
       const file = await fileHandle.getFile()
       const text = await file.text()
       this.readData(file.name, JSON.parse(text))
@@ -237,7 +238,7 @@ export default class Home extends React.Component {
       } else {
         this._readData(`${path}.pdman.json`, callBack);
       }
-    }else{
+    } else {
       this.openExistsProject(callBack)
     }
   };

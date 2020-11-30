@@ -42,7 +42,7 @@ const storeHistory = async (fileHandler, projectName) => {
     // 如果历史记录不存在, push一条
     histories.push(history)
     set('history', histories)
-
+    return histories
 }
 
 export default {
