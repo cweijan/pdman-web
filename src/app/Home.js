@@ -207,9 +207,7 @@ export default class Home extends React.Component {
   openHistory = async (history) => {
     if (history.type == "file") {
       const fileHandle = history.handler
-      console.log(fileHandle)
-      console.log(await fileHandle.getFile())
-      verifyPermission(fileHandle,true)
+      await verifyPermission(fileHandle,true)
       this.setState({
         projectHandler: fileHandle
       })
