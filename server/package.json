@@ -1,10 +1,10 @@
 {
   "name": "pdman",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Pdman Web Version",
   "main": "build/index.js",
   "scripts": {
-    "dev": "ts-node --project tsconfig.json --files src/index.ts",
+    "dev": "set NODE_ENV=DEV && ts-node --project tsconfig.json --files src/index.ts",
     "build": "tsc",
     "upload": "npm run build && npm publish --registry=https://registry.npmjs.org/ "
   },
