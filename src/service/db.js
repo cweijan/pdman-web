@@ -1,7 +1,13 @@
 export function convertOldDbs(dbs) {
+    if(!dbs){
+        return;
+    }
     var urlLib = require('url');
     for (const db of dbs) {
         const properties = db.properties
+        if(!properties){
+            continue;
+        }
         const url = properties.url;
         if (!url.startsWith("jdbc:")) {
             continue;

@@ -168,12 +168,13 @@ export default class Home extends React.Component {
   };
   readData = (path, res, callBack) => {
     // 过滤已经存在的历史记录
+    console.log('read')
     const project = path.split('.pdman.json')[0];
     const temp = [...this.state.histories].filter(his => his !== project);
     // 把当前的项目插入到第一条数据
     temp.unshift(project);
     callBack && callBack();
-    convertOldDbs(res.profile.dbs)
+    convertOldDbs(res?.profile?.dbs)
     this.setState({
       // histories: temp,
       flag: false,
@@ -220,7 +221,7 @@ export default class Home extends React.Component {
       const text = await file.text()
       this.readData(file.name, JSON.parse(text))
     } else {
-      this._readData(`${file.name}.pdman.json`);
+      this._readData(`${history.name}.pdman.json`);
     }
   };
   _openProject = async (path, callBack, type) => {
