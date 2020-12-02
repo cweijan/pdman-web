@@ -98,12 +98,13 @@ export default class Home extends React.Component {
     fileExistPromise(path, true, {
       dataTypeDomains: defaultData.profile.defaultDataTypeDomains,
       modules: defaultData.profile.defaultModules,
-    }).then((res) => {
+    }).then(async (res) => {
       // 保存的用户配置
-      history.store(this.state.projectHandler, this.projectName)
+      let newHistories =await history.store(this.state.projectHandler, this.projectName)
       this.setState({
         dataSource: res,
         flag: false,
+        histories: newHistories,
         project: basePath,
         projectHandler: null,
         closeProject: false,
