@@ -1507,7 +1507,7 @@ export default class App extends React.Component {
                    ${(tools === 'file' || tools === 'entity') ? 'menu-tools-edit-active' : 'tools-content-enable-click'}`}
                       onClick={() => this._menuClick('file')}
                     >
-                      <span><u>开</u>始</span>
+                      <span><u>工</u>程</span>
                     </li>
                     <li
                       className={`other-options-menu-tools
@@ -1524,13 +1524,13 @@ export default class App extends React.Component {
                     >
                       <span><u>模</u>型</span>
                     </li> */}
-                    <li
+                    {/* <li
                       className={`other-options-menu-tools ${tools === 'dbversion' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
                       onClick={() => this._menuClick('dbversion')}
                     >
                       <span><u>模</u>型版本</span>
-                    </li>
+                    </li> */}
                   </ul>
                   <Icon
                     type='logout'
