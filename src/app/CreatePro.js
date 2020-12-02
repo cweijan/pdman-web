@@ -98,9 +98,9 @@ export default class CreatePro extends React.Component {
           <div className='pdman-create-right-com-input'>
             <input onChange={this._onChange} value={this.state.value} />
           </div>
-          <div className='pdman-create-right-com-button'>
+          {/* <div className='pdman-create-right-com-button'>
             <Button onClick={this._iconClick}>...</Button>
-          </div>
+          </div> */}
         </div>
         {/* <div className='pdman-create-right-footer' style={{ right: '100px' }}>
           <Button onClick={this._closeCreatePro}>Cancel</Button>
