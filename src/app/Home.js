@@ -100,7 +100,7 @@ export default class Home extends React.Component {
       modules: defaultData.profile.defaultModules,
     }).then(async (res) => {
       // 保存的用户配置
-      let newHistories =await history.store(this.state.projectHandler, this.projectName)
+      let newHistories = await history.store(this.state.projectHandler, this.projectName)
       this.setState({
         dataSource: res,
         flag: false,
@@ -170,7 +170,8 @@ export default class Home extends React.Component {
     // 过滤已经存在的历史记录
     console.log('read')
     const project = path.split('.pdman.json')[0];
-    const temp = [...this.state.histories].filter(his => his !== project);
+    const histories = (this.state.histories && this.state.histories instanceof Array) ? this.state.histories : [];
+    const temp = [...histories].filter(his => his !== project);
     // 把当前的项目插入到第一条数据
     temp.unshift(project);
     callBack && callBack();
@@ -202,7 +203,7 @@ export default class Home extends React.Component {
       extensions.push('pdman.json');
     }
     const { fileHandle, file, text } = await open()
-    let newHistories =await history.store(fileHandle, file.name)
+    let newHistories = await history.store(fileHandle, file.name)
     this.setState({
       projectHandler: fileHandle,
       histories: newHistories
