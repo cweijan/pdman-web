@@ -128,7 +128,6 @@ export default class Home extends React.Component {
     e && e.stopPropagation();
     const { histories } = this.state;
     let temp = [...histories];
-    console.log(temp)
     if (type === 'all') {
       temp = [];
     } else {
@@ -168,7 +167,6 @@ export default class Home extends React.Component {
   };
   readData = (path, res, callBack) => {
     // 过滤已经存在的历史记录
-    console.log('read')
     const project = path.split('.pdman.json')[0];
     const histories = (this.state.histories && this.state.histories instanceof Array) ? this.state.histories : [];
     const temp = [...histories].filter(his => his !== project);
@@ -514,7 +512,6 @@ export default class Home extends React.Component {
   render() {
     if (this.state.flag || this.state.error || this.state.closeProject) {
       const { histories, project, display } = this.state;
-      console.log(histories)
       return (
         <div tabIndex="0" className='pdman-home-content' ref={instance => this.instance = instance}>
           <Header project={project} disableMaximize />
