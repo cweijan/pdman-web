@@ -1741,7 +1741,8 @@ export default class App extends React.Component {
           >
             <div className="tools-left-tab-header">
               <div className="tools-left-tab-header-icons">
-                <Icon title='收起左侧树图' type="verticleright" onClick={this._closeLeftTab} />
+                <Icon type='logout' title='关闭当前项目' style={{ float: 'right', marginRight: 5, paddingTop: 1, cursor: 'pointer' }} onClick={this._closeProject} />
+                {/* <Icon title='收起左侧树图' type="verticleright" onClick={this._closeLeftTab} /> */}
                 <Icon title='重新加载项目' type="reload1" onClick={this._refresh} style={{ display: width === 0 ? 'none' : '' }} />
               </div>
               <div className="tools-left-tab-header-tab-names" style={{ display: width === 0 ? 'none' : '' }}>
