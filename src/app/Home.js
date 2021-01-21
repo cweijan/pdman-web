@@ -42,6 +42,7 @@ export default class Home extends React.Component {
       error: false,
       closeProject: false,
       register: {},
+      history: {}
     };
   }
   async componentDidMount() {
@@ -222,6 +223,9 @@ export default class Home extends React.Component {
     } else {
       this._readData(`${history.name}.pdman.json`);
     }
+    this.setState({
+      history
+    })
   };
   _openProject = async (path, callBack, type) => {
     // 打开项目
@@ -594,6 +598,8 @@ export default class Home extends React.Component {
           project={this.state.project}
           saveProject={this._saveProject}
           openObject={this._openProject}
+          openHistory={this.openHistory}
+          history={this.state.history}
           dataHistory={this.state.dataHistory}
           saveProjectSome={this._saveProjectSome}
           closeProject={this._closeProject}

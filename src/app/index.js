@@ -660,8 +660,8 @@ export default class App extends React.Component {
       message: '重新加载数据会使未保存的数据丢失，是否要继续？',
       onOk: (modal) => {
         modal && modal.close();
-        const { openObject, project } = this.props;
-        openObject(project);
+        const { openHistory, history } = this.props;
+        openHistory(history);
       },
       width: 350
     });
