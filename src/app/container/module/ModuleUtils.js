@@ -187,13 +187,13 @@ export const cutModule = (name, dataSource) => {
     .map(module => ({ ...module, rightType: 'cut' }))[0]));
 };
 
-export const pasteModule = (dataSource, cb) => {
+export const pasteModule =async (dataSource, cb) => {
   const copyTables = [];
   const copyModules = [];
   // 粘贴模块
   let data = {};
   try {
-    data = JSON.parse(clipboard.readText());
+    data = JSON.parse(await clipboard.readText());
   } catch (err) {
     console.log('数据格式错误，无法粘贴', err);
   }

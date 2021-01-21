@@ -1,6 +1,6 @@
 //TODO  返回的是primise
 const readText = () => {
-    return navigator.clipboard.read();
+    return navigator.clipboard.readText();
 }
 
 const writeText = (text) => {

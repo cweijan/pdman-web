@@ -170,12 +170,12 @@ export const cutTable = (moduleName, tableName, dataSource) => {
   }
 };
 
-export const pasteTable = (moduleName, dataSource, cb) => {
+export const pasteTable = async (moduleName, dataSource, cb) => {
   // 粘贴模块
   const copyTables = [];
   let data = [];
   try {
-    data = JSON.parse(clipboard.readText());
+    data = JSON.parse(await clipboard.readText());
   } catch (err) {
     console.log('数据格式错误，无法粘贴', err);
   }
