@@ -1,22 +1,16 @@
 # Pdman Web
 
+该版本仅支持Mysql以及移除了数据库版本管理.
+
 ## 安装
+`npm i -g pdman`
 
-`#`表示执行命令
-```shell script
-# git clone https://github.com/cweijan/pdman-web.git
+## 启动
 
-# cd pdman_web
+打开控制台, 输入`pdman`, 启动后访问[http://localhost:8000](http://localhost:8000)
 
-# yarn install
-```
-
-## 运行
-
-```
-# yarn start
-```
-打开 [http://localhost:3000](http://localhost:3000)
+## 致谢
+原始仓库: [pdman](https://gitee.com/robergroup/pdman)
 
 ## 备注
 
