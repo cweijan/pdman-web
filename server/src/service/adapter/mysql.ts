@@ -9,6 +9,7 @@ export class MysqlApi implements DbAdapter {
         if (!connection) {
             var connection = mysql.createConnection({
                 host: option.url,
+                port: option.port,
                 user: option.username,
                 password: option.password,
                 database: option.database,
