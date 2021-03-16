@@ -60,7 +60,7 @@ module.exports = (app: express.Application) => {
         if (!fs.existsSync(parent)) {
             fs.mkdirSync(parent, { recursive: true })
         }
-        fs.writeFileSync(saveRequest.path, saveRequest.content, 'utf8')
+        fs.writeFileSync(saveRequest.path, JSON.stringify(JSON.parse(saveRequest.content),null,4), 'utf8');
         res.json(req.body);
     });
 }
