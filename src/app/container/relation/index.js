@@ -1272,6 +1272,7 @@ export default class Relation extends React.Component{
     });
 
     this.net.render();
+    this.showPaint()
   };
   _tableHasExistAndUpdateName = (graphCanvas, name) => {
     if ((graphCanvas.nodes || []).some(node => node.title === name)) {
@@ -1510,6 +1511,12 @@ export default class Relation extends React.Component{
       count: this.net.getScale(),
     })
   };
+  showPaint=()=>{
+    const { value } = this.props;
+    const paint = document.getElementById(`paint-${value}`);
+    const navigation = paint && paint.querySelector('.g6-plugins-navigation');
+    navigation.style.display = 'block';
+  };
   _keyDown = (e, close) => {
     // 按下M键
     if (e.key === 'm') {
@@ -1554,7 +1561,7 @@ export default class Relation extends React.Component{
         {}
       </div>
       <div
-        style={{position: 'fixed', bottom: 10, right: 10, color: '#CCCCCC'}}
+        style={{position: 'fixed', bottom: 10, right: 10, color: 'rgb(48 48 48)',fontSize:'15px'}}
       >
         按住shift可拖动关系图，滑动鼠标可放大缩小关系图，按下M可打开或者关闭缩略图
       </div>
