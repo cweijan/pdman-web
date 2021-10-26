@@ -30,6 +30,8 @@ ReactDOM.render(
   <Home columnOrder={columnOrder} />,
   document.getElementById('root')
 );
-
+window.onbeforeunload=()=>{
+  return "您的修改暂未保存, 是否确定退出PDMan??";
+}
 // serviceWorker.register()
 serviceWorker.unregister();
