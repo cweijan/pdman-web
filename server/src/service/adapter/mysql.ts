@@ -1,4 +1,4 @@
-import * as mysql from "mysql";
+import * as mysql from "mysql2";
 import { ExecuteDTO } from "../../request/requestDTO";
 import { DbAdapter } from "./DbAdapater";
 
@@ -49,7 +49,7 @@ export class MysqlApi implements DbAdapter {
                     connection.commit()
                     resolve(null)
                 } catch (err) {
-                    connection.rollback()
+                    connection.rollback(()=>{})
                     resolve(err)
                 }
             })
@@ -57,9 +57,9 @@ export class MysqlApi implements DbAdapter {
 
     }
 
-    private queryPromise<T>(connection: mysql.Connection, sql: string): Promise<T> {
+    private queryPromise<T>(connection: mysql.Connection, sql: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            connection.query(sql, (err: mysql.MysqlError, rows) => {
+            connection.query(sql, (err: Error, rows) => {
                 if (err) {
                     reject(err);
                 } else {
