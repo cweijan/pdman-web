@@ -61,19 +61,19 @@ class TreeNode extends React.Component {
     const childrenValue = nextProps.childrenValue
       .filter(c => c && !c.startsWith('map&') && !c.startsWith('table&'))
       .map(c => (c.split('&')[2] || c).toLocaleLowerCase());
-    if (searchValue !== this.props.searchValue) {
-      if (searchValue && childrenValue.some(c => c && c.includes(searchValue.toLocaleLowerCase()))) {
-        this.setState({
-          rotate: 'rotate(90deg)',
-          display: '',
-        });
-      } else {
-        this.setState({
-          rotate: 'rotate(0deg)',
-          display: 'none',
-        });
-      }
-    }
+    // if (searchValue !== this.props.searchValue) {
+    //   if (searchValue && childrenValue.some(c => c && c.includes(searchValue.toLocaleLowerCase()))) {
+    //     this.setState({
+    //       rotate: 'rotate(90deg)',
+    //       display: '',
+    //     });
+    //   } else {
+    //     this.setState({
+    //       rotate: 'rotate(0deg)',
+    //       display: 'none',
+    //     });
+    //   }
+    // }
   }
   _validateSearchValue = (nextProps) => {
     if (nextProps.searchValue !== this.props.searchValue) {
