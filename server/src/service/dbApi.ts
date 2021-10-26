@@ -1,6 +1,7 @@
 import * as express from "express";
 import { ConnnectDTO, ExecuteDTO, NewVersionDTO } from "../request/requestDTO";
 import { MysqlApi } from "./adapter/mysql";
+import { PostgreSQLApi } from "./adapter/pg";
 var nodeUrl = require('url');
 
 function pressError(res: express.Response, fun: Function) {
@@ -13,27 +14,29 @@ function pressError(res: express.Response, fun: Function) {
 
 module.exports = (app: express.Application) => {
 
-    const mysqlApi = new MysqlApi()
+    const apiMap = { mysql: new MysqlApi(), pg: new PostgreSQLApi() }
 
     app.use((req, _, next) => {
-        const opt=req.body;
-        if(opt.url && opt.url.startsWith('jdbc:')){
-            opt.url=nodeUrl.parse(opt.url.replace('jdbc:','')).hostname;
+        const opt = req.body;
+        if (opt.url && opt.url.startsWith('jdbc:')) {
+            opt.url = nodeUrl.parse(opt.url.replace('jdbc:', '')).hostname;
         }
         next();
-      });
-      
+    });
+
     app.post('/api/db/connect', async (req, res, next) => {
         pressError(res, async () => {
             const option: ConnnectDTO = req.body
+            const mysqlApi =apiMap.mysql;
             const { error, connection } = await mysqlApi.execute({ ...option, sql: 'SELECT 1 + 1 AS solution' })
-            res.json({ success: error == null, msg: error?.sqlMessage||error?.message })
+            res.json({ success: error == null, msg: error?.sqlMessage || error?.message })
             connection.end()
         })
     });
 
     app.post('/api/db/execute', async (req, res, next) => {
         pressError(res, async () => {
+            const mysqlApi =apiMap.mysql;
             const { error, connection } = await mysqlApi.execute(req.body as ExecuteDTO);
             res.json({ success: error == null, msg: error?.sqlMessage })
             connection.end()
@@ -44,6 +47,7 @@ module.exports = (app: express.Application) => {
         pressError(res, async () => {
             const option: NewVersionDTO = req.body;
 
+            const mysqlApi =apiMap.mysql;
             const { error, connection } = await mysqlApi.execute(option);
             if (error) {
                 res.json({ success: false, msg: error.sqlMessage })
@@ -67,8 +71,9 @@ module.exports = (app: express.Application) => {
         pressError(res, async () => {
 
 
-            const dataTypeMap={};
+            const dataTypeMap = {};
 
+            const mysqlApi =apiMap.mysql;
             const { error, results: tables, connection } = await mysqlApi.execute({ ...option, sql: `SELECT table_comment comment,TABLE_NAME name FROM information_schema.TABLES  WHERE TABLE_SCHEMA = '${option.database}' and TABLE_TYPE<>'VIEW' order by table_name;` })
 
             const entities = await Promise.all(tables.map(async (table) => {
@@ -78,7 +83,7 @@ module.exports = (app: express.Application) => {
                     title: table.name,
                     chnname: table.comment,
                     fields: await Promise.all(columns.map(column => {
-                        dataTypeMap[column.type]={
+                        dataTypeMap[column.type] = {
                             name: column.type,
                             code: column.type,
                             type: column.type
