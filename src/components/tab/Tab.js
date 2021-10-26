@@ -23,7 +23,7 @@ class Tab extends React.Component {
     this.state = {
       key: props.defaultShow,
       defaultSelectColor: '#CDDDF6',
-      defaultColor: '#E3E3E5',
+      defaultColor: '#f7f7f7',
       hrColor: '#CDCDCD',
       border: '2px solid #58A1F3',
     };

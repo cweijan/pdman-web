@@ -1736,7 +1736,7 @@ export default class App extends React.Component {
         <div className="tools-work-content" style={{ display: tools === 'dbversion' ? 'none' : '' }}>
           <div
             className="tools-left-tab"
-            style={{ width: width === 0 ? 20 : '20%', minWidth: width === 0 ? 20 : 200, background: '#EBEEF2' }}
+            style={{ width: width === 0 ? 20 : '20%', minWidth: width === 0 ? 20 : 200, background: '#fbfbfb' }}
             ref={instance => this.leftTabInstance = instance}
           >
             <div className="tools-left-tab-header">
@@ -1748,7 +1748,7 @@ export default class App extends React.Component {
               <div className="tools-left-tab-header-tab-names" style={{ display: width === 0 ? 'none' : '' }}>
                 <span
                   className={`${tab === 'table' ? 'menu-tab-tools-edit-active' : ''}`}
-                  onClick={() => this._leftTabChange('table')}
+                  onClick={() => this._leftTabChange('table')  }
                 ><Icon type='fa-th' style={{ marginRight: 5 }} />数据表</span>
                 <span
                   className={`${tab === 'domain' ? 'menu-tab-tools-edit-active' : ''}`}

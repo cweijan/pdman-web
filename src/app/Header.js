@@ -40,7 +40,7 @@ export default class Header extends React.Component{
   render() {
     const { flag } = this.state;
     const { disableMaximize = false, project = '', projectDemo } = this.props;
-    return (<div style={{background: '#E3E3E5'}}>
+    return (<div style={{background: '#f7f7f7',borderBottom:'1px solid #cfcfcf'}}>
       <div className='pdman-top-border' onDoubleClick={this._onDbClick}>{}</div>
       <div className='pdman-header'>
         <div className='pdman-header-left'>

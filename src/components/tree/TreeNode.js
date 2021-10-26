@@ -4,9 +4,9 @@ import _object from 'lodash/object';
 
 import Icon from '../icon';
 
-const defaultColor = '#EBEEF2';
-const selectColor = '#D4D9E0';
-const blurColor = '#c1cad8';
+const defaultColor = '#fbfbfb';
+const selectColor = '#efefef';
+const blurColor = '#efefef';
 const selectTextColor = '#1b1b1b';
 const defaultTextColor = '#1b1b1b';
 
