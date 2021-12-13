@@ -7,7 +7,7 @@ export default class ExportImg extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      value: 'view',
+      value: 'all',
     };
   }
   getType = () => {

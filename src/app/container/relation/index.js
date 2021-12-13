@@ -219,26 +219,34 @@ export default class Relation extends React.Component {
   setNodes = (nodes) => {
     this.newNodes = nodes;
   };
-  exportImg = (type, callback) => {
-    const { value,project } = this.props;
-    const tempNet = this.net;
-    const currentDom = document.getElementById(`paint-${value}`);
-    const currentStyle = getComputedStyle(currentDom);
-    let tempDom = null;
-    let tempWidth = '';
-    let tempHeight = '';
-    let fitView = undefined;
-    if (type === 'all') {
-      fitView = 'autoSize';
-      tempWidth = 4000;
-      tempHeight = 4000;
-    } else {
-      tempWidth = currentStyle.width && currentStyle.width.split('px')[0];
-      tempHeight = currentStyle.width && currentStyle.height.split('px')[0];
+
+  findCanvas() {
+    const graphs = document.querySelectorAll('#body>div')
+    for (const graph of graphs) {
+      console.log(graph.style)
+      if (graph.style.display == 'none') continue;
+      return graph.querySelector("canvas")
     }
+  }
+
+  exportImg = (type, callback) => {
+    const { value, project } = this.props;
+    const suffix = 'png';
+    if (type == 'view') {
+      var link = document.createElement('a');
+      link.download = `${project}.${suffix}`;
+      const canvas = this.findCanvas();
+      link.href = canvas.toDataURL(`image/${suffix}`)
+      link.click();
+      return;
+    }
+
+    const tempWidth = 4000;
+    const tempHeight = 4000;
+    let fitView = 'autoSize';
     // 1.创建一个临时的dom节点
     const id = uuid();
-    tempDom = document.createElement('div');
+    const tempDom = document.createElement('div');
     tempDom.setAttribute('id', id);
     tempDom.style.width = `${tempWidth}px`;
     tempDom.style.height = `${tempHeight}px`;
@@ -253,7 +261,6 @@ export default class Relation extends React.Component {
     setTimeout(() => {
       const tempGraphContainer = this.net.get('graphContainer');
       // 关闭缩略图
-      const suffix='png';
       this._keyDown({ key: 'm' }, true);
       html2canvas(tempGraphContainer).then(canvas => {
         var link = document.createElement('a');
