@@ -11,7 +11,7 @@ import { uuid } from '../../../utils/uuid';
 
 G6.track(false);
 
-export default class Relation extends React.Component{
+export default class Relation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,14 +24,14 @@ export default class Relation extends React.Component{
     this.graphCanvas = this._getData(props.dataSource);
     //this.relations = [];
   }
-  componentDidMount(){
+  componentDidMount() {
     const { height, dataSource, width } = this.props;
     const data = this.graphCanvas;
     this._checkEmpty(data);
     this._renderRelation(height, width, data, dataSource);
     this.pointerDom = ReactDom.findDOMNode(this.pointer);
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
     if (nextProps.height !== this.props.height ||
       nextProps.width !== this.props.width ||
       nextProps.dataSource !== this.props.dataSource) {
@@ -68,13 +68,13 @@ export default class Relation extends React.Component{
         }
         this._renderRelation(nextProps.height,
           nextProps.width, this.graphCanvas, nextProps.dataSource);*/
-        this.net.changeData({...this.graphCanvas});
+        this.net.changeData({ ...this.graphCanvas });
       } else {
         this.net.changeSize(nextProps.width, nextProps.height);
       }
     }
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
   }
   onZoom = (zoom) => {
     let scale = this.net.getScale();
@@ -89,7 +89,7 @@ export default class Relation extends React.Component{
     }
     this._zoomTree(scale);
   };
-  
+
   _addCountTableName = (name, title) => {
     const titleNumber = title.split(':')[1];
     if (name.includes(':')) {
@@ -122,15 +122,15 @@ export default class Relation extends React.Component{
   _updateTableName = (data = [], dataHistory = {}) => {
     // 将旧表名，替换到新表名
     return data.map((node) => {
-        const titleArray = node.title.split(':');
-        if (dataHistory.oldName === titleArray[0]) {
-          return {
-            ...node,
-            title: `${dataHistory.newName}${titleArray[1] ? `:${titleArray[1]}` : ''}`,
-          };
-        }
-        return node;
-      });
+      const titleArray = node.title.split(':');
+      if (dataHistory.oldName === titleArray[0]) {
+        return {
+          ...node,
+          title: `${dataHistory.newName}${titleArray[1] ? `:${titleArray[1]}` : ''}`,
+        };
+      }
+      return node;
+    });
   };
   _getAssociations = (data, module) => {
     const edges = [...(data.edges || [])];
@@ -146,9 +146,9 @@ export default class Relation extends React.Component{
       const targetEntityData = entities
         .filter(entity => entity.title === targetEntity)[0] || targetNode;
       const sourceFieldData = (sourceEntityData.fields || []).filter(f => !f.relationNoShow)
-        [parseInt(edge.sourceAnchor / 2, 10)];
+      [parseInt(edge.sourceAnchor / 2, 10)];
       const targetFieldData = (targetEntityData.fields || []).filter(f => !f.relationNoShow)
-        [parseInt(edge.targetAnchor / 2, 10)];
+      [parseInt(edge.targetAnchor / 2, 10)];
       if (!sourceFieldData || !targetFieldData) {
         return null;
       }
@@ -180,8 +180,10 @@ export default class Relation extends React.Component{
       ...graphCanvas,
       edges: this._updateEdges(graphCanvas.nodes, graphCanvas.nodes, graphCanvas.edges),
       nodes: (graphCanvas.nodes || [])
-        .map(node => ({..._object.omit(node,
-            ['fields', 'headers', 'datatype', 'associations', 'realName', 'edges'])})),
+        .map(node => ({
+          ..._object.omit(node,
+            ['fields', 'headers', 'datatype', 'associations', 'realName', 'edges'])
+        })),
     };
   };
   searchNodes = (value) => {
@@ -217,8 +219,8 @@ export default class Relation extends React.Component{
   setNodes = (nodes) => {
     this.newNodes = nodes;
   };
-  exportImg = (path, type, callback) => {
-    const { value } = this.props;
+  exportImg = (type, callback) => {
+    const { value,project } = this.props;
     const tempNet = this.net;
     const currentDom = document.getElementById(`paint-${value}`);
     const currentStyle = getComputedStyle(currentDom);
@@ -228,8 +230,8 @@ export default class Relation extends React.Component{
     let fitView = undefined;
     if (type === 'all') {
       fitView = 'autoSize';
-      tempWidth = 2000;
-      tempHeight = 2000;
+      tempWidth = 4000;
+      tempHeight = 4000;
     } else {
       tempWidth = currentStyle.width && currentStyle.width.split('px')[0];
       tempHeight = currentStyle.width && currentStyle.height.split('px')[0];
@@ -251,15 +253,13 @@ export default class Relation extends React.Component{
     setTimeout(() => {
       const tempGraphContainer = this.net.get('graphContainer');
       // 关闭缩略图
-      this._keyDown({key: 'm'}, true);
-      const imageType = path.endsWith('.jpg') ? 'jpg' : 'png';
+      const suffix='png';
+      this._keyDown({ key: 'm' }, true);
       html2canvas(tempGraphContainer).then(canvas => {
-        const dataBuffer = Buffer.from(canvas.toDataURL(`image/${imageType}`).replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        writeFile(path, dataBuffer).then(() => {
-          callback && callback(path);
-          this.net = tempNet;
-          tempDom && tempDom.parentNode.removeChild(tempDom);
-        });
+        var link = document.createElement('a');
+        link.download = `${project}.${suffix}`;
+        link.href = canvas.toDataURL(`image/${suffix}`)
+        link.click();
       });
     });
   };
@@ -272,7 +272,8 @@ export default class Relation extends React.Component{
     const module = (dataSource.modules || []).filter(mo => mo.name === moduleName)[0];
     saveProjectSome(`${project}.pdman.json`, {
       associations: this._getAssociations(this.graphCanvas, module),
-      graphCanvas: {...tempData}}, () => {
+      graphCanvas: { ...tempData }
+    }, () => {
       callBack && callBack();
     }, undefined, `${moduleName}/graphCanvas`);
   };
@@ -445,7 +446,7 @@ export default class Relation extends React.Component{
         return {
           index,
           distance: (point.x - x) * (point.x - x)
-          + (point.y - y) * (point.y - y),
+            + (point.y - y) * (point.y - y),
         };
       });
       // 找出该锚点
@@ -456,220 +457,220 @@ export default class Relation extends React.Component{
         clickPoint = (activeEdge._attrs.model.controlPoints || [])[pointerIndex];
       }
     }
-      return clickPoint;
+    return clickPoint;
   };
   _renderRelation = (paintHeight, paintWidth, data, dataSource, id, fitView, disableGrid, disableMap) => {
     const Util = G6.Util;
     const getDefaultDataType = this._getDefaultDataType;
-    
+
 
     const miniMap = new G6.Plugins['tool.minimap']({
       width: 180,
       height: 180,
     });
     G6.registEdge('erdRelation', {
-        stroke: '#666',
-        getShorterPath: function(sA, tA, box, isCross){
-          let margin = 10;
-          let topDistance,bottomDistance;
-          let shorter = 0;
+      stroke: '#666',
+      getShorterPath: function (sA, tA, box, isCross) {
+        let margin = 10;
+        let topDistance, bottomDistance;
+        let shorter = 0;
 
-          let path = [];
+        let path = [];
 
-          if(isCross){
-            topDistance = box.minY-margin - tA.y;
-            bottomDistance = box.maxY+margin - tA.y;
-            let isTop = (Math.abs(topDistance)<Math.abs(bottomDistance))?true:false;
-            if(isTop){
-              shorter = box.minY-margin - sA.y;
-            }else{
-              shorter = box.maxY+margin - sA.y;
-            }
-          }
-
-          return shorter;
-
-        },
-        getPath: function(cfg, group, s, t) {
-          let shorten = 24
-              ,sBox = s.getBBox()
-              ,tBox = t.getBBox()
-              ,points = cfg.points
-              ,s1 = points[0]
-              ,t1 = points[points.length - 1];
-
-          // 箭头方向
-          let sPosition = (sBox.minX == s1.x)?-1:1;
-          let tPosition = (tBox.minX == t1.x)?-1:1;
-
-          // 根据箭头重新固定起点
-          let s2 = {'x':s1.x+sPosition*shorten, 'y':s1.y};
-          let t2 = {'x':t1.x+tPosition*shorten, 'y':t1.y};
-
-
-          let gapX = t2.x-s2.x;
-          let gapY = t2.y-s2.y;
-
-          // 判断线条有没有穿过表
-          let sIsCross = sPosition * gapX < 0;
-          let tIsCross = -tPosition * gapX < 0;
-
-          let path = [['M', s1.x, s1.y]];
-          path.push(['L', s2.x, s2.y]);
-          let ctrlPoints = cfg.origin.controlPoints;
-          if(ctrlPoints && ctrlPoints.length > 2){
-            for (var i = 1; i < ctrlPoints.length - 1; i++) {
-              path.push(['L', ctrlPoints[i].x,ctrlPoints[i].y]);
-            }
-          }else{
-            let sY = this.getShorterPath(s2,t2,sBox,sIsCross);
-            let tY = this.getShorterPath(t2,s2,tBox,tIsCross);
-            if(sY != 0 && tY != 0){
-
-            }
-            if(gapX > 0){
-              // source锚点在左
-              if(sY != 0){
-                path.push(['L', s2.x, s2.y+sY]);
-              }
-              path.push(['L', s2.x+gapX/2, s2.y+sY]);
-              path.push(['L', t2.x-gapX/2, t2.y+tY]);
-              if(tY != 0){
-                path.push(['L', t2.x, t2.y+tY]);
-              }
-            }else{
-              // source锚点在右
-              path.push(['L', s2.x, s2.y+gapY/2]);
-              path.push(['L', t2.x, t2.y-gapY/2]);
-            }
-          }
-
-
-          path.push(['L', t2.x, t2.y]);
-          path.push(['L', t1.x, t1.y]);
-          return path;
-
-        },
-        afterDraw: function(cfg, group, keyShape) {
-          cfg.origin.relation = cfg.origin.relation || '0,n:1';
-          var points = cfg.points;
-          var s1 = points[0];
-          var e1 = points[points.length - 1];
-          var s2 = keyShape.getPoint(0.01);
-          var e2 = keyShape.getPoint(0.99);
-
-          const r = 4;
-          const x = -15;
-          const y = 0;
-          var relationArrow = {
-            '0,1' : {
-              attrs:{
-                x: 0,
-                y: 0,
-                path: 'M'+x+','+(y-r) +
-                    'a '+r+','+r+',0,1,1,0,'+(2*r)+
-                    'a '+r+','+r+',0,1,1,0,'+(-2*r)+
-                    'M '+(x+r+1)+','+(r+1)+
-                    'L '+(x+r+1)+','+(-r-1)+
-                    'M '+(x+r+1)+',0'+
-                    'L 0,0'+
-                    'z',
-
-                stroke: this.stroke,
-                fill:'#fff'
-              },
-              class: 'arrow',
-              zIndex: 10
-            },
-            '0,n' : {
-              attrs:{
-                x: 0,
-                y: 0,
-                path: 'M'+x+','+(y-r) +
-                    'a '+r+','+r+',0,1,1,0,'+(2*r)+
-                    'a '+r+','+r+',0,1,1,0,'+(-2*r)+
-                    'M '+(x+r+1)+','+(r+1)+
-                    'L '+(x+r+1)+','+(-r-1)+
-                    'M '+(x+r+1)+','+y+
-                    'L '+y+',-'+r+
-                    'M '+(x+r+1)+','+y+
-                    'L '+y+','+r+
-                    'M '+(x+r+1)+',0'+
-                    'L 0,0'+
-                    'z',
-
-                stroke: this.stroke,
-                fill:'#fff'
-              },
-              class: 'arrow',
-              zIndex: 10
-            },
-            '1' : {
-              attrs:{
-                x: 0,
-                y: 0,
-                path: 'M '+(x+r+1)+','+(r+1)+
-                    'L '+(x+r+1)+','+(-r-1)+
-                    'M '+(x+r+1)+',0'+
-                    'L 0,0'+
-                    'z',
-
-                stroke: this.stroke,
-                fill:'#fff'
-              },
-              class: 'arrow',
-              zIndex: 10
-            },
-            '1,n' : {
-              attrs:{
-                x: 0,
-                y: 0,
-                path: 'M '+(x+r+1)+','+(r+1)+
-                    'L '+(x+r+1)+','+(-r-1)+
-                    'M '+(x+r+1)+','+y+
-                    'L '+y+',-'+r+
-                    'M '+(x+r+1)+','+y+
-                    'L '+y+','+r+
-                    'M '+(x+r+1)+',0'+
-                    'L 0,0'+
-                    'z',
-
-                stroke: this.stroke,
-                fill:'#fff'
-              },
-              class: 'arrow',
-              zIndex: 10
-            },
-            '0' : {
-              attrs:{
-                x: 0,
-                y: 0,
-                path: 'M'+x+','+(y-r) +
-                  'a '+r+','+r+',0,1,1,0,'+(2*r)+
-                  'a '+r+','+r+',0,1,1,0,'+(-2*r),
-                stroke: this.stroke,
-                fill:'#fff'
-              },
-              class: 'arrow',
-              zIndex: 10
-            },
-          };
-          if(cfg.origin.relation){
-            var relation = cfg.origin.relation.split(':');
-            if(relation.length == 2 && s2){
-              var startArrow = group.addShape('path', relationArrow[relation[0]]);
-              G6.Util.arrowTo(startArrow, s1.x, s1.y, s2.x, s2.y, s1.x, s1.y);
-              var endArrow = group.addShape('path', relationArrow[relation[1]]);
-              G6.Util.arrowTo(endArrow, e1.x, e1.y, e2.x, e2.y, e1.x, e1.y);
-            }
-
+        if (isCross) {
+          topDistance = box.minY - margin - tA.y;
+          bottomDistance = box.maxY + margin - tA.y;
+          let isTop = (Math.abs(topDistance) < Math.abs(bottomDistance)) ? true : false;
+          if (isTop) {
+            shorter = box.minY - margin - sA.y;
+          } else {
+            shorter = box.maxY + margin - sA.y;
           }
         }
+
+        return shorter;
+
+      },
+      getPath: function (cfg, group, s, t) {
+        let shorten = 24
+          , sBox = s.getBBox()
+          , tBox = t.getBBox()
+          , points = cfg.points
+          , s1 = points[0]
+          , t1 = points[points.length - 1];
+
+        // 箭头方向
+        let sPosition = (sBox.minX == s1.x) ? -1 : 1;
+        let tPosition = (tBox.minX == t1.x) ? -1 : 1;
+
+        // 根据箭头重新固定起点
+        let s2 = { 'x': s1.x + sPosition * shorten, 'y': s1.y };
+        let t2 = { 'x': t1.x + tPosition * shorten, 'y': t1.y };
+
+
+        let gapX = t2.x - s2.x;
+        let gapY = t2.y - s2.y;
+
+        // 判断线条有没有穿过表
+        let sIsCross = sPosition * gapX < 0;
+        let tIsCross = -tPosition * gapX < 0;
+
+        let path = [['M', s1.x, s1.y]];
+        path.push(['L', s2.x, s2.y]);
+        let ctrlPoints = cfg.origin.controlPoints;
+        if (ctrlPoints && ctrlPoints.length > 2) {
+          for (var i = 1; i < ctrlPoints.length - 1; i++) {
+            path.push(['L', ctrlPoints[i].x, ctrlPoints[i].y]);
+          }
+        } else {
+          let sY = this.getShorterPath(s2, t2, sBox, sIsCross);
+          let tY = this.getShorterPath(t2, s2, tBox, tIsCross);
+          if (sY != 0 && tY != 0) {
+
+          }
+          if (gapX > 0) {
+            // source锚点在左
+            if (sY != 0) {
+              path.push(['L', s2.x, s2.y + sY]);
+            }
+            path.push(['L', s2.x + gapX / 2, s2.y + sY]);
+            path.push(['L', t2.x - gapX / 2, t2.y + tY]);
+            if (tY != 0) {
+              path.push(['L', t2.x, t2.y + tY]);
+            }
+          } else {
+            // source锚点在右
+            path.push(['L', s2.x, s2.y + gapY / 2]);
+            path.push(['L', t2.x, t2.y - gapY / 2]);
+          }
+        }
+
+
+        path.push(['L', t2.x, t2.y]);
+        path.push(['L', t1.x, t1.y]);
+        return path;
+
+      },
+      afterDraw: function (cfg, group, keyShape) {
+        cfg.origin.relation = cfg.origin.relation || '0,n:1';
+        var points = cfg.points;
+        var s1 = points[0];
+        var e1 = points[points.length - 1];
+        var s2 = keyShape.getPoint(0.01);
+        var e2 = keyShape.getPoint(0.99);
+
+        const r = 4;
+        const x = -15;
+        const y = 0;
+        var relationArrow = {
+          '0,1': {
+            attrs: {
+              x: 0,
+              y: 0,
+              path: 'M' + x + ',' + (y - r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (2 * r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (-2 * r) +
+                'M ' + (x + r + 1) + ',' + (r + 1) +
+                'L ' + (x + r + 1) + ',' + (-r - 1) +
+                'M ' + (x + r + 1) + ',0' +
+                'L 0,0' +
+                'z',
+
+              stroke: this.stroke,
+              fill: '#fff'
+            },
+            class: 'arrow',
+            zIndex: 10
+          },
+          '0,n': {
+            attrs: {
+              x: 0,
+              y: 0,
+              path: 'M' + x + ',' + (y - r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (2 * r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (-2 * r) +
+                'M ' + (x + r + 1) + ',' + (r + 1) +
+                'L ' + (x + r + 1) + ',' + (-r - 1) +
+                'M ' + (x + r + 1) + ',' + y +
+                'L ' + y + ',-' + r +
+                'M ' + (x + r + 1) + ',' + y +
+                'L ' + y + ',' + r +
+                'M ' + (x + r + 1) + ',0' +
+                'L 0,0' +
+                'z',
+
+              stroke: this.stroke,
+              fill: '#fff'
+            },
+            class: 'arrow',
+            zIndex: 10
+          },
+          '1': {
+            attrs: {
+              x: 0,
+              y: 0,
+              path: 'M ' + (x + r + 1) + ',' + (r + 1) +
+                'L ' + (x + r + 1) + ',' + (-r - 1) +
+                'M ' + (x + r + 1) + ',0' +
+                'L 0,0' +
+                'z',
+
+              stroke: this.stroke,
+              fill: '#fff'
+            },
+            class: 'arrow',
+            zIndex: 10
+          },
+          '1,n': {
+            attrs: {
+              x: 0,
+              y: 0,
+              path: 'M ' + (x + r + 1) + ',' + (r + 1) +
+                'L ' + (x + r + 1) + ',' + (-r - 1) +
+                'M ' + (x + r + 1) + ',' + y +
+                'L ' + y + ',-' + r +
+                'M ' + (x + r + 1) + ',' + y +
+                'L ' + y + ',' + r +
+                'M ' + (x + r + 1) + ',0' +
+                'L 0,0' +
+                'z',
+
+              stroke: this.stroke,
+              fill: '#fff'
+            },
+            class: 'arrow',
+            zIndex: 10
+          },
+          '0': {
+            attrs: {
+              x: 0,
+              y: 0,
+              path: 'M' + x + ',' + (y - r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (2 * r) +
+                'a ' + r + ',' + r + ',0,1,1,0,' + (-2 * r),
+              stroke: this.stroke,
+              fill: '#fff'
+            },
+            class: 'arrow',
+            zIndex: 10
+          },
+        };
+        if (cfg.origin.relation) {
+          var relation = cfg.origin.relation.split(':');
+          if (relation.length == 2 && s2) {
+            var startArrow = group.addShape('path', relationArrow[relation[0]]);
+            G6.Util.arrowTo(startArrow, s1.x, s1.y, s2.x, s2.y, s1.x, s1.y);
+            var endArrow = group.addShape('path', relationArrow[relation[1]]);
+            G6.Util.arrowTo(endArrow, e1.x, e1.y, e2.x, e2.y, e1.x, e1.y);
+          }
+
+        }
+      }
     });
 
 
     G6.registerNode('table', {
-      draw(cfg, group){
+      draw(cfg, group) {
         const x = cfg.x;
         const y = cfg.y;
         const model = cfg.model;
@@ -688,7 +689,7 @@ export default class Relation extends React.Component{
         const backRect = group.addShape('rect', {
           attrs: {
             stroke: 'blue',
-            fill: model.moduleName ? '#5D616A': cfg.color,
+            fill: model.moduleName ? '#5D616A' : cfg.color,
           },
         });
         // 按顺序初始化列名
@@ -755,7 +756,7 @@ export default class Relation extends React.Component{
           // 绘制每一行
           Object.keys(headerGroup).forEach((fieldName) => {
             headerGroup[fieldName].addShape('text', {
-              attrs:{
+              attrs: {
                 x: x,
                 y: y + lineHeight * i,
                 text: getTitle(field, fieldName),
@@ -817,11 +818,11 @@ export default class Relation extends React.Component{
           x2: cfg.x + width / 2,
           y2: cfg.y - height / 2 + 2 * padding + titleBox.height,
         });
-        
+
         backRect.attr({
           x: x - (!isFinite(width) ? titleBox.width : width / 2),
           y: y - (!isFinite(height) ? titleBox.height / 2 : height / 2),
-          width:  (!isFinite(width) ? titleBox.width * 2  : width),
+          width: (!isFinite(width) ? titleBox.width * 2 : width),
           height: (!isFinite(height) ? titleBox.height * 2 : height),
         });
         const firstBox = headerBox[Object.keys(headerBox)[0]];
@@ -834,7 +835,7 @@ export default class Relation extends React.Component{
         group.set('anchorPoints', anchorPoints);
         return backRect;
       },
-      getAnchorPoints(cfg, group){
+      getAnchorPoints(cfg, group) {
         //const anchorPoints = group.get('anchorPoints');
         //anchorPoints.unshift([0.5, 0]);   // 上中
         //anchorPoints.push([0.5, 1]);      // 下中
@@ -869,7 +870,7 @@ export default class Relation extends React.Component{
         if (pointer) {
           const domPosition = this.net.converPoint(pointer);
           this.pointerDom.style.display = 'block';
-          this.pointerDom.style.top = `${domPosition.y - 3}px` ;
+          this.pointerDom.style.top = `${domPosition.y - 3}px`;
           this.pointerDom.style.left = `${domPosition.x - 3}px`;
         }
         this.clickEdgeX = e.x;
@@ -880,17 +881,17 @@ export default class Relation extends React.Component{
         this.domX = e.domX;
         this.domY = e.domY;
       }
-    /*  if (e.domEvent.ctrlKey) {
-        if (this.net._attrs.mode === 'edit') {
-          const { modeChange } = this.props;
-          //this.net.changeMode('drag');
-          modeChange && modeChange('drag');
-        } else {
-          const { modeChange } = this.props;
-          //this.net.changeMode('edit');
-          modeChange && modeChange('edit');
-        }
-      }*/
+      /*  if (e.domEvent.ctrlKey) {
+          if (this.net._attrs.mode === 'edit') {
+            const { modeChange } = this.props;
+            //this.net.changeMode('drag');
+            modeChange && modeChange('drag');
+          } else {
+            const { modeChange } = this.props;
+            //this.net.changeMode('edit');
+            modeChange && modeChange('edit');
+          }
+        }*/
     });
     this.net.on('mousewheel', () => {
       this.pointerDom.style.display = 'none';
@@ -956,7 +957,7 @@ export default class Relation extends React.Component{
     });
     this.net.on('dragmove', (e) => {
       if (this.pointerDom.style.display !== 'none') {
-        this.pointerDom.style.top = `${e.domY - 3}px` ;
+        this.pointerDom.style.top = `${e.domY - 3}px`;
         this.pointerDom.style.left = `${e.domX - 3}px`;
       }
     });
@@ -979,20 +980,20 @@ export default class Relation extends React.Component{
         }, 1);
       }
     });
-// 进入锚点切换到曲线添加模式
+    // 进入锚点切换到曲线添加模式
     this.net.on('mouseenter', (ev) => {
       let shape = ev.shape;
-      if(shape && shape.hasClass('anchor-point') && !dragging) {
+      if (shape && shape.hasClass('anchor-point') && !dragging) {
         this.net.beginAdd('edge', {
           shape: 'erdRelation',
           relation: '0,n:1'
         });
       }
     });
-// 离开锚点切换回编辑模式
+    // 离开锚点切换回编辑模式
     this.net.on('mouseleave', (ev) => {
       let shape = ev.shape;
-      if(shape && shape.hasClass('anchor-point') && !dragging) {
+      if (shape && shape.hasClass('anchor-point') && !dragging) {
         this.net.changeMode('edit');
       }
     });
@@ -1045,7 +1046,7 @@ export default class Relation extends React.Component{
             return {
               index,
               distance: (point.x - this.clickEdgeX) * (point.x - this.clickEdgeX)
-              + (point.y - this.clickEdgeY) * (point.y - this.clickEdgeY)
+                + (point.y - this.clickEdgeY) * (point.y - this.clickEdgeY)
             };
           });
           // 找出该锚点对应的索引
@@ -1113,9 +1114,9 @@ export default class Relation extends React.Component{
                 })
               })
             }
-            const domPosition = this.net.converPoint({x: this.clickEdgeX, y: this.clickEdgeY});
+            const domPosition = this.net.converPoint({ x: this.clickEdgeX, y: this.clickEdgeY });
             this.pointerDom.style.display = 'block';
-            this.pointerDom.style.top = `${domPosition.y - 3}px` ;
+            this.pointerDom.style.top = `${domPosition.y - 3}px`;
             this.pointerDom.style.left = `${domPosition.x - 3}px`;
           }
         }
@@ -1141,7 +1142,7 @@ export default class Relation extends React.Component{
     });
     this.net.on('itemadd', (ev) => {
       let item = ev.item;
-      if(item.get('type') === 'node'){
+      if (item.get('type') === 'node') {
         // 处理复制的情况
         const nodes = this.net.getNodes();
         // 新增table的标题
@@ -1191,7 +1192,7 @@ export default class Relation extends React.Component{
       // 移除item需要更新缓存表
 
       let item = ev.item;
-      if(item.get('type') === 'node'){
+      if (item.get('type') === 'node') {
         this.table = this.table.filter(table => table.title !== ev.item._attrs.model.title);
       } else if (item.get('type') === 'edge') {
         setTimeout(() => {
@@ -1216,39 +1217,48 @@ export default class Relation extends React.Component{
         let clickPoint = -1;
         let item = ev.item;
         let contextMenus = [];
-        if(item && item.get('type') === 'node' && item._attrs.actived){
+        if (item && item.get('type') === 'node' && item._attrs.actived) {
           contextMenus = [
-            { name: <span><Icon type='delete' style={{color: '#FF0000', marginRight: 5}}/>删除数据表</span>,
+            {
+              name: <span><Icon type='delete' style={{ color: '#FF0000', marginRight: 5 }} />删除数据表</span>,
               key: 'deleteTable',
             }];
-        } else if (item && item.get('type') === 'edge' && item._attrs.actived){
+        } else if (item && item.get('type') === 'edge' && item._attrs.actived) {
           contextMenus = [
-            { name: <span><Icon type='edit' style={{color: '#008000', marginRight: 5}}/>对应关系</span>,
-              key: 'relation'},
-            { name: <span><Icon type='delete' style={{color: '#FF0000', marginRight: 5}}/>删除连接线</span>,
-              key: 'deleteEdge'},
-            ];
+            {
+              name: <span><Icon type='edit' style={{ color: '#008000', marginRight: 5 }} />对应关系</span>,
+              key: 'relation'
+            },
+            {
+              name: <span><Icon type='delete' style={{ color: '#FF0000', marginRight: 5 }} />删除连接线</span>,
+              key: 'deleteEdge'
+            },
+          ];
           // 判断点击的时候是否锚点
           const model = item._attrs.model;
           // 1.计算点击的和当前边的所有锚点的距离
           const controlPoints = model.controlPoints.map((point, index) => {
-            const domPointer = this.net.invertPoint({x: ev.domX, y: ev.domY});
+            const domPointer = this.net.invertPoint({ x: ev.domX, y: ev.domY });
             return {
               index,
               distance: (point.x - domPointer.x) * (point.x - domPointer.x)
-              + (point.y - domPointer.y) * (point.y - domPointer.y)
+                + (point.y - domPointer.y) * (point.y - domPointer.y)
             };
           });
           clickPoint = model.controlPoints.findIndex((point, index) => controlPoints[index].distance < 10);
           if (clickPoint > -1) {
             contextMenus.push(
-              { name: <span><Icon type='delete' style={{color: '#FF0000', marginRight: 5}}/>删除锚点</span>,
-                key: 'deleteAnchor'})
+              {
+                name: <span><Icon type='delete' style={{ color: '#FF0000', marginRight: 5 }} />删除锚点</span>,
+                key: 'deleteAnchor'
+              })
           } else {
-            contextMenus.push({ name: <span><Icon type='addfolder' style={{color: '#008000', marginRight: 5}}/>添加锚点</span>,
-              key: 'addAnchor'})
+            contextMenus.push({
+              name: <span><Icon type='addfolder' style={{ color: '#008000', marginRight: 5 }} />添加锚点</span>,
+              key: 'addAnchor'
+            })
           }
-        } else if (!item){
+        } else if (!item) {
           /*contextMenus = [
             { name: <span><Icon type='addfolder' style={{color: '#008000', marginRight: 5}}/>新增数据表</span>,
               key: 'addTable'}];*/
@@ -1290,7 +1300,7 @@ export default class Relation extends React.Component{
     const moduleName = value.split('map&')[1].split('/')[0];
     const data = e.dataTransfer.getData('Text');
     if (data.startsWith('map&')) {
-      Modal.error({title: '移动无效', message: '该内容不是数据表，无法放置在关系图中！', width: 300})
+      Modal.error({ title: '移动无效', message: '该内容不是数据表，无法放置在关系图中！', width: 300 })
     } else {
       if (data.startsWith('entity&')) {
         // 将拖入的数据表放入画布中
@@ -1301,9 +1311,9 @@ export default class Relation extends React.Component{
         // 2.检查画布中的数据
         let x = e.clientX - paintRect.left;
         let y = e.clientY - paintRect.top;
-        const point = this.net.invertPoint({x, y});
+        const point = this.net.invertPoint({ x, y });
         let table = this._tableHasExistAndUpdateName(this.graphCanvas, data.split('&')[2]);
-        this._addDataTable(table, point.x , point.y, 'drag',
+        this._addDataTable(table, point.x, point.y, 'drag',
           data.split('&')[1] !== moduleName && data.split('&')[1]);
       }
       /*if (data.split('&')[1] !== moduleName) {
@@ -1340,11 +1350,11 @@ export default class Relation extends React.Component{
             ...mo,
             entities: type === 'new' ? (mo.entities || []).concat(table)
               : (mo.entities || []).map((entity) => {
-              if (entity.title === table.title) {
-                return table;
-              }
-              return entity;
-            }),
+                if (entity.title === table.title) {
+                  return table;
+                }
+                return entity;
+              }),
           };
         }
         return mo;
@@ -1360,7 +1370,7 @@ export default class Relation extends React.Component{
   _addDataTable = (title, x, y, type, tableModuleName) => {
     const { dataSource, value } = this.props;
     let tableData = null;
-    const mapData = {...this.net.save().source};
+    const mapData = { ...this.net.save().source };
     const nodes = _object.get(mapData, 'nodes', []);
     const edges = _object.get(mapData, 'edges', []);
     const moduleName = value.split('map&')[1].split('/')[0];
@@ -1410,7 +1420,7 @@ export default class Relation extends React.Component{
       y: y,
     });
     this.net.changeData(nodes, edges);
-    this._checkEmpty({nodes, edges});
+    this._checkEmpty({ nodes, edges });
   };
   _checkUntitledName = (name) => {
     if (!name.split('untitled')[1]) {
@@ -1444,8 +1454,8 @@ export default class Relation extends React.Component{
         nodes: this.graphCanvas.nodes.filter(node => node.title !== item._attrs.model.title),
       };*/
       this.del(item);
-    } else if (key === 'addTable'){
-      const point = this.net.invertPoint({x: left, y: top});
+    } else if (key === 'addTable') {
+      const point = this.net.invertPoint({ x: left, y: top });
       this._addDataTable(this._getTableName(this._getAllTable(dataSource), 'untitled'), point.x, point.y, 'new');
     } else if (key === 'addAnchor') {
       // 给连接线增加节点
@@ -1467,7 +1477,7 @@ export default class Relation extends React.Component{
       const relation = item._attrs.model.relation || '';
       const from = relation.split(':')[0] || '';
       const to = relation.split(':')[1] || '';
-      openModal(<RelationEdit from={from} to={to}/>,
+      openModal(<RelationEdit from={from} to={to} />,
         {
           title: '编辑对应关系',
           modality: true,
@@ -1482,7 +1492,7 @@ export default class Relation extends React.Component{
                 });
                 this.net.refresh();
               } else {
-                Modal.error({title: '编辑失败', message: '编辑失败', width: 100})
+                Modal.error({ title: '编辑失败', message: '编辑失败', width: 100 })
               }
             });
           }
@@ -1496,7 +1506,7 @@ export default class Relation extends React.Component{
   };
   _zoomTree = (scale) => {
     const { width, height } = this.props;
-    const centerNode = this.net.invertPoint({x: width / 2, y: height / 2});
+    const centerNode = this.net.invertPoint({ x: width / 2, y: height / 2 });
     const p0 = centerNode;
     const p1 = centerNode;
     const matrix = new G6.Matrix.Matrix3();
@@ -1511,7 +1521,7 @@ export default class Relation extends React.Component{
       count: this.net.getScale(),
     })
   };
-  showPaint=()=>{
+  showPaint = () => {
     const { value } = this.props;
     const paint = document.getElementById(`paint-${value}`);
     const navigation = paint && paint.querySelector('.g6-plugins-navigation');
@@ -1540,7 +1550,7 @@ export default class Relation extends React.Component{
       onDragOver={this._onDragOver}
     >
       <div className={`${prefix}-relation-pointer`} ref={instance => this.pointer = instance}>
-        {}
+        { }
       </div>
       <Context
         menus={this.state.contextMenus}
@@ -1558,15 +1568,15 @@ export default class Relation extends React.Component{
         className={`${prefix}-relation-paint`}
         id={`paint-${value}`}
       >
-        {}
+        { }
       </div>
       <div
-        style={{position: 'fixed', bottom: 10, right: 10, color: 'rgb(48 48 48)',fontSize:'15px'}}
+        style={{ position: 'fixed', bottom: 10, right: 10, color: 'rgb(48 48 48)', fontSize: '15px' }}
       >
         按住shift可拖动关系图，滑动鼠标可放大缩小关系图，按下M可打开或者关闭缩略图
       </div>
       <div
-        style={{position: 'fixed', top: 140, right: 20, color: 'green'}}
+        style={{ position: 'fixed', top: 140, right: 20, color: 'green' }}
       >
         放大倍数：{count}X
       </div>

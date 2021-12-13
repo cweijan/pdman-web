@@ -1215,7 +1215,7 @@ export default class App extends React.Component {
       default: break;
     }
   };
-  _onFilter=(searchValue)=>{
+  _onFilter = (searchValue) => {
     this.setState({
       searchValue
     })
@@ -1464,22 +1464,15 @@ export default class App extends React.Component {
       onOk: (modal, com) => {
         modal.close();
         const type = com.getType();
-        // 打开选择图片存储路径的对话框
-        // TODO
-        // dialog.showSaveDialog({
-        //   title: '选择图片存储路径',
-        //   filters: [
-        //     { name: 'image/jpg', extensions: ['jpg'] },
-        //     { name: 'image/png', extensions: ['png'] },
-        //   ],
-        // }, (file) => {
-        //   if (file) {
-        //     const { show } = this.state;
-        //     this.relationInstance[show] && this.relationInstance[show].exportImg(file, type, () => {
-              // aMessage.success( '图片导出成功！')
-        //     });
-        //   }
-        // });
+        const { show } = this.state;
+        const rel = this.relationInstance[show];
+        if (!rel) {
+          aMessage.error("未能找到关系图!")
+          return;
+        }
+        rel.exportImg(type, () => {
+          aMessage.success('图片导出成功！')
+        });
       }
     });
   };
@@ -1600,7 +1593,7 @@ export default class App extends React.Component {
                       className='tools-content-clickeable'
                       onClick={() => this._readDB()}
                     ><Icon type="fa-hand-lizard-o" />逆向解析</div>
-                     <div
+                    <div
                       className='tools-content-clickeable'
                       onClick={() => this._exportSQL()}
                     ><Icon type="fa-database" />执行SQL</div>
@@ -1754,7 +1747,7 @@ export default class App extends React.Component {
               <div className="tools-left-tab-header-tab-names" style={{ display: width === 0 ? 'none' : '' }}>
                 <span
                   className={`${tab === 'table' ? 'menu-tab-tools-edit-active' : ''}`}
-                  onClick={() => this._leftTabChange('table')  }
+                  onClick={() => this._leftTabChange('table')}
                 ><Icon type='fa-th' style={{ marginRight: 5 }} />数据表</span>
                 <span
                   className={`${tab === 'domain' ? 'menu-tab-tools-edit-active' : ''}`}
@@ -1792,7 +1785,7 @@ export default class App extends React.Component {
                             value={`table&${module.name}&数据表`}
                           >
                             {(module.entities || [])
-                            .filter(entity=>!this.state.searchValue  || entity.title.includes(this.state.searchValue))
+                              .filter(entity => !this.state.searchValue || entity.title.includes(this.state.searchValue))
                               .map((entity) => {
                                 const realName = this._getTableNameByNameTemplate(entity);
                                 return (
@@ -1812,7 +1805,7 @@ export default class App extends React.Component {
                       })
                     }
                   </Tree> : <span onClick={this._emptyClick} className='tools-left-tab-body-domain-empty-span'>
-                      <Icon type='addfolder' />无模块点击新增</span>
+                    <Icon type='addfolder' />无模块点击新增</span>
                 }
               </div>
               <div className="tools-left-tab-body-domain" style={{ display: tab === 'domain' ? '' : 'none' }}>
