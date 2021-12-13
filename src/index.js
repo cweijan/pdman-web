@@ -11,7 +11,7 @@ import * as serviceWorker from './serviceWorker';
  * antd参考文档: https://ant.design/components/overview-cn/
  */
 
-const columnOrder=[
+const columnOrder = [
   { code: 'chnname', value: '字段名', com: 'Input', relationNoShow: false },
   { code: 'name', value: '逻辑名', com: 'Input', relationNoShow: false },
   { code: 'type', value: '类型', com: 'Select', relationNoShow: false },
@@ -30,8 +30,10 @@ ReactDOM.render(
   <Home columnOrder={columnOrder} />,
   document.getElementById('root')
 );
-window.onbeforeunload=()=>{
-  return "您的修改暂未保存, 是否确定退出PDMan??";
+if (process.env.NODE_ENV != 'development') {
+  window.onbeforeunload = () => {
+    return "您的修改暂未保存, 是否确定退出PDMan??";
+  }
 }
 // serviceWorker.register()
 serviceWorker.unregister();
