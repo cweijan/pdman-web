@@ -115,7 +115,7 @@ export default class Input extends React.Component {
         placeholder={placeholder}
         ref={instance => this.instance = instance}
         autoFocus={autoFocus}
-        draggable
+        draggable allowClear 
         onDragStart={this._onDragStart}
         onBlur={this._onBlur}
         className={`${prefix}-input`}

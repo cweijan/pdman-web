@@ -52,6 +52,7 @@ export default class App extends React.Component {
       width: 1,
       left: 0,
       top: 0,
+      searchValue: '',
       contextDisplay: 'none',
       contextMenus: [],
       leftTabWidth: 0,
@@ -1214,6 +1215,11 @@ export default class App extends React.Component {
       default: break;
     }
   };
+  _onFilter=(searchValue)=>{
+    this.setState({
+      searchValue
+    })
+  };
   _onDrop = (drop, drag) => {
     // database&data&MySQL
     // datatype&data&DateTime
@@ -1760,7 +1766,7 @@ export default class App extends React.Component {
               <div className="tools-left-tab-body-table" style={{ display: tab === 'table' ? '' : 'none' }}>
                 {
                   (dataSource.modules || []).length > 0 ? <Tree
-                    showSearch
+                    showSearch onFilter={this._onFilter}
                     ref={instance => this.treeInstance = instance}
                     onContextMenu={this._onContextMenu}
                     onDoubleClick={this._onDoubleClick}
@@ -1786,6 +1792,7 @@ export default class App extends React.Component {
                             value={`table&${module.name}&数据表`}
                           >
                             {(module.entities || [])
+                            .filter(entity=>!this.state.searchValue  || entity.title.includes(this.state.searchValue))
                               .map((entity) => {
                                 const realName = this._getTableNameByNameTemplate(entity);
                                 return (
@@ -1809,7 +1816,7 @@ export default class App extends React.Component {
                 }
               </div>
               <div className="tools-left-tab-body-domain" style={{ display: tab === 'domain' ? '' : 'none' }}>
-                <Tree onContextMenu={this._onContextMenu} onDoubleClick={this._onDoubleClick} onDrop={this._onDrop}>
+                <Tree onContextMenu={this._onContextMenu} onDoubleClick={this._onDoubleClick} onDrop={this._onDrop} >
                   {
                     ([{ name: '数据类型', type: 'datatype' }, { name: '数据库', type: 'database' }]).map((type) => {
                       return (<TreeNode key={type.name} name={type.name} value={`${type.type}&${type.name}`}>

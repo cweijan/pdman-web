@@ -155,9 +155,8 @@ class TreeNode extends React.Component {
         }
         return c;
       });
-    const hitSearch=!this.props.searchValue || (children[1] && children[1].includes(this.props.searchValue.toLocaleLowerCase()));
     return (<span
-      style={{ padding: this.state.padding, paddingLeft: (row * (this.state.iconWidth + 5)) + 5 ,display:hitSearch?"inherit":"none"}}
+      style={{ padding: this.state.padding, paddingLeft: (row * (this.state.iconWidth + 5)) + 5 ,display:"inherit"}}
     >
       <span
         style={{

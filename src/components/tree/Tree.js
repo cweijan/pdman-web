@@ -130,6 +130,8 @@ class Tree extends React.Component {
     this.setState({
       searchValue: e.target.value,
     });
+    const { onFilter } = this.props;
+    onFilter && onFilter(e.target.value)
   };
   _onContextMenu = (e, value) => {
     const { onContextMenu } = this.props;
