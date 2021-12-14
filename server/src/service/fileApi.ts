@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { basename, resolve } from 'path';
 import { SaveDTO } from "../request/requestDTO";
 
-module.exports = (app: express.Application) => {
+export function bindFileApi(app: express.Application) {
 
     app.post('/api/exists', function (req, res) {
         res.send(fs.existsSync(req.body.path));
@@ -60,7 +60,7 @@ module.exports = (app: express.Application) => {
         if (!fs.existsSync(parent)) {
             fs.mkdirSync(parent, { recursive: true })
         }
-        fs.writeFileSync(saveRequest.path, JSON.stringify(JSON.parse(saveRequest.content),null,4), 'utf8');
+        fs.writeFileSync(saveRequest.path, JSON.stringify(JSON.parse(saveRequest.content), null, 4), 'utf8');
         res.json(req.body);
     });
 }

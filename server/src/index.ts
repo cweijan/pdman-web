@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import express from "express";
-import bodyParser = require('body-parser');
-import { bindFileApi, bindDbApi } from "./service/index";
 import { readFileSync } from "fs";
-import { initRevision } from "./service/revision";
+import { bindDbApi } from "./service/dbApi";
+import { bindFileApi } from "./service/fileApi";
+import { bindRevisionApi } from "./service/revision";
+import bodyParser = require('body-parser');
 
 const args = process.argv.slice(2);
 const input = args[0];
@@ -34,7 +35,7 @@ app.get('/api/info', (req, res) => {
 
 bindFileApi(app)
 bindDbApi(app)
-initRevision()
+bindRevisionApi(app)
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port}!`);

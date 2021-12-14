@@ -21,3 +21,10 @@ export class NewVersionDTO extends ExecuteDTO{
     version: string;
     message: string;
 }
+
+export class NewProjectVersion{
+    projectId: string;
+    version: string;
+    content: string;
+    remark: string;
+}
