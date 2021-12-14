@@ -1,4 +1,4 @@
-import { post } from '@/service/ajax';
+import { get, post } from '@/service/ajax';
 
 // 判断文件是否存在
 function fileExist(filePath) {
@@ -108,6 +108,16 @@ function saveFileCall(jsonObj, filePath, callBack) {
 }
 
 
+function getProjectVersion(projectId) {
+  return get("/api/project/version?projectId=" + projectId)
+}
+
+function saveNewProjectVersion(projectId, version, remark, content) {
+  return post("/api/project/version/new", {
+    projectId, version, remark, content
+  })
+}
+
 function getDirListPromise(dir, baseName) {
   return post("/api/read/dir", {
     path: dir,
@@ -134,5 +144,7 @@ export {
   saveFilePromise,
   saveFileCall,
   getDirListPromise,
+  getProjectVersion,
+  saveNewProjectVersion
 };
 
