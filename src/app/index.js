@@ -1523,13 +1523,13 @@ export default class App extends React.Component {
                     >
                       <span><u>模</u>型</span>
                     </li> */}
-                    {/* <li
+                    <li
                       className={`other-options-menu-tools ${tools === 'dbversion' ?
                         'menu-tools-edit-active' : 'tools-content-enable-click'}`}
                       onClick={() => this._menuClick('dbversion')}
                     >
                       <span><u>模</u>型版本</span>
-                    </li> */}
+                    </li>
                   </ul>
                   <Icon
                     type='logout'
