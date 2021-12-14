@@ -261,7 +261,7 @@ export default class Relation extends React.Component {
     setTimeout(() => {
       const tempGraphContainer = this.net.get('graphContainer');
       // 关闭缩略图
-      this._keyDown({ key: 'm' }, true);
+      // this._keyDown({ key: 'm' }, true);
       html2canvas(tempGraphContainer).then(canvas => {
         var link = document.createElement('a');
         link.download = `${project}.${suffix}`;
