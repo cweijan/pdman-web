@@ -116,6 +116,7 @@ export default class App extends React.Component {
       if (flag) {
         // 判断是否是演示项目
         const { saveProject, project } = this.props;
+        if (!data.id) { data.id = new Date().getTime(); }
         project && saveProject(`${project}.pdman.json`, {
           ...data,
         }, () => {

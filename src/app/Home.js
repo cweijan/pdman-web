@@ -7,7 +7,7 @@ import ReactDom from 'react-dom';
 import { open, getFileHandle, write, verifyPermission } from "@/service/fileSaver";
 import { Icon, Modal, openModal } from '../components';
 import demo from '../demo';
-import { fileExist, fileExistPromise, readFilePromise, writeFile } from '../utils/json';
+import { fileExist, fileExistPromise, readFilePromise, saveFileSync, writeFile } from '../utils/json';
 import CreatePro from './CreatePro';
 import defaultData from './defaultData.json';
 import Header from './Header';
@@ -97,6 +97,7 @@ export default class Home extends React.Component {
     }
 
     fileExistPromise(path, true, {
+      id: new Date().getTime(),
       dataTypeDomains: defaultData.profile.defaultDataTypeDomains,
       modules: defaultData.profile.defaultModules,
     }).then(async (res) => {
@@ -157,8 +158,13 @@ export default class Home extends React.Component {
   };
   _readData = async (path, callBack) => {
     if (await fileExist(path)) {
-      readFilePromise(path).then((res) => {
-        this.readData(path, res, callBack)
+      readFilePromise(path).then((data) => {
+        console.log(data)
+        if (!data.id) {
+          data.id = new Date().getTime();
+          saveFileSync(data, path)
+        }
+        this.readData(path, data, callBack)
       }).catch((e) => {
       });
     } else {
@@ -166,7 +172,7 @@ export default class Home extends React.Component {
       this._delete(null, path);
     }
   };
-  readData = (path, res, callBack) => {
+  readData = (path, data, callBack) => {
     // 过滤已经存在的历史记录
     const project = path.split('.pdman.json')[0];
     const histories = (this.state.histories && this.state.histories instanceof Array) ? this.state.histories : [];
@@ -174,15 +180,15 @@ export default class Home extends React.Component {
     // 把当前的项目插入到第一条数据
     temp.unshift(project);
     callBack && callBack();
-    convertOldDbs(res?.profile?.dbs)
+    convertOldDbs(data?.profile?.dbs)
     this.setState({
       // histories: temp,
       flag: false,
       dataSource: {
-        ...res,
+        ...data,
         dataTypeDomains: {
-          ...(res.dataTypeDomains || {}),
-          database: this._checkDatabase(_object.get(res, 'dataTypeDomains.database', [])),
+          ...(data.dataTypeDomains || {}),
+          database: this._checkDatabase(_object.get(data, 'dataTypeDomains.database', [])),
         },
       },
       changeDataType: 'reset',
@@ -207,7 +213,12 @@ export default class Home extends React.Component {
       projectHandler: fileHandle,
       histories: newHistories
     })
-    this.readData(file.name, JSON.parse(text))
+    const data = JSON.parse(text);
+    if (!data.id) {
+      data.id = new Date().getTime();
+      write(fileHandle, data)
+    }
+    this.readData(file.name, data)
     callBack && callBack()
   };
   openHistory = async (history) => {
@@ -219,7 +230,12 @@ export default class Home extends React.Component {
       await verifyPermission(fileHandle, true)
       const file = await fileHandle.getFile()
       const text = await file.text()
-      this.readData(file.name, JSON.parse(text))
+      const data = JSON.parse(text);
+      if (!data.id) {
+        data.id = new Date().getTime();
+        write(fileHandle, data)
+      }
+      this.readData(file.name, data)
     } else {
       this._readData(`${history.name}.pdman.json`);
     }
@@ -257,34 +273,35 @@ export default class Home extends React.Component {
       return;
     }
 
-    if (path) {
-      const tempData = { ...data };
-      if (!tempData) {
-        // 保存时增加数据为空提示，防止生成空文件
-        Modal.error({
-          title: '保存失败！',
-          message: '保存失败，请重试！',
-        });
-      } else {
-        const fileHandler = this.state.projectHandler;
-        const promise = fileHandler ? write(fileHandler, tempData) : fileExistPromise(path, true, tempData);
-        promise.then(() => {
-          this.setState({
-            dataSource: tempData,
-            changeDataType: 'update',
-            dataHistory,
-          }, () => {
-            cb && cb();
-          });
-        }).catch((e) => {
-          console.log(e)
-          aMessage.error('保存失败')
-        });
-      }
-    } else {
+    if (!path) {
       download(project + ".json", JSON.stringify(data, null, 2))
+      return;
     }
 
+    if (!data.id) { data.id = new Date().getTime(); }
+    const tempData = { ...data };
+    if (!tempData) {
+      // 保存时增加数据为空提示，防止生成空文件
+      Modal.error({
+        title: '保存失败！',
+        message: '保存失败，请重试！',
+      });
+    } else {
+      const fileHandler = this.state.projectHandler;
+      const promise = fileHandler ? write(fileHandler, tempData) : fileExistPromise(path, true, tempData);
+      promise.then(() => {
+        this.setState({
+          dataSource: tempData,
+          changeDataType: 'update',
+          dataHistory,
+        }, () => {
+          cb && cb();
+        });
+      }).catch((e) => {
+        console.log(e)
+        aMessage.error('保存失败')
+      });
+    }
 
   };
   _createClose = () => {
