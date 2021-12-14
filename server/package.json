@@ -4,7 +4,8 @@
   "description": "Pdman Web Version",
   "main": "build/index.js",
   "scripts": {
-    "dev": "set NODE_ENV=DEV && ts-node --project tsconfig.json --files src/index.ts",
+    "dev": "set NODE_ENV=DEV && tshot src/index.ts",
+    "dev-old": "set NODE_ENV=DEV && ts-node --project tsconfig.json --files src/index.ts",
     "build": "tsc",
     "upload": "npm run build && npm publish --registry=https://registry.npmjs.org/ "
   },
@@ -16,13 +17,16 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mysql2": "^2.3.2",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
     "@types/express": "^4.17.9",
     "@types/node": "^14.14.9",
+    "@types/sqlite3": "^3.1.7",
     "ts-node": "^9.0.0",
+    "tshot": "0.0.2",
     "typescript": "^4.1.2"
   }
 }
