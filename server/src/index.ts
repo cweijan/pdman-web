@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser = require('body-parser');
 import { bindFileApi, bindDbApi } from "./service/index";
 import { readFileSync } from "fs";
+import { initRevision } from "./service/revision";
 
 const args = process.argv.slice(2);
 const input = args[0];
@@ -33,6 +34,7 @@ app.get('/api/info', (req, res) => {
 
 bindFileApi(app)
 bindDbApi(app)
+initRevision()
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port}!`);
