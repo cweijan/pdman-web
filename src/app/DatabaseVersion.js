@@ -285,7 +285,8 @@ class DatabaseVersionContext extends React.Component {
         <span>版本号：</span>
         <Input
           disabled={versionReadonly}
-          style={{ width: '500px' }}
+          allowClear={false}
+          style={{ width: '300px' ,textAlign:'left'}}
           defaultValue={'V1.0.0' || this.getNewVersion()}
           placeholder='例如：v1.0.0【请勿低于系统默认的数据库版本v0.0.0】'
           onChange={e => this.onChange(e, 'version')} />
@@ -296,7 +297,7 @@ class DatabaseVersionContext extends React.Component {
           defaultValue={defaultMessage}
           wrapperStyle={{ width: '100%' }}
           style={{ width: '100%' }}
-          placeholder='例如：初始化当前项目版本'
+          placeholder='例如：初始化版本'
           onChange={e => this.onChange(e, 'message')} />
       </div>
     </div>);
@@ -451,6 +452,7 @@ export default class DatabaseVersion extends React.Component {
     histroy.writeH(data)
   };
   _getVersionMessage = () => {
+    const projectId=this.props.dataSource.id;
     getDirListPromise(this.basePathDir).then((res) => {
       // 从每个版本的文件中获取版本信息
       const versions = res.filter(r => r.endsWith('.pdman.json'));

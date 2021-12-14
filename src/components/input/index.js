@@ -107,7 +107,11 @@ export default class Input extends React.Component {
       otherProps.value = this.fixControlledValue(otherProps.value);
       delete otherProps.defaultValue;
     }
-    const { prefix = 'pdman', style, defaultValue, wrapperStyle, value, autoFocus, suffix, placeholder, disabled } = otherProps;
+    let { prefix = 'pdman', style, defaultValue, wrapperStyle, value, autoFocus, suffix, placeholder, disabled,allowClear } = otherProps;
+    if(allowClear==null){
+      allowClear=true;
+    }
+
     const renValue =this.state.value
     return (<div className={`${prefix}-input-wrapper`} style={wrapperStyle}>
       <AInput
@@ -115,7 +119,7 @@ export default class Input extends React.Component {
         placeholder={placeholder}
         ref={instance => this.instance = instance}
         autoFocus={autoFocus}
-        draggable allowClear 
+        draggable allowClear={allowClear}
         onDragStart={this._onDragStart}
         onBlur={this._onBlur}
         className={`${prefix}-input`}
