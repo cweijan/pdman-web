@@ -14,7 +14,7 @@ web版pdman, 并进行了美化, 只支持Mysql, 不支持数据库版本管理.
 
 ## 备注
 
-历史记录
+开发日志
 1. 使用了IndexedDB进行存储, 对FileHandler对象进行了持久化
 2. 其中使用[idb-keyval](https://github.com/jakearchibald/idb-keyval)库避免了底层操作
 
