@@ -1,6 +1,6 @@
 # Pdman Web
 
-该版本仅支持Mysql以及移除了数据库版本管理.
+web版pdman, 并进行了美化, 只支持Mysql, 不支持数据库版本管理.
 
 ## 安装
 `npm i -g pdman`
